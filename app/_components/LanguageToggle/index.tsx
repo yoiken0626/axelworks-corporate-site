@@ -1,5 +1,8 @@
+'use client';
+
 import Link from 'next/link';
 import classNames from 'classnames';
+import { setLangCookie, type Lang } from '@/app/_libs/lang';
 import styles from './index.module.css';
 
 type Props = {
@@ -11,24 +14,31 @@ type Props = {
 export default function LanguageToggle({ slug, lang, dk }: Props) {
   const isEn = lang === 'en';
 
-  const buildHref = (targetLang?: 'en') => {
+  // lang は常に明示的に付与する。こうすることで lang Cookie が en でも
+  // 「日本語」リンクが確実に日本語表示になる(URL パラメータが Cookie より優先)。
+  const buildHref = (targetLang: Lang) => {
     const params = new URLSearchParams();
-    if (targetLang) {
-      params.set('lang', targetLang);
-    }
+    params.set('lang', targetLang);
     if (dk) {
       params.set('dk', dk);
     }
-    const query = params.toString();
-    return `/news/${slug}${query ? `?${query}` : ''}`;
+    return `/news/${slug}?${params.toString()}`;
   };
 
   return (
     <div className={styles.toggle}>
-      <Link href={buildHref()} className={classNames(styles.item, { [styles.active]: !isEn })}>
+      <Link
+        href={buildHref('ja')}
+        className={classNames(styles.item, { [styles.active]: !isEn })}
+        onClick={() => setLangCookie('ja')}
+      >
         日本語
       </Link>
-      <Link href={buildHref('en')} className={classNames(styles.item, { [styles.active]: isEn })}>
+      <Link
+        href={buildHref('en')}
+        className={classNames(styles.item, { [styles.active]: isEn })}
+        onClick={() => setLangCookie('en')}
+      >
         English
       </Link>
     </div>

@@ -1,31 +1,23 @@
 import Image from 'next/image';
+import { cookies } from 'next/headers';
 import { getNewsList } from '@/app/_libs/microcms';
 import { TOP_NEWS_LIMIT } from '@/app/_constants';
+import { LANG_COOKIE, resolveLang } from '@/app/_libs/lang';
 import NewsList from '@/app/_components/NewsList';
 import styles from './page.module.css';
 import ButtonLink from '@/app/_components/ButtonLink';
+import HeroQueen from '@/app/_components/HeroQueen';
 
 export default async function Page() {
+  const cookieStore = await cookies();
+  const lang = resolveLang(cookieStore.get(LANG_COOKIE)?.value);
   const data = await getNewsList({
     limit: TOP_NEWS_LIMIT,
   });
   return (
     <>
       <section className={styles.top}>
-        <div>
-          <h1 className={styles.title}>テクノロジーの力で世界を変える</h1>
-          <p className={styles.description}>
-            私たちは市場をリードしているグローバルテックカンパニーです。
-          </p>
-        </div>
-        <Image
-          className={styles.bgimg}
-          src="/img-mv.jpg"
-          alt=""
-          width={3600}
-          height={1200}
-          priority
-        />
+        <HeroQueen lang={lang} />
       </section>
       <section className={styles.news}>
         <h2 className={styles.newsTitle}>News</h2>

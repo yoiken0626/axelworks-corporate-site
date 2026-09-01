@@ -36,6 +36,11 @@
     "prettier": "^3.5.3",
     "react": "^19.0.4",
     "react-dom": "^19.0.4",
+    "three": "^0.185.1",
     "typescript": "^5.8.2"
+  },
+  "devDependencies": {
+    "@types/three": "^0.185.4",
+    "circle-flags": "^2.8.3"
   }
 }

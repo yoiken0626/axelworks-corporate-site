@@ -1,21 +1,4 @@
-.button {
-  display: block;
-  padding: 20px 40px;
-  border-radius: var(--border-radius);
-  width: 300px;
-  background: url('/arrow-right-circle.svg') no-repeat right 20px center, #fff;
-}
-
-.footer {
-  display: flex;
-  justify-content: flex-end;
-  border-top: 1px solid var(--color-border);
-  margin-top: 80px;
-  padding-top: 40px;
-}
-
 /* Sheet(.container: position:relative) の右上に地球儀言語スイッチャーを重ねる。
-   記事上部の LanguageToggle(テキスト版)とは別に、見た目の一貫性のため配置する。
    角に収まるようリング半径(--gls-ring-radius)を既定より小さめにする。 */
 .langSwitch {
   --gls-size: 48px;

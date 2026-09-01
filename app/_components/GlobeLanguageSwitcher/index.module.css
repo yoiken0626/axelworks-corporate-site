@@ -1,0 +1,127 @@
+.root {
+  position: relative;
+  /* 呼び出し側が --gls-size で大きさを指定する（既定 56px）。国旗リングは外にはみ出すので clip しない */
+  width: var(--gls-size, 56px);
+  aspect-ratio: 1;
+}
+
+.globeButton {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.globeButton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.6);
+  animation: pulse 2.4s ease-out infinite;
+  pointer-events: none;
+}
+
+.earthGlobe {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* HeroQueen ではイラストの光る球を覆うため --globe-scale で拡大する */
+  transform: rotate(-7deg) scale(var(--globe-scale, 1));
+}
+
+.earthGlobe canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+.fallbackEmoji {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 16px rgba(255, 255, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
+.flagList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.flagItem {
+  position: absolute;
+  width: var(--gls-flag-size, 60%);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%) scale(0.15);
+  opacity: 0;
+  transition:
+    transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 0.3s ease-out;
+  pointer-events: none;
+}
+
+.flagItem[data-open='true'] {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.flagButton {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #fff;
+  border: 2px solid #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+.flagButton:hover,
+.flagButton:focus-visible {
+  transform: scale(1.1);
+}
+
+.flagIcon {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.tooltip {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 6px);
+  transform: translateX(-50%);
+  background-color: var(--color-bg-painted);
+  color: var(--color-text-unpainted);
+  font-size: 0.7rem;
+  white-space: nowrap;
+  padding: 4px 10px;
+  border-radius: var(--border-radius);
+  z-index: 1;
+}
