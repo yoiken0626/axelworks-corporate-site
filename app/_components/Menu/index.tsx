@@ -34,7 +34,7 @@ export default function Menu() {
             </Link>
           </li>
           <li>
-            <Link href="/contact" onClick={close}>
+            <Link href="/#contact-form" onClick={close}>
               お問い合わせ
             </Link>
           </li>

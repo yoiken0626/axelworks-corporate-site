@@ -7,6 +7,7 @@ import NewsList from '@/app/_components/NewsList';
 import styles from './page.module.css';
 import ButtonLink from '@/app/_components/ButtonLink';
 import HeroQueen from '@/app/_components/HeroQueen';
+import ContactSection from '@/app/_components/ContactSection';
 
 export default async function Page() {
   const cookieStore = await cookies();
@@ -113,6 +114,7 @@ export default async function Page() {
           />
         </div>
       </section>
+      <ContactSection />
     </>
   );
 }
