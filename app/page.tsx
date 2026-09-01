@@ -69,31 +69,32 @@ export default async function Page() {
               <h2 className={styles.sectionTitleEn}>About Us</h2>
               <p className={styles.sectionTitleJa}>私たちについて</p>
               <p className={styles.sectionDescription}>
-                「テクノロジーの力で世界を変える」をミッションに掲げ、日々活動をしています。
+                「AIとともに、多言語で世界とつながる」をミッションに掲げ、日々活動をしています。
               </p>
+              <ul className={styles.businessList}>
+                <li>AIエージェント実装支援（法人向けコンサルティング）</li>
+                <li>AI・IT研修事業「AX Academy」（個人向け）</li>
+                <li>受託開発・SaaS開発</li>
+              </ul>
               <dl className={styles.info}>
                 <dt className={styles.infoTitle}>社名</dt>
-                <dd className={styles.infoDescription}>株式会社Simple</dd>
+                <dd className={styles.infoDescription}>AXelWorks</dd>
               </dl>
               <dl className={styles.info}>
                 <dt className={styles.infoTitle}>設立</dt>
-                <dd className={styles.infoDescription}>2023年4月</dd>
+                <dd className={styles.infoDescription}>準備中</dd>
               </dl>
               <dl className={styles.info}>
                 <dt className={styles.infoTitle}>所在地</dt>
-                <dd className={styles.infoDescription}>
-                  〒000-0000
-                  <br />
-                  東京都渋谷区渋谷1-1-1
-                </dd>
+                <dd className={styles.infoDescription}>準備中</dd>
               </dl>
               <dl className={styles.info}>
                 <dt className={styles.infoTitle}>代表者</dt>
-                <dd className={styles.infoDescription}>鈴木 太郎</dd>
+                <dd className={styles.infoDescription}>吉田 健一</dd>
               </dl>
               <dl className={styles.info}>
                 <dt className={styles.infoTitle}>資本金</dt>
-                <dd className={styles.infoDescription}>1,000万円</dd>
+                <dd className={styles.infoDescription}>準備中</dd>
               </dl>
             </div>
           </div>
