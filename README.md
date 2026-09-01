@@ -65,6 +65,55 @@ npm run dev
 - [HubSpot の準備](https://github.com/microcmsio/nextjs-simple-corporate-site-template/blob/main/docs/hubspot-setting.md)
 - [Vercel へのデプロイ](https://github.com/microcmsio/nextjs-simple-corporate-site-template/blob/main/docs/vercel-deploy.md)
 
+## 多言語ブログ化（フェーズ1：英語自動翻訳パイプライン）
+
+ニュース記事（microCMSの`news` API）の日本語本文（`title` / `content`）から、英語版（`title_en` / `content_en`）を自動生成する仕組みです。
+
+### 概要
+
+1. microCMSで記事を保存すると、設定したWebhookから `/api/translate-article` が呼び出される
+2. `translation_status` が「生成中」または「完了」の記事は何もせずスキップする（無限ループ防止）
+3. 該当記事の `title` / `content` を取得し、Anthropic Claude APIで英訳する
+4. 翻訳結果を `title_en` / `content_en` に書き戻し、`translation_status` を「完了」にする
+5. 翻訳や書き戻しに失敗した場合は `translation_status` を「未処理」に戻す
+
+英語版の表示は記事詳細ページに `?lang=en` を付与することで切り替えられます（例：`/news/xxxxx?lang=en`）。ページ上部の「日本語 / English」リンクからも切り替え可能です。`content_en` / `title_en` が未生成の場合は自動的に日本語表示にフォールバックします。
+
+### microCMS側の設定
+
+- `news` APIに以下の3フィールドを追加していること（本プロジェクトのスコープの前提）
+  - `title_en`（テキストフィールド）
+  - `content_en`（リッチエディタ）
+  - `translation_status`（セレクトフィールド：未処理 / 生成中 / 完了、初期値：未処理）
+- **書き込み専用のAPIキー**を新規発行し、`news` APIに対して **PATCH権限のみ** を付与する（閲覧用の`MICROCMS_API_KEY`とは別のキーにすること）。このキーを`MICROCMS_MANAGEMENT_API_KEY`として設定する
+  - ※ microCMSには「マネジメントAPI」という別サービスも存在しますが、現状ベータ版でステータス変更等の限定操作のみに対応しており、任意フィールドの更新はできません。そのため本実装では通常のコンテンツAPI（PATCH）を書き込み専用キーで利用しています
+- microCMS管理画面の「API設定 > Webhook」から、カスタム通知（一般Webhook）を追加する
+  - リクエストURL：`https://<デプロイ先ドメイン>/api/translate-article`
+  - メソッド：POST
+  - カスタムヘッダー：`x-webhook-secret: <TRANSLATE_WEBHOOK_SECRETと同じ値>`
+  - 通知タイミング：コンテンツの公開・更新時
+  - リクエストボディ：microCMSの標準Webhookペイロード（トップレベルの`id`をcontentIdとして利用）をそのまま送信すればよい。カスタムテンプレートを使う場合は `{"contentId": "{{contentId}}"}` のようにcontentIdを含めること
+
+### 環境変数
+
+`.env.example`を参考に、下記を`.env.local`（またはこのテンプレートの慣例に合わせて`.env`）に設定してください。
+
+```
+MICROCMS_MANAGEMENT_API_KEY=xxxxxxxxxx
+ANTHROPIC_API_KEY=sk-ant-xxxxxxxxxx
+ANTHROPIC_MODEL=claude-sonnet-5
+TRANSLATE_WEBHOOK_SECRET=xxxxxxxxxx
+```
+
+`MICROCMS_MANAGEMENT_API_KEY`と`ANTHROPIC_API_KEY`はサーバー側（Vercelの環境変数）でのみ使用し、クライアントに露出することはありません。Vercelにデプロイする場合は、プロジェクトの Environment Variables 設定にも同じ値を登録してください。
+
+### スコープ外（今回未対応）
+
+- 日本語・英語以外の言語（韓国語以降）への対応
+- 地球儀UIなど本格的な言語切替UIの実装（簡易的な `?lang=en` 切替のみ）
+- Supabase連携
+- Vercel Deploy Hook / ISR revalidateの自動化。翻訳完了後にサイトへ反映するには、手動での再デプロイまたはキャッシュの再検証確認が必要です
+
 ## Node.js のバージョンについて
 
 このテンプレートは **Node.js 24 以上**を前提としています。

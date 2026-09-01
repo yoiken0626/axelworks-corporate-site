@@ -13,11 +13,17 @@ export type Category = {
 } & MicroCMSContentId &
   MicroCMSDate;
 
+// 翻訳ステータスの型定義
+export type TranslationStatus = '未処理' | '生成中' | '完了';
+
 // ニュースの型定義
 export type News = {
   title: string;
   description: string;
   content: string;
+  title_en?: string;
+  content_en?: string;
+  translation_status?: TranslationStatus[];
   thumbnail?: MicroCMSImage;
   category: Category;
 };

@@ -10,6 +10,7 @@ type Props = {
   }>;
   searchParams: Promise<{
     dk: string;
+    lang?: string;
   }>;
 };
 
@@ -42,7 +43,7 @@ export default async function Page(props: Props) {
   });
   return (
     <>
-      <Article data={data} />
+      <Article data={data} lang={searchParams.lang} dk={searchParams.dk} />
       <div className={styles.footer}>
         <ButtonLink href="/news">ニュース一覧へ</ButtonLink>
       </div>

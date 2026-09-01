@@ -4,15 +4,24 @@ import { type Article } from '@/app/_libs/microcms';
 import PublishedDate from '../Date';
 import styles from './index.module.css';
 import Category from '../Category';
+import LanguageToggle from '../LanguageToggle';
 
 type Props = {
   data: Article;
+  lang?: string;
+  dk?: string;
 };
 
-export default function Article({ data }: Props) {
+export default function Article({ data, lang, dk }: Props) {
+  const isEn = lang === 'en';
+  // 英語表示時はtitle_en/content_enを優先し、未翻訳の場合は日本語にフォールバックする
+  const title = (isEn && data.title_en) || data.title;
+  const content = (isEn && data.content_en) || data.content;
+
   return (
     <main>
-      <h1 className={styles.title}>{data.title}</h1>
+      <LanguageToggle slug={data.id} lang={lang} dk={dk} />
+      <h1 className={styles.title}>{title}</h1>
       <p className={styles.description}>{data.description}</p>
       <div className={styles.meta}>
         <Category category={data.category} />
@@ -30,7 +39,7 @@ export default function Article({ data }: Props) {
       <div
         className={styles.content}
         dangerouslySetInnerHTML={{
-          __html: `${formatRichText(data.content)}`,
+          __html: `${formatRichText(content)}`,
         }}
       />
     </main>
