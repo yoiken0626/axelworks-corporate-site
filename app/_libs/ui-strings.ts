@@ -33,6 +33,7 @@ const UI_STRINGS = {
   // News セクション
   newsHeading: { ja: 'News' },
   seeMore: { ja: 'もっとみる', en: 'See more' },
+  newsListLink: { ja: 'ニュース一覧へ', en: 'View all news' },
 
   // Business セクション
   businessHeading: { ja: 'Business' },

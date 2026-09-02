@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import { getNewsDetail } from '@/app/_libs/microcms';
 import Article from '@/app/_components/Article';
 import { LANG_COOKIE, resolveLang } from '@/app/_libs/lang';
+import { ui } from '@/app/_libs/ui-strings';
 import styles from './page.module.css';
 import ButtonLink from '@/app/_components/ButtonLink';
 import GlobeLanguageSwitcher from '@/app/_components/GlobeLanguageSwitcher';
@@ -57,7 +58,7 @@ export default async function Page(props: Props) {
       </div>
       <Article data={data} lang={lang} dk={searchParams.dk} />
       <div className={styles.footer}>
-        <ButtonLink href="/news">ニュース一覧へ</ButtonLink>
+        <ButtonLink href="/news">{ui('newsListLink', lang)}</ButtonLink>
       </div>
     </>
   );
