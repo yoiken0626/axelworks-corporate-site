@@ -2,6 +2,8 @@
 
 import { type FormEvent, useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
+import { ui } from '@/app/_libs/ui-strings';
+import { type Lang } from '@/app/_libs/lang';
 import styles from './index.module.css';
 import {
   APPOINTMENT_TIMES,
@@ -12,12 +14,13 @@ import {
   type AppointmentDay,
 } from './slots';
 
+// value はメール本文に載る正規表記（担当者向けに日本語で固定）。表示ラベルは lang に応じて出し分ける。
 const CONSULTATION_OPTIONS = [
-  'AIエージェント実装相談',
-  '受託開発・SaaS開発相談',
-  'AI・IT研修相談（AX Academy）',
-  'その他',
-];
+  { key: 'consultAgent', value: 'AIエージェント実装相談' },
+  { key: 'consultDev', value: '受託開発・SaaS開発相談' },
+  { key: 'consultTraining', value: 'AI・IT研修相談（AX Academy）' },
+  { key: 'consultOther', value: 'その他' },
+] as const;
 
 const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -31,7 +34,11 @@ type FieldErrors = {
 
 type Status = 'idle' | 'submitting' | 'success' | 'error';
 
-export default function AppointmentForm() {
+type Props = {
+  lang: Lang;
+};
+
+export default function AppointmentForm({ lang }: Props) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [consultation, setConsultation] = useState('');
@@ -49,8 +56,8 @@ export default function AppointmentForm() {
   const [now, setNow] = useState(0);
   useEffect(() => {
     setNow(Date.now());
-    setDays(getAppointmentDays());
-  }, []);
+    setDays(getAppointmentDays(MAX_SELECTIONS, lang));
+  }, [lang]);
 
   const atLimit = selected.length >= MAX_SELECTIONS;
 
@@ -85,18 +92,18 @@ export default function AppointmentForm() {
   const validate = (): FieldErrors => {
     const next: FieldErrors = {};
     if (!name.trim()) {
-      next.name = 'お名前を入力してください';
+      next.name = ui('errNameRequired', lang);
     }
     if (!email.trim()) {
-      next.email = 'メールアドレスを入力してください';
+      next.email = ui('errEmailRequired', lang);
     } else if (!EMAIL_PATTERN.test(email.trim())) {
-      next.email = 'メールアドレスの形式が正しくありません';
+      next.email = ui('errEmailInvalid', lang);
     }
     if (!consultation) {
-      next.consultation = 'ご相談内容を選択してください';
+      next.consultation = ui('errConsultationRequired', lang);
     }
     if (selected.length === 0) {
-      next.slots = '候補日時を1件以上選択してください';
+      next.slots = ui('errSlotsRequired', lang);
     }
     return next;
   };
@@ -122,9 +129,7 @@ export default function AppointmentForm() {
       // eslint-disable-next-line no-console
       console.error('NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY is not set');
       setStatus('error');
-      setStatusMessage(
-        '送信設定が未完了のため送信できませんでした。お手数ですが時間をおいて再度お試しください。',
-      );
+      setStatusMessage(ui('errNotConfigured', lang));
       return;
     }
 
@@ -153,15 +158,11 @@ export default function AppointmentForm() {
         setStatus('success');
       } else {
         setStatus('error');
-        setStatusMessage(
-          '送信に失敗しました。お手数ですが時間をおいて再度お試しいただくか、直接メールにてご連絡ください。',
-        );
+        setStatusMessage(ui('errSubmitFailed', lang));
       }
     } catch {
       setStatus('error');
-      setStatusMessage(
-        'ネットワークエラーにより送信できませんでした。通信環境をご確認のうえ再度お試しください。',
-      );
+      setStatusMessage(ui('errNetwork', lang));
     }
   };
 
@@ -169,28 +170,28 @@ export default function AppointmentForm() {
     return (
       <div className={styles.card}>
         <div className={styles.successPanel} role="status">
-          <p className={styles.successTitle}>送信しました。ありがとうございます。</p>
-          <p className={styles.successBody}>
-            担当者が内容を確認のうえ、いただいたメールアドレス宛に日程のご連絡をいたします。
-            通常2〜3営業日以内にご返信します。
-          </p>
+          <p className={styles.successTitle}>{ui('formSuccessTitle', lang)}</p>
+          <p className={styles.successBody}>{ui('formSuccessBody', lang)}</p>
         </div>
       </div>
     );
   }
+
+  const requiredBadge = <span className={styles.req}>{ui('formRequired', lang)}</span>;
 
   return (
     <form className={styles.card} onSubmit={onSubmit} noValidate>
       <div className={styles.fieldRow}>
         <div className={styles.field}>
           <label className={styles.label} htmlFor="appt-name">
-            お名前<span className={styles.req}>必須</span>
+            {ui('formName', lang)}
+            {requiredBadge}
           </label>
           <input
             id="appt-name"
             className={styles.input}
             type="text"
-            placeholder="山田 太郎"
+            placeholder={ui('formNamePlaceholder', lang)}
             value={name}
             autoComplete="name"
             aria-invalid={Boolean(errors.name)}
@@ -206,7 +207,8 @@ export default function AppointmentForm() {
 
         <div className={styles.field}>
           <label className={styles.label} htmlFor="appt-email">
-            メールアドレス<span className={styles.req}>必須</span>
+            {ui('formEmail', lang)}
+            {requiredBadge}
           </label>
           <input
             id="appt-email"
@@ -229,7 +231,8 @@ export default function AppointmentForm() {
 
       <div className={styles.field}>
         <label className={styles.label} htmlFor="appt-consultation">
-          ご相談内容<span className={styles.req}>必須</span>
+          {ui('formConsultation', lang)}
+          {requiredBadge}
         </label>
         <select
           id="appt-consultation"
@@ -239,10 +242,10 @@ export default function AppointmentForm() {
           aria-describedby={errors.consultation ? 'appt-consultation-error' : undefined}
           onChange={(e) => setConsultation(e.target.value)}
         >
-          <option value="">選択してください</option>
+          <option value="">{ui('formConsultationPlaceholder', lang)}</option>
           {CONSULTATION_OPTIONS.map((opt) => (
-            <option key={opt} value={opt}>
-              {opt}
+            <option key={opt.key} value={opt.value}>
+              {ui(opt.key, lang)}
             </option>
           ))}
         </select>
@@ -255,12 +258,13 @@ export default function AppointmentForm() {
 
       <div className={styles.field}>
         <label className={styles.label} htmlFor="appt-message">
-          メッセージ<span className={styles.optional}>任意</span>
+          {ui('formMessage', lang)}
+          <span className={styles.optional}>{ui('formOptional', lang)}</span>
         </label>
         <textarea
           id="appt-message"
           className={styles.textarea}
-          placeholder="まだぼんやりした内容でも、お気軽にどうぞ。"
+          placeholder={ui('formMessagePlaceholder', lang)}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
@@ -274,17 +278,16 @@ export default function AppointmentForm() {
         aria-describedby={errors.slots ? 'appt-slots-error' : undefined}
       >
         <legend className={styles.calHeading}>
-          Google Meet相談（顔出し不要）の候補日時を選択してください（最大{MAX_SELECTIONS}件）{' '}
-          <span className={styles.req}>必須</span>
+          {ui('formCalendarLegend', lang).replace('{max}', String(MAX_SELECTIONS))} {requiredBadge}
         </legend>
-        <p className={styles.calNote}>直近の営業日から自動で3日分表示しています</p>
+        <p className={styles.calNote}>{ui('formCalendarNote', lang)}</p>
 
         <div className={styles.tableWrap}>
           <table className={styles.table}>
             <thead>
               <tr>
                 <th scope="col" className={styles.timeHead}>
-                  <span className={styles.srOnly}>時間帯</span>
+                  <span className={styles.srOnly}>{ui('formTimeColumn', lang)}</span>
                 </th>
                 {(days ?? [null, null, null]).map((day, i) => (
                   <th key={day?.key ?? i} scope="col">
@@ -328,7 +331,7 @@ export default function AppointmentForm() {
                           />
                           <span className={styles.srOnly}>
                             {day.label} {time}
-                            {tooSoon ? '（受付終了）' : ''}
+                            {tooSoon ? ui('formSlotClosed', lang) : ''}
                           </span>
                         </label>
                       </td>
@@ -341,7 +344,9 @@ export default function AppointmentForm() {
         </div>
 
         <p className={styles.counter} aria-live="polite">
-          {selected.length} / {MAX_SELECTIONS}件選択中
+          {ui('formSlotsCounter', lang)
+            .replace('{n}', String(selected.length))
+            .replace('{max}', String(MAX_SELECTIONS))}
         </p>
         {errors.slots && (
           <p id="appt-slots-error" className={styles.fieldError}>
@@ -359,11 +364,11 @@ export default function AppointmentForm() {
           checked={botcheck}
           onChange={(e) => setBotcheck(e.target.checked)}
         />
-        この項目は入力しないでください
+        Do not fill this field
       </label>
 
       <button type="submit" className={styles.submit} disabled={status === 'submitting'}>
-        {status === 'submitting' ? '送信中…' : '相談内容を送る'}
+        {status === 'submitting' ? ui('formSubmitting', lang) : ui('formSubmit', lang)}
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path
             d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7Z"
@@ -374,9 +379,7 @@ export default function AppointmentForm() {
           />
         </svg>
       </button>
-      <p className={styles.submitNote}>
-        入力内容と選択した候補日時を、担当者へメールで送信します。
-      </p>
+      <p className={styles.submitNote}>{ui('formSubmitNote', lang)}</p>
 
       <div aria-live="polite">
         {status === 'error' && (

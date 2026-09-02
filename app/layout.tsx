@@ -1,5 +1,7 @@
 import { Metadata } from 'next';
+import { cookies } from 'next/headers';
 import { getMeta } from '@/app/_libs/microcms';
+import { LANG_COOKIE, resolveLang } from '@/app/_libs/lang';
 import Footer from '@/app/_components/Footer';
 import Header from '@/app/_components/Header';
 import './globals.css';
@@ -31,12 +33,14 @@ type Props = {
 };
 
 export default async function RootLayout({ children }: Props) {
+  const cookieStore = await cookies();
+  const lang = resolveLang(cookieStore.get(LANG_COOKIE)?.value);
   return (
-    <html lang="ja">
+    <html lang={lang}>
       <body className={styles.body}>
-        <Header />
+        <Header lang={lang} />
         <main>{children}</main>
-        <Footer />
+        <Footer lang={lang} />
       </body>
     </html>
   );

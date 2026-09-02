@@ -1,26 +1,32 @@
 import Link from 'next/link';
+import { ui } from '@/app/_libs/ui-strings';
+import { type Lang } from '@/app/_libs/lang';
 import styles from './index.module.css';
 
-export default function Footer() {
+type Props = {
+  lang: Lang;
+};
+
+export default function Footer({ lang }: Props) {
   return (
     <footer className={styles.footer}>
       <nav className={styles.nav}>
         <ul className={styles.items}>
           <li className={styles.item}>
-            <Link href="/news">ニュース</Link>
+            <Link href="/news">{ui('navNews', lang)}</Link>
           </li>
           <li className={styles.item}>
-            <Link href="/members">メンバー</Link>
+            <Link href="/members">{ui('navMembers', lang)}</Link>
           </li>
           <li className={styles.item}>
-            <Link href="">採用情報</Link>
+            <Link href="">{ui('navCareers', lang)}</Link>
           </li>
           <li className={styles.item}>
-            <Link href="/#contact-form">お問い合わせ</Link>
+            <Link href="/#contact-form">{ui('navContact', lang)}</Link>
           </li>
         </ul>
       </nav>
-      <p>© SIMPLE. All Rights Reserved 2023</p>
+      <p>{ui('footerCopyright', lang)}</p>
     </footer>
   );
 }

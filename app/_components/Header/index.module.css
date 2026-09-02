@@ -1,4 +1,8 @@
 .header {
+  /* ナビ・ロゴの色。data-variant で切り替える */
+  --nav-color: #fff;
+  --nav-icon-filter: none;
+
   position: absolute;
   padding: 16px 24px 8px;
   z-index: 1000;
@@ -8,13 +12,27 @@
   width: 100%;
 }
 
+.header[data-variant='light'] {
+  --nav-color: var(--color-text-main);
+  --nav-icon-filter: brightness(0) opacity(0.75);
+}
+
 .logoLink {
   display: flex;
+  align-items: center;
 }
 
 .logo {
-  height: 24px;
-  width: auto;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  color: var(--nav-color);
+  line-height: 1;
+}
+
+.logoSuffix {
+  font-weight: 600;
+  opacity: 0.7;
 }
 
 @media (max-width: 640px) {

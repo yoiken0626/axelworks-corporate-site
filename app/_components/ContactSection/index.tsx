@@ -1,78 +1,83 @@
+import { ui } from '@/app/_libs/ui-strings';
+import { type Lang } from '@/app/_libs/lang';
 import styles from './index.module.css';
 import AppointmentForm from './AppointmentForm';
 
+const iconProps = {
+  width: 18,
+  height: 18,
+  viewBox: '0 0 24 24',
+  fill: 'none',
+  'aria-hidden': true,
+} as const;
+const pathProps = {
+  stroke: 'currentColor',
+  strokeWidth: 1.8,
+  strokeLinecap: 'round',
+  strokeLinejoin: 'round',
+} as const;
+
 const SERVICES = [
   {
-    label: 'AIエージェント実装支援（法人向けコンサルティング）',
+    key: 'contactService1',
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path
-          d="M8 6 3 12l5 6M16 6l5 6-5 6"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+      <svg {...iconProps}>
+        <path d="M8 6 3 12l5 6M16 6l5 6-5 6" {...pathProps} strokeWidth={2} />
       </svg>
     ),
   },
   {
-    label: '受託開発・SaaS開発',
+    key: 'contactService2',
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <svg {...iconProps}>
         <path
           d="m12 3 8.5 4.9v8.2L12 21l-8.5-4.9V7.9L12 3Zm0 0v9m0 0 8.5-4.9M12 12l-8.5-4.9"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+          {...pathProps}
         />
       </svg>
     ),
   },
   {
-    label: 'AI・IT研修事業「AX Academy」',
+    key: 'contactService3',
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path
-          d="M12 4 2 9l10 5 10-5-10-5ZM6 11v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+      <svg {...iconProps}>
+        <path d="M12 4 2 9l10 5 10-5-10-5ZM6 11v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5" {...pathProps} />
       </svg>
     ),
   },
-];
+] as const;
 
-export default function ContactSection() {
+type Props = {
+  lang: Lang;
+};
+
+export default function ContactSection({ lang }: Props) {
   return (
     <section id="contact-form" className={styles.section}>
       <div className={styles.inner}>
         <div className={styles.intro}>
-          <p className={styles.eyebrow}>CONTACT</p>
+          <p className={styles.eyebrow}>{ui('contactEyebrow', lang)}</p>
           <h2 className={styles.heading}>
-            その「ちょっと困った」、
+            {ui('contactHeadingLead', lang)}
             <br />
-            <span className={styles.headingAccent}>聞かせてください。</span>
+            <span className={styles.headingAccent}>{ui('contactHeadingAccent', lang)}</span>
           </h2>
           <p className={styles.lead}>
-            まだアイデアが固まっていなくても大丈夫です。
+            {ui('contactLead1', lang)}
             <br />
-            できることから、一緒に考えます。
+            {ui('contactLead2', lang)}
           </p>
           <ul className={styles.services}>
             {SERVICES.map((s) => (
-              <li key={s.label} className={styles.serviceItem}>
+              <li key={s.key} className={styles.serviceItem}>
                 <span className={styles.serviceIcon}>{s.icon}</span>
-                {s.label}
+                {ui(s.key, lang)}
               </li>
             ))}
           </ul>
         </div>
 
-        <AppointmentForm />
+        <AppointmentForm lang={lang} />
       </div>
     </section>
   );

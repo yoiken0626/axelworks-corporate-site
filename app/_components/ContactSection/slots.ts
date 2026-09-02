@@ -12,7 +12,10 @@ export type AppointmentDay = {
 export const APPOINTMENT_TIMES = ['9:00', '13:00', '16:00'] as const;
 export const MAX_SELECTIONS = 3;
 
-const WEEKDAY_JA = ['日', '月', '火', '水', '木', '金', '土'];
+const WEEKDAY: Record<'ja' | 'en', string[]> = {
+  ja: ['日', '月', '火', '水', '木', '金', '土'],
+  en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+};
 
 const isBusinessDay = (d: Date) => {
   const day = d.getDay();
@@ -34,8 +37,13 @@ const todayInTokyo = (): Date => {
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
-/** 直近の営業日から count 営業日分（土日を除く）を返す */
-export const getAppointmentDays = (count = 3, base?: Date): AppointmentDay[] => {
+/** 直近の営業日から count 営業日分（土日を除く）を返す。曜日表記は lang に合わせる */
+export const getAppointmentDays = (
+  count = 3,
+  lang: string = 'ja',
+  base?: Date,
+): AppointmentDay[] => {
+  const weekday = lang === 'en' ? WEEKDAY.en : WEEKDAY.ja;
   const cursor = base ? new Date(base) : todayInTokyo();
   cursor.setHours(0, 0, 0, 0);
   const days: AppointmentDay[] = [];
@@ -44,7 +52,7 @@ export const getAppointmentDays = (count = 3, base?: Date): AppointmentDay[] => 
       const y = cursor.getFullYear();
       const m = cursor.getMonth() + 1;
       const d = cursor.getDate();
-      const w = WEEKDAY_JA[cursor.getDay()];
+      const w = weekday[cursor.getDay()];
       days.push({
         key: `${y}-${pad(m)}-${pad(d)}`,
         label: `${m}/${d}(${w})`,

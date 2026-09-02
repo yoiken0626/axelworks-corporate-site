@@ -1,11 +1,15 @@
 .items {
   display: flex;
-  color: #fff;
+  color: var(--nav-color, #fff);
   gap: 40px;
 }
 
 .button {
   display: none;
+}
+
+.button img {
+  filter: var(--nav-icon-filter, none);
 }
 
 @media (max-width: 640px) {
@@ -23,11 +27,18 @@
     background-color: var(--color-bg-painted);
     color: var(--color-text-unpainted);
     padding: 24px 16px;
+    z-index: 1001;
   }
 
-  .items {
+  /* オーバーレイは常に暗い背景なので、ヘッダーの variant に関わらず白文字・白アイコン */
+  .nav.open .items {
     flex-direction: column;
     gap: 24px;
+    color: var(--color-text-unpainted);
+  }
+
+  .nav.open .close img {
+    filter: none;
   }
 
   .button {

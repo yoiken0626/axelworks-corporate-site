@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import { getNewsList } from '@/app/_libs/microcms';
 import { TOP_NEWS_LIMIT } from '@/app/_constants';
 import { LANG_COOKIE, resolveLang } from '@/app/_libs/lang';
+import { ui } from '@/app/_libs/ui-strings';
 import NewsList from '@/app/_components/NewsList';
 import styles from './page.module.css';
 import ButtonLink from '@/app/_components/ButtonLink';
@@ -21,23 +22,23 @@ export default async function Page() {
         <HeroQueen lang={lang} />
       </section>
       <section className={styles.news}>
-        <h2 className={styles.newsTitle}>News</h2>
+        <h2 className={styles.newsTitle}>{ui('newsHeading', lang)}</h2>
         <NewsList articles={data.contents} />
         <div className={styles.newsLink}>
-          <ButtonLink href="/news">もっとみる</ButtonLink>
+          <ButtonLink href="/news">{ui('seeMore', lang)}</ButtonLink>
         </div>
       </section>
       <section className={styles.section}>
         <div className={styles.horizontal}>
           <div>
-            <h2 className={styles.sectionTitleEn}>Business</h2>
-            <p className={styles.sectionTitleJa}>事業内容</p>
+            <h2 className={styles.sectionTitleEn}>{ui('businessHeading', lang)}</h2>
+            <p className={styles.sectionTitleJa}>{ui('businessSubtitle', lang)}</p>
             <p className={styles.sectionDescription}>
-              当社は、次世代テクノロジーの研究開発・製造・販売を行う革新的な企業です。
+              {ui('businessBody1', lang)}
               <br />
-              AI、ロボット工学、自律システムなど、幅広い分野でのソリューション提供を通じて、社会の進化と未来の創造に貢献します。
+              {ui('businessBody2', lang)}
             </p>
-            <ButtonLink href="/business">もっとみる</ButtonLink>
+            <ButtonLink href="/business">{ui('seeMore', lang)}</ButtonLink>
           </div>
           <Image
             className={styles.businessImg}
@@ -59,35 +60,33 @@ export default async function Page() {
               height={4000}
             />
             <div>
-              <h2 className={styles.sectionTitleEn}>About Us</h2>
-              <p className={styles.sectionTitleJa}>私たちについて</p>
-              <p className={styles.sectionDescription}>
-                「AIとともに、多言語で世界とつながる」をミッションに掲げ、日々活動をしています。
-              </p>
+              <h2 className={styles.sectionTitleEn}>{ui('aboutHeading', lang)}</h2>
+              <p className={styles.sectionTitleJa}>{ui('aboutSubtitle', lang)}</p>
+              <p className={styles.sectionDescription}>{ui('aboutMission', lang)}</p>
               <ul className={styles.businessList}>
-                <li>AIエージェント実装支援（法人向けコンサルティング）</li>
-                <li>AI・IT研修事業「AX Academy」（個人向け）</li>
-                <li>受託開発・SaaS開発</li>
+                <li>{ui('aboutService1', lang)}</li>
+                <li>{ui('aboutService2', lang)}</li>
+                <li>{ui('aboutService3', lang)}</li>
               </ul>
               <dl className={styles.info}>
-                <dt className={styles.infoTitle}>社名</dt>
+                <dt className={styles.infoTitle}>{ui('aboutInfoCompany', lang)}</dt>
                 <dd className={styles.infoDescription}>AXelWorks</dd>
               </dl>
               <dl className={styles.info}>
-                <dt className={styles.infoTitle}>設立</dt>
-                <dd className={styles.infoDescription}>準備中</dd>
+                <dt className={styles.infoTitle}>{ui('aboutInfoFounded', lang)}</dt>
+                <dd className={styles.infoDescription}>{ui('aboutInfoTBD', lang)}</dd>
               </dl>
               <dl className={styles.info}>
-                <dt className={styles.infoTitle}>所在地</dt>
-                <dd className={styles.infoDescription}>準備中</dd>
+                <dt className={styles.infoTitle}>{ui('aboutInfoLocation', lang)}</dt>
+                <dd className={styles.infoDescription}>{ui('aboutInfoTBD', lang)}</dd>
               </dl>
               <dl className={styles.info}>
-                <dt className={styles.infoTitle}>代表者</dt>
-                <dd className={styles.infoDescription}>吉田 健一</dd>
+                <dt className={styles.infoTitle}>{ui('aboutInfoRepresentative', lang)}</dt>
+                <dd className={styles.infoDescription}>{ui('aboutRepName', lang)}</dd>
               </dl>
               <dl className={styles.info}>
-                <dt className={styles.infoTitle}>資本金</dt>
-                <dd className={styles.infoDescription}>準備中</dd>
+                <dt className={styles.infoTitle}>{ui('aboutInfoCapital', lang)}</dt>
+                <dd className={styles.infoDescription}>{ui('aboutInfoTBD', lang)}</dd>
               </dl>
             </div>
           </div>
@@ -96,14 +95,14 @@ export default async function Page() {
       <section className={styles.section}>
         <div className={styles.horizontal}>
           <div>
-            <h2 className={styles.sectionTitleEn}>We are hiring</h2>
-            <p className={styles.sectionTitleJa}>採用情報</p>
+            <h2 className={styles.sectionTitleEn}>{ui('hiringHeading', lang)}</h2>
+            <p className={styles.sectionTitleJa}>{ui('hiringSubtitle', lang)}</p>
             <p className={styles.sectionDescription}>
-              当社では、チャレンジ精神を持った人材を求めています。
+              {ui('hiringBody1', lang)}
               <br />
-              新しいアイデアを出し合い、成長する環境で活躍したい方は、ぜひご応募ください。当社でのキャリアを築きながら、技術の最前線で力を発揮しましょう。
+              {ui('hiringBody2', lang)}
             </p>
-            <ButtonLink href="">採用情報へ</ButtonLink>
+            <ButtonLink href="">{ui('hiringLink', lang)}</ButtonLink>
           </div>
           <Image
             className={styles.hiringImg}
@@ -114,7 +113,7 @@ export default async function Page() {
           />
         </div>
       </section>
-      <ContactSection />
+      <ContactSection lang={lang} />
     </>
   );
 }
