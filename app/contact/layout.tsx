@@ -1,5 +1,8 @@
+import { cookies } from 'next/headers';
 import Hero from '@/app/_components/Hero';
 import Sheet from '@/app/_components/Sheet';
+import { LANG_COOKIE, resolveLang } from '@/app/_libs/lang';
+import { ui } from '@/app/_libs/ui-strings';
 
 export const metadata = {
   title: 'コンタクト｜シンプルなコーポレートサイト',
@@ -15,10 +18,11 @@ type Props = {
   children: React.ReactNode;
 };
 
-export default function RootLayout({ children }: Props) {
+export default async function RootLayout({ children }: Props) {
+  const lang = resolveLang((await cookies()).get(LANG_COOKIE)?.value);
   return (
     <>
-      <Hero title="Contact" sub="お問い合わせ" />
+      <Hero title="Contact" sub={ui('navContact', lang)} />
       <Sheet>{children}</Sheet>
     </>
   );

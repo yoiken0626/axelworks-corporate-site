@@ -1,7 +1,7 @@
 .wrapper {
   position: relative;
   container-type: inline-size;
-  width: min(100%, 560px);
+  width: min(100%, 900px);
   margin: 0 auto;
 }
 
@@ -11,37 +11,128 @@
   height: auto;
 }
 
-.bubble {
+/* --- 思考の泡（thought bubble） --- */
+.thought {
   position: absolute;
-  left: 2%;
-  top: 6%;
-  max-width: 55%;
-  background-color: #fff;
-  color: var(--color-text-main);
-  border-radius: 999px 999px 999px 4px;
-  padding: 3cqw 4.5cqw;
-  font-size: clamp(0.75rem, 4cqw, 1.05rem);
-  font-weight: bold;
-  line-height: 1.4;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  left: 2.5%;
+  top: 3%;
+  width: 30%;
+  z-index: 2;
+  /* 雲の実際の輪郭に沿って影を落とす */
+  filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.18));
 }
 
-/* GlobeLanguageSwitcher をイラストの地球儀の位置に重ねる枠 */
+/* モコモコした雲。テキストボックスより一回り大きく広げて膨らみを外に出す */
+.cloud {
+  position: absolute;
+  top: -22%;
+  left: -12%;
+  width: 124%;
+  height: 148%;
+}
+
+.bubbleText {
+  position: relative;
+  margin: 0;
+  padding: 5cqw 5.5cqw;
+  color: var(--color-text-main);
+  font-size: clamp(0.66rem, 2.7cqw, 0.9rem);
+  font-weight: bold;
+  line-height: 1.5;
+  text-align: center;
+}
+
+/* しっぽ：大→小の白丸がキャラクターの口元へ連なる（wrapper に対する%で配置） */
+.tailDot {
+  position: absolute;
+  z-index: 2;
+  aspect-ratio: 1;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+}
+
+.tailDot[data-dot='1'] {
+  width: 4.8%;
+  left: 35.5%;
+  top: 25.5%;
+}
+
+.tailDot[data-dot='2'] {
+  width: 3%;
+  left: 43%;
+  top: 27%;
+}
+
+.tailDot[data-dot='3'] {
+  width: 1.9%;
+  left: 49.5%;
+  top: 28.5%;
+}
+
+/* --- GlobeLanguageSwitcher をイラストの球体に重ねる枠 --- */
 .globeSlot {
   position: absolute;
-  width: 20%;
+  width: 16%;
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
 }
 
 .globe {
-  /* 枠いっぱいに広げ、球体本体がイラストの透明な球体の内側に収まるよう縮小する */
   --gls-size: 100%;
-  --globe-scale: 0.85;
+  /* 3D地球儀本体をイラストの球体に合わせる */
+  --globe-scale: 0.9;
+  /* 横長のヒーロー画像に収まるよう、国旗リングをコンパクトに */
+  --gls-ring-radius: 88%;
+  --gls-flag-size: 46%;
 }
 
 @media (max-width: 640px) {
   .wrapper {
     width: 100%;
+  }
+
+  /* 横長画像が短くなるスマホでは吹き出し・しっぽ・地球儀リングを調整する */
+  .thought {
+    left: 3%;
+    top: 7%;
+    width: 47%;
+  }
+
+  .cloud {
+    top: -15%;
+    height: 130%;
+  }
+
+  .bubbleText {
+    padding: 3.5cqw 4cqw;
+    font-size: clamp(0.56rem, 3cqw, 0.76rem);
+  }
+
+  .tailDot[data-dot='1'] {
+    width: 6.5%;
+    left: 51%;
+    top: 34%;
+  }
+
+  .tailDot[data-dot='2'] {
+    width: 4.2%;
+    left: 58%;
+    top: 38%;
+  }
+
+  .tailDot[data-dot='3'] {
+    width: 2.8%;
+    left: 63.5%;
+    top: 42%;
+  }
+
+  .globeSlot {
+    width: 23%;
+  }
+
+  .globe {
+    --gls-ring-radius: 74%;
+    --gls-flag-size: 40%;
   }
 }

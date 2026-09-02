@@ -130,7 +130,8 @@
 
 @media (max-width: 640px) {
   .top {
-    padding: 40px 16px;
+    /* 上余白はヘッダー(絶対配置)の高さ分を確保して吹き出しと重ならないようにする */
+    padding: 60px 16px 40px;
   }
 
   .news {
