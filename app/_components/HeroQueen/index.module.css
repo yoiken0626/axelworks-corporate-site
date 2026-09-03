@@ -71,34 +71,6 @@
   text-align: center;
 }
 
-/* しっぽ：大→小の白丸がキャラクターの口元へ連なる（wrapper に対する%で配置） */
-.tailDot {
-  position: absolute;
-  z-index: 2;
-  aspect-ratio: 1;
-  background: #fff;
-  border-radius: 50%;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
-}
-
-.tailDot[data-dot='1'] {
-  width: 4.8%;
-  left: 35.5%;
-  top: 25.5%;
-}
-
-.tailDot[data-dot='2'] {
-  width: 3%;
-  left: 43%;
-  top: 27%;
-}
-
-.tailDot[data-dot='3'] {
-  width: 1.9%;
-  left: 49.5%;
-  top: 28.5%;
-}
-
 /* --- GlobeLanguageSwitcher をイラストの球体に重ねる枠 --- */
 .globeSlot {
   position: absolute;
@@ -121,39 +93,24 @@
     width: 100%;
   }
 
-  /* 横長画像が短くなるスマホでは吹き出し・しっぽ・地球儀リングを調整する */
+  /* 横長画像が短くなるスマホでは吹き出し・地球儀リングを調整する。
+     読み上げコントロール（右上）に雲がかからないよう幅と右側のはみ出しを抑える。 */
   .thought {
     left: 3%;
     top: 7%;
-    width: 47%;
+    width: 44%;
   }
 
   .cloud {
     top: -15%;
+    left: -14%;
+    width: 116%;
     height: 130%;
   }
 
   .bubbleText {
     padding: 3.5cqw 4cqw;
     font-size: clamp(0.56rem, 3cqw, 0.76rem);
-  }
-
-  .tailDot[data-dot='1'] {
-    width: 6.5%;
-    left: 51%;
-    top: 34%;
-  }
-
-  .tailDot[data-dot='2'] {
-    width: 4.2%;
-    left: 58%;
-    top: 38%;
-  }
-
-  .tailDot[data-dot='3'] {
-    width: 2.8%;
-    left: 63.5%;
-    top: 42%;
   }
 
   .globeSlot {

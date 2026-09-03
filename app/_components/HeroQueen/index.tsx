@@ -43,7 +43,9 @@ export default function HeroQueen({ lang, mouthOpen = false }: Props) {
         <GlobeLanguageSwitcher className={styles.globe} />
       </div>
 
-      {/* 思考の泡（thought bubble）：モコモコした雲＋口元へ連なる小さな丸のしっぽ */}
+      {/* 思考の泡（thought bubble）：モコモコした雲だけで表現。
+         口元（右下）側に小さなコブを2つ添えて「心の声」感を出す。
+         独立した丸の“しっぽ”は置かない（スマホで地球儀等と重なるため廃止）。 */}
       <div className={styles.thought}>
         <svg
           className={styles.cloud}
@@ -52,22 +54,23 @@ export default function HeroQueen({ lang, mouthOpen = false }: Props) {
           aria-hidden="true"
         >
           <g fill="#fff">
-            <ellipse cx="120" cy="92" rx="100" ry="54" />
-            <circle cx="54" cy="66" r="36" />
-            <circle cx="104" cy="44" r="42" />
-            <circle cx="156" cy="46" r="38" />
-            <circle cx="196" cy="74" r="34" />
-            <circle cx="58" cy="122" r="34" />
-            <circle cx="118" cy="136" r="36" />
-            <circle cx="180" cy="124" r="32" />
+            <ellipse cx="117" cy="88" rx="99" ry="52" />
+            <circle cx="49" cy="62" r="34" />
+            <circle cx="95" cy="39" r="42" />
+            <circle cx="145" cy="43" r="37" />
+            <circle cx="185" cy="60" r="34" />
+            <circle cx="203" cy="90" r="23" />
+            <circle cx="50" cy="114" r="34" />
+            <circle cx="103" cy="132" r="38" />
+            <circle cx="155" cy="125" r="33" />
+            <circle cx="191" cy="115" r="25" />
+            {/* 口元（下・やや右）へ向かう控えめなコブを2つ */}
+            <circle cx="188" cy="140" r="14" />
+            <circle cx="201" cy="153" r="7.5" />
           </g>
         </svg>
         <p className={styles.bubbleText}>{ui('heroSpeech', lang)}</p>
       </div>
-
-      <span className={styles.tailDot} data-dot="1" aria-hidden="true" />
-      <span className={styles.tailDot} data-dot="2" aria-hidden="true" />
-      <span className={styles.tailDot} data-dot="3" aria-hidden="true" />
     </div>
   );
 }
