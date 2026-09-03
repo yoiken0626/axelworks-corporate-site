@@ -1,0 +1,98 @@
+.section {
+  position: relative;
+  width: min(100%, 900px);
+  margin: 0 auto;
+}
+
+/* --- ヒーロー画像の右上に重ねる小型フローティングコントロール --- */
+.control {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px 4px 4px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(6px);
+  border-radius: 999px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+}
+
+.iconButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-button-primary);
+  color: #fff;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.iconButton:hover {
+  opacity: 0.9;
+}
+
+.iconButton:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.divider {
+  width: 1px;
+  height: 18px;
+  background: var(--color-border);
+  margin: 0 2px;
+}
+
+.speed {
+  width: 68px;
+  accent-color: var(--color-button-primary);
+  cursor: pointer;
+}
+
+.speedValue {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-sub);
+  min-width: 2.4em;
+  text-align: right;
+}
+
+@media (max-width: 640px) {
+  .section {
+    width: 100%;
+  }
+
+  /* 地球儀・吹き出しと重ならないよう、右上で1行のまま小さくまとめる */
+  .control {
+    top: 6px;
+    right: 6px;
+    gap: 3px;
+    padding: 3px 5px 3px 3px;
+    border-radius: 999px;
+  }
+
+  /* スマホは指で押しやすいよう最低 44x44 のタップ領域を確保 */
+  .iconButton {
+    width: 44px;
+    height: 44px;
+  }
+
+  .divider {
+    display: none;
+  }
+
+  .speed {
+    width: 46px;
+  }
+
+  .speedValue {
+    display: none;
+  }
+}

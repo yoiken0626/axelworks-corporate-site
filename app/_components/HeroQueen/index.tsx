@@ -9,18 +9,31 @@ const GLOBE_POSITION = { left: 47, top: 66 };
 
 type Props = {
   lang: Lang;
+  /** 読み上げの発話タイミングに同期した口の開閉。true で口開き画像を表示 */
+  mouthOpen?: boolean;
 };
 
-export default function HeroQueen({ lang }: Props) {
+export default function HeroQueen({ lang, mouthOpen = false }: Props) {
   return (
     <div className={styles.wrapper}>
+      {/* ベース（口閉じ）。常時表示・切り替えなし。比率は .wrapper の aspect-ratio で確定 */}
       <Image
         src="/hero-queen-erica-2.png"
         alt="王冠をつけた女性が紫の球体を両手で持っているイラスト"
-        width={1280}
-        height={670}
+        fill
         priority
+        sizes="(max-width: 900px) 100vw, 900px"
         className={styles.image}
+      />
+      {/* 口開き画像を「口元だけ」楕円マスクで切り抜いて重ね、opacity だけをトグルする */}
+      <Image
+        src="/hero-queen-erica-3.png"
+        alt=""
+        fill
+        aria-hidden="true"
+        sizes="(max-width: 900px) 100vw, 900px"
+        className={styles.mouthOverlay}
+        style={{ opacity: mouthOpen ? 1 : 0 }}
       />
 
       <div

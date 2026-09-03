@@ -3,12 +3,41 @@
   container-type: inline-size;
   width: min(100%, 900px);
   margin: 0 auto;
+  /* 口閉じ画像(1280x670)の比率でボックスを確定させ、2枚をこの同一矩形に描画する */
+  aspect-ratio: 1280 / 670;
 }
 
-.image {
-  display: block;
+/* ベース画像（口閉じ・erica-2）は常時表示し、切り替えない。
+   → 衣装・髪・背景は常にこの1枚なので、圧縮差によるざらつきが出ない。 */
+.image,
+.mouthOverlay {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: fill;
+}
+
+/* 口開き画像（erica-3）は「口まわり一帯」を楕円のグラデーションマスクで切り抜き、
+   ベースに重ねて opacity をトグルするだけ。全身は動かず、口元のみ差し替わる。
+   2枚は同一構図なので transform/scale は不要（かけると上唇までずれる）。
+   ・下唇全体・口角・口元のほくろ（≈ 横59.5% / 縦35%）まで含めて広めに切り抜き、
+     下唇の輪郭が途中で途切れないよう余白を持たせる
+   ・ほくろは2枚で座標がほぼ一致しているため、含めても位置ズレ・点滅は起きない
+   ・楕円の縁は radial-gradient でぼかし、肌の境目を目立たせない */
+.mouthOverlay {
+  pointer-events: none;
+  transition: opacity 45ms linear;
+  --mouth-mask: radial-gradient(
+    ellipse 10% 9.5% at 53.5% 34.5%,
+    #000 45%,
+    rgba(0, 0, 0, 0.35) 72%,
+    transparent 100%
+  );
+  -webkit-mask-image: var(--mouth-mask);
+  mask-image: var(--mouth-mask);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
 }
 
 /* --- 思考の泡（thought bubble） --- */
@@ -80,8 +109,8 @@
 
 .globe {
   --gls-size: 100%;
-  /* 3D地球儀本体をイラストの球体に合わせる */
-  --globe-scale: 0.9;
+  /* 3D地球儀本体を、イラストが持つ透明な球体の輪郭に収まる大きさに合わせる */
+  --globe-scale: 0.78;
   /* 横長のヒーロー画像に収まるよう、国旗リングをコンパクトに */
   --gls-ring-radius: 88%;
   --gls-flag-size: 46%;

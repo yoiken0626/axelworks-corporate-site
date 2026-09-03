@@ -65,8 +65,10 @@ export default function GlobeLanguageSwitcher({ className }: Props) {
       return;
     }
     setLangCookie(flag.lang);
-    // リングは開いたままにして確認ツールチップを見せる（準備中フラグと同じ挙動）
-    setTooltip({ code: flag.code, message: `${flag.label}に切り替えました` });
+    // 実際に言語が切り替わったら国旗リングを畳んで地球儀だけの状態に戻す。
+    // （別言語に変えたいときは再度地球儀をクリックして展開する）
+    setTooltip(null);
+    setIsOpen(false);
     router.refresh();
   };
 

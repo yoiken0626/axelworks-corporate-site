@@ -2,6 +2,7 @@ import { ui } from '@/app/_libs/ui-strings';
 import { type Lang } from '@/app/_libs/lang';
 import styles from './index.module.css';
 import AppointmentForm from './AppointmentForm';
+import ContactGlobe from '@/app/_components/ContactGlobe';
 
 const iconProps = {
   width: 18,
@@ -54,6 +55,7 @@ type Props = {
 export default function ContactSection({ lang }: Props) {
   return (
     <section id="contact-form" className={styles.section}>
+      <ContactGlobe />
       <div className={styles.inner}>
         <div className={styles.intro}>
           <p className={styles.eyebrow}>{ui('contactEyebrow', lang)}</p>

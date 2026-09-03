@@ -1,0 +1,35 @@
+.fixed {
+  position: fixed;
+  top: 84px;
+  right: 40px;
+  z-index: 900;
+  --gls-size: 46px;
+  --gls-ring-radius: 112%;
+  --gls-flag-size: 54%;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+  pointer-events: none;
+}
+
+.fixed[data-visible='true'] {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.globe {
+  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.28));
+}
+
+@media (max-width: 640px) {
+  .fixed {
+    top: 66px;
+    right: 16px;
+    --gls-size: 40px;
+    --gls-ring-radius: 96%;
+    --gls-flag-size: 46%;
+  }
+}

@@ -40,6 +40,12 @@ const UI_STRINGS = {
   businessPageHeading: { ja: '事業内容', en: 'Business' },
   membersPageHeading: { ja: 'メンバー', en: 'Members' },
 
+  // ページ読み上げコントロール
+  readAloudPlay: { ja: 'このページを読み上げる', en: 'Read this page aloud' },
+  readAloudPause: { ja: '読み上げを一時停止', en: 'Pause reading' },
+  readAloudStop: { ja: '読み上げを停止', en: 'Stop reading' },
+  readAloudSpeed: { ja: '速度', en: 'Speed' },
+
   // Business セクション
   businessHeading: { ja: 'Business' },
   businessSubtitle: { ja: '事業内容', en: 'Our business' },
