@@ -1,0 +1,112 @@
+/* ContactGlobe と同じく、ページに対して固定表示する右上バー。
+   [読み上げコントロール] [地球儀] の順で横並び（地球儀を右端に置き、
+   展開する国旗リングが画面外へ出ないよう right に余裕を持たせる）。 */
+.bar {
+  position: fixed;
+  top: 96px;
+  right: 44px;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.control {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px 4px 4px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+  border-radius: 999px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+}
+
+.iconButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-button-primary);
+  color: #fff;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.iconButton:hover {
+  opacity: 0.9;
+}
+
+.iconButton:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.divider {
+  width: 1px;
+  height: 18px;
+  background: var(--color-border);
+  margin: 0 2px;
+}
+
+.speed {
+  width: 68px;
+  accent-color: var(--color-button-primary);
+  cursor: pointer;
+}
+
+.speedValue {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-sub);
+  min-width: 2.4em;
+  text-align: right;
+}
+
+.globe {
+  flex-shrink: 0;
+  --gls-size: 42px;
+  --gls-ring-radius: 100%;
+  --gls-flag-size: 50%;
+  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.28));
+}
+
+@media (max-width: 640px) {
+  .bar {
+    top: 70px;
+    right: 30px;
+    gap: 6px;
+  }
+
+  .control {
+    gap: 3px;
+    padding: 3px 5px 3px 3px;
+  }
+
+  /* スマホは指で押しやすいよう最低 44x44 のタップ領域を確保 */
+  .iconButton {
+    width: 44px;
+    height: 44px;
+  }
+
+  .divider {
+    display: none;
+  }
+
+  .speed {
+    width: 44px;
+  }
+
+  .speedValue {
+    display: none;
+  }
+
+  .globe {
+    --gls-size: 34px;
+    --gls-ring-radius: 82%;
+    --gls-flag-size: 42%;
+  }
+}

@@ -18,3 +18,20 @@ export const formatRichText = (richText: string) => {
   });
   return $.html();
 };
+
+// リッチテキスト（HTML）を読み上げ用のプレーンテキストに変換する。
+// コード・スクリプトは読み上げても意味が無いので除去し、ブロック要素の区切りで
+// 改行を入れて文の切れ目を作る。
+export const htmlToPlainText = (richText: string): string => {
+  const $ = load(richText, null, false);
+  $('pre, code, script, style').remove();
+  $('p, h1, h2, h3, h4, h5, h6, li, blockquote, figcaption, br, tr').each((_, elm) => {
+    $(elm).append('\n');
+  });
+  return $.root()
+    .text()
+    .replace(/[ \t]+/g, ' ')
+    .replace(/\s*\n\s*/g, '\n')
+    .replace(/\n{2,}/g, '\n')
+    .trim();
+};

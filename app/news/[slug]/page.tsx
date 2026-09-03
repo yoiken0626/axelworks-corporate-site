@@ -4,9 +4,10 @@ import { getNewsDetail } from '@/app/_libs/microcms';
 import Article from '@/app/_components/Article';
 import { LANG_COOKIE, resolveLang } from '@/app/_libs/lang';
 import { ui } from '@/app/_libs/ui-strings';
+import { htmlToPlainText } from '@/app/_libs/utils';
 import styles from './page.module.css';
 import ButtonLink from '@/app/_components/ButtonLink';
-import GlobeLanguageSwitcher from '@/app/_components/GlobeLanguageSwitcher';
+import PageReadAloud from '@/app/_components/PageReadAloud';
 
 type Props = {
   params: Promise<{
@@ -51,11 +52,15 @@ export default async function Page(props: Props) {
   const data = await getNewsDetail(params.slug, {
     draftKey: searchParams.dk,
   });
+
+  // 読み上げ対象：記事タイトル＋本文（表示言語に合わせる。未翻訳なら日本語）
+  const title = (lang === 'en' && data.title_en) || data.title;
+  const content = (lang === 'en' && data.content_en) || data.content;
+  const segments = [title, htmlToPlainText(content || '')].filter(Boolean);
+
   return (
     <>
-      <div className={styles.langSwitch}>
-        <GlobeLanguageSwitcher />
-      </div>
+      <PageReadAloud lang={lang} segments={segments} />
       <Article data={data} lang={lang} dk={searchParams.dk} />
       <div className={styles.footer}>
         <ButtonLink href="/news">{ui('newsListLink', lang)}</ButtonLink>

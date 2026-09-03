@@ -1,10 +1,11 @@
 .fixed {
   position: fixed;
   top: 84px;
-  right: 40px;
+  /* 国旗リングは地球儀の外側へ大きく張り出すので、右端に余裕を持たせる */
+  right: 50px;
   z-index: 900;
   --gls-size: 46px;
-  --gls-ring-radius: 112%;
+  --gls-ring-radius: 108%;
   --gls-flag-size: 54%;
   opacity: 0;
   transform: translateY(-10px);
@@ -25,11 +26,13 @@
 }
 
 @media (max-width: 640px) {
+  /* 画面が狭いので、地球儀本体だけでなく展開後の国旗リングも画面内に
+     完全に収まるよう、右に寄せつつリングをコンパクトにする。 */
   .fixed {
-    top: 66px;
-    right: 16px;
-    --gls-size: 40px;
-    --gls-ring-radius: 96%;
-    --gls-flag-size: 46%;
+    top: 70px;
+    right: 34px;
+    --gls-size: 38px;
+    --gls-ring-radius: 86%;
+    --gls-flag-size: 44%;
   }
 }

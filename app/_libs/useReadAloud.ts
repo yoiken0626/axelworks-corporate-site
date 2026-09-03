@@ -168,10 +168,16 @@ export function useReadAloud(segments: string[], lang: Lang) {
             fallbackArmRef.current = null;
             if (gen !== genRef.current || boundarySeenRef.current) return;
             if (fallbackIntervalRef.current) window.clearInterval(fallbackIntervalRef.current);
-            fallbackIntervalRef.current = window.setInterval(
-              () => setMouthOpen((o) => !o),
-              MOUTH_FALLBACK_MS,
-            );
+            fallbackIntervalRef.current = window.setInterval(() => {
+              // gen が変わった / 実際の発話が止まったら自己終了して口を閉じる
+              if (gen !== genRef.current || !window.speechSynthesis.speaking) {
+                if (fallbackIntervalRef.current) window.clearInterval(fallbackIntervalRef.current);
+                fallbackIntervalRef.current = null;
+                setMouthOpen(false);
+                return;
+              }
+              setMouthOpen((o) => !o);
+            }, MOUTH_FALLBACK_MS);
           }, BOUNDARY_WAIT_MS);
         };
 
@@ -194,6 +200,17 @@ export function useReadAloud(segments: string[], lang: Lang) {
           // 文と文の隙間（無音）は必ず口を閉じる
           closeMouth();
           if (i === lastIdx) setStatus('idle');
+        };
+
+        // onend が発火しない失敗経路（synthesis-failed / network / audio-busy 等）。
+        // 自前の cancel 由来（interrupted / canceled）は gen チェックで既に弾かれる。
+        u.onerror = () => {
+          if (gen !== genRef.current) return;
+          genRef.current += 1; // 残りキューのコールバックを無効化
+          synth.cancel();
+          closeMouth();
+          idxRef.current = 0;
+          setStatus('idle');
         };
 
         synth.speak(u);
@@ -253,13 +270,75 @@ export function useReadAloud(segments: string[], lang: Lang) {
     if (typeof navigator === 'undefined' || !/Chrome/.test(navigator.userAgent)) return;
     const id = window.setInterval(() => {
       const s = window.speechSynthesis;
-      if (s.speaking && !s.paused) {
+      if (!s.speaking) return;
+      if (s.paused) {
+        // Chrome が勝手に一時停止した場合の復帰
+        s.resume();
+      } else {
+        // 15 秒バグ回避のためのキック
         s.pause();
         s.resume();
       }
-    }, 9000);
+    }, 8000);
     return () => window.clearInterval(id);
   }, [status]);
+
+  // 安全装置: onend / onerror が発火しない終了経路（Chrome の長文自動停止、
+  // 音声ドライバ都合の中断、拡張機能の干渉 等）に備える。再生中とみなしているのに
+  // speechSynthesis が何も発話していない状態を検知し、口とステートを戻す。
+  useEffect(() => {
+    if (status !== 'playing') return;
+    const synth = window.speechSynthesis;
+    let silentTicks = 0;
+    const id = window.setInterval(() => {
+      if (synth.speaking || synth.pending) {
+        silentTicks = 0;
+        return;
+      }
+      // 発話が無いのに口が開いていたら即閉じる
+      clearMouthTimers();
+      setMouthOpen(false);
+      silentTicks += 1;
+      // ~1 秒継続して無音なら再生状態も解除（文の切れ目の一時的な false を除外）
+      if (silentTicks >= 4) {
+        genRef.current += 1;
+        synth.cancel();
+        idxRef.current = 0;
+        setStatus('idle');
+      }
+    }, 250);
+    return () => window.clearInterval(id);
+  }, [status, clearMouthTimers]);
+
+  // ステートが再生中でなければ口は必ず閉じる（あらゆる終了経路の最終保険）
+  useEffect(() => {
+    if (status !== 'playing' && mouthOpen) {
+      clearMouthTimers();
+      setMouthOpen(false);
+    }
+  }, [status, mouthOpen, clearMouthTimers]);
+
+  // タブ非表示・ページ離脱で読み上げを止めて口を閉じる
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.speechSynthesis) return;
+    const stopAll = () => {
+      genRef.current += 1;
+      window.speechSynthesis.cancel();
+      clearMouthTimers();
+      setMouthOpen(false);
+      idxRef.current = 0;
+      setStatus('idle');
+    };
+    const onVisibility = () => {
+      if (document.hidden) stopAll();
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+    window.addEventListener('pagehide', stopAll);
+    return () => {
+      document.removeEventListener('visibilitychange', onVisibility);
+      window.removeEventListener('pagehide', stopAll);
+    };
+  }, [clearMouthTimers]);
 
   return {
     status,

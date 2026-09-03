@@ -35,8 +35,7 @@ const UI_STRINGS = {
   seeMore: { ja: 'もっとみる', en: 'See more' },
   newsListLink: { ja: 'ニュース一覧へ', en: 'View all news' },
 
-  // 下層ページのヒーローバナー小見出し
-  newsPageHeading: { ja: 'ニュース', en: 'News' },
+  // 下層ページのヒーローバナー小見出し（news はバナー廃止済み）
   businessPageHeading: { ja: '事業内容', en: 'Business' },
   membersPageHeading: { ja: 'メンバー', en: 'Members' },
 

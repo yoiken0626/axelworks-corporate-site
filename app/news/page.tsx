@@ -1,19 +1,23 @@
+import { cookies } from 'next/headers';
 import { getNewsList } from '@/app/_libs/microcms';
 import { NEWS_LIST_LIMIT } from '@/app/_constants';
+import { LANG_COOKIE, resolveLang } from '@/app/_libs/lang';
 import NewsList from '@/app/_components/NewsList';
 import Pagination from '@/app/_components/Pagination';
-import GlobeLanguageSwitcher from '@/app/_components/GlobeLanguageSwitcher';
-import styles from './page.module.css';
+import PageReadAloud from '@/app/_components/PageReadAloud';
 
 export default async function Page() {
+  const lang = resolveLang((await cookies()).get(LANG_COOKIE)?.value);
   const data = await getNewsList({
     limit: NEWS_LIST_LIMIT,
   });
+
+  // 読み上げ対象：記事タイトル一覧（表示言語に合わせる）
+  const segments = data.contents.map((a) => (lang === 'en' && a.title_en) || a.title);
+
   return (
     <>
-      <div className={styles.langSwitch}>
-        <GlobeLanguageSwitcher />
-      </div>
+      <PageReadAloud lang={lang} segments={segments} />
       <NewsList articles={data.contents} />
       <Pagination totalCount={data.totalCount} basePath="/news" />
     </>

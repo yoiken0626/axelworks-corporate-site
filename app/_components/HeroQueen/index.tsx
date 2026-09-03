@@ -25,7 +25,7 @@ export default function HeroQueen({ lang, mouthOpen = false }: Props) {
         sizes="(max-width: 900px) 100vw, 900px"
         className={styles.image}
       />
-      {/* 口開き画像を「口元だけ」楕円マスクで切り抜いて重ね、opacity だけをトグルする */}
+      {/* 口開き画像を「口元だけ」楕円マスクで切り抜いて重ね、data-open で表示を切り替える */}
       <Image
         src="/hero-queen-erica-3.png"
         alt=""
@@ -33,7 +33,7 @@ export default function HeroQueen({ lang, mouthOpen = false }: Props) {
         aria-hidden="true"
         sizes="(max-width: 900px) 100vw, 900px"
         className={styles.mouthOverlay}
-        style={{ opacity: mouthOpen ? 1 : 0 }}
+        data-open={mouthOpen ? 'true' : 'false'}
       />
 
       <div

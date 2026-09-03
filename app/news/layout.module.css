@@ -1,0 +1,22 @@
+/* ヒーローバナーを廃止し、ヘッダー（position:absolute）直下から
+   本文シート（白カード）を始める。上部パディングでヘッダー分と
+   右上固定バー（PageReadAloud）の高さ分を確保する。 */
+.container {
+  position: relative;
+  background-color: #fff;
+  width: 840px;
+  max-width: calc(100% - 80px);
+  margin: 40px auto 0;
+  padding: 64px 80px 80px;
+  border-radius: 8px;
+}
+
+@media (max-width: 640px) {
+  .container {
+    max-width: calc(100% - 32px);
+    /* スマホは右上の固定バー（地球儀＋コントロール）に本文がかからないよう
+       上パディングを厚めに取る */
+    margin: 24px auto 0;
+    padding: 96px 16px 40px;
+  }
+}
