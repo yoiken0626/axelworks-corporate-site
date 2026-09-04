@@ -1,15 +1,16 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Article } from '@/app/_libs/microcms';
+import { Article, localizedTitle } from '@/app/_libs/microcms';
 import styles from './index.module.css';
 import PublishedDate from '../Date';
 import Category from '../Category';
 
 type Props = {
   news: Article;
+  lang?: string;
 };
 
-export default function NewsListItem({ news }: Props) {
+export default function NewsListItem({ news, lang }: Props) {
   return (
     <li className={styles.list}>
       <Link href={`/news/${news.id}`} className={styles.link}>
@@ -31,7 +32,7 @@ export default function NewsListItem({ news }: Props) {
           />
         )}
         <dl className={styles.content}>
-          <dt className={styles.title}>{news.title}</dt>
+          <dt className={styles.title}>{localizedTitle(news, lang ?? 'ja')}</dt>
           <dd className={styles.meta}>
             <Category category={news.category} />
             <PublishedDate date={news.publishedAt || news.createdAt} />

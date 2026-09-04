@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { cookies } from 'next/headers';
-import { getNewsList } from '@/app/_libs/microcms';
+import { getNewsList, localizedTitle } from '@/app/_libs/microcms';
 import { TOP_NEWS_LIMIT } from '@/app/_constants';
 import { LANG_COOKIE, resolveLang } from '@/app/_libs/lang';
 import { ui } from '@/app/_libs/ui-strings';
@@ -18,7 +18,7 @@ export default async function Page() {
   });
 
   // 読み上げ対象：トップページの主要テキスト（ui-strings の文言＋記事タイトル）を表示順に
-  const newsTitles = data.contents.map((a) => (lang === 'en' && a.title_en) || a.title);
+  const newsTitles = data.contents.map((a) => localizedTitle(a, lang));
   const readSegments = [
     ui('heroSpeech', lang),
     ui('newsHeading', lang),
@@ -43,7 +43,7 @@ export default async function Page() {
       </section>
       <section className={styles.news}>
         <h2 className={styles.newsTitle}>{ui('newsHeading', lang)}</h2>
-        <NewsList articles={data.contents} />
+        <NewsList articles={data.contents} lang={lang} />
         <div className={styles.newsLink}>
           <ButtonLink href="/news">{ui('seeMore', lang)}</ButtonLink>
         </div>

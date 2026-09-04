@@ -3,9 +3,10 @@ import NewsListItem from '../NewsListItem';
 
 type Props = {
   articles?: Article[];
+  lang?: string;
 };
 
-export default function NewsList({ articles }: Props) {
+export default function NewsList({ articles, lang }: Props) {
   if (!articles) {
     return null;
   }
@@ -15,7 +16,7 @@ export default function NewsList({ articles }: Props) {
   return (
     <ul>
       {articles.map((article) => (
-        <NewsListItem key={article.id} news={article} />
+        <NewsListItem key={article.id} news={article} lang={lang} />
       ))}
     </ul>
   );

@@ -12,9 +12,10 @@ export type AppointmentDay = {
 export const APPOINTMENT_TIMES = ['9:00', '13:00', '16:00'] as const;
 export const MAX_SELECTIONS = 3;
 
-const WEEKDAY: Record<'ja' | 'en', string[]> = {
+const WEEKDAY: Record<'ja' | 'en' | 'ko', string[]> = {
   ja: ['日', '月', '火', '水', '木', '金', '土'],
   en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+  ko: ['일', '월', '화', '수', '목', '금', '토'],
 };
 
 const isBusinessDay = (d: Date) => {
@@ -43,7 +44,7 @@ export const getAppointmentDays = (
   lang: string = 'ja',
   base?: Date,
 ): AppointmentDay[] => {
-  const weekday = lang === 'en' ? WEEKDAY.en : WEEKDAY.ja;
+  const weekday = lang === 'en' ? WEEKDAY.en : lang === 'ko' ? WEEKDAY.ko : WEEKDAY.ja;
   const cursor = base ? new Date(base) : todayInTokyo();
   cursor.setHours(0, 0, 0, 0);
   const days: AppointmentDay[] = [];

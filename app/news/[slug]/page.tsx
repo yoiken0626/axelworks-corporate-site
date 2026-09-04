@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { cookies } from 'next/headers';
-import { getNewsDetail } from '@/app/_libs/microcms';
+import { getNewsDetail, localizedTitle, localizedContent } from '@/app/_libs/microcms';
 import Article from '@/app/_components/Article';
 import { LANG_COOKIE, resolveLang } from '@/app/_libs/lang';
 import { ui } from '@/app/_libs/ui-strings';
@@ -28,7 +28,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     draftKey: searchParams.dk,
   });
 
-  const title = (lang === 'en' && data.title_en) || data.title;
+  const title = localizedTitle(data, lang);
 
   return {
     title,
@@ -54,8 +54,8 @@ export default async function Page(props: Props) {
   });
 
   // 読み上げ対象：記事タイトル＋本文（表示言語に合わせる。未翻訳なら日本語）
-  const title = (lang === 'en' && data.title_en) || data.title;
-  const content = (lang === 'en' && data.content_en) || data.content;
+  const title = localizedTitle(data, lang);
+  const content = localizedContent(data, lang);
   const segments = [title, htmlToPlainText(content || '')].filter(Boolean);
 
   return (

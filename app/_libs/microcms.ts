@@ -23,6 +23,8 @@ export type News = {
   content: string;
   title_en?: string;
   content_en?: string;
+  title_ko?: string;
+  content_ko?: string;
   translation_status?: TranslationStatus[];
   thumbnail?: MicroCMSImage;
   category: Category;
@@ -55,6 +57,13 @@ export type Meta = {
 };
 
 export type Article = News & MicroCMSContentId & MicroCMSDate;
+
+// 記事のタイトル / 本文を表示言語に合わせて返す。未翻訳（空）の場合は日本語にフォールバックする。
+export const localizedTitle = (article: News, lang: string): string =>
+  (lang === 'en' && article.title_en) || (lang === 'ko' && article.title_ko) || article.title;
+
+export const localizedContent = (article: News, lang: string): string =>
+  (lang === 'en' && article.content_en) || (lang === 'ko' && article.content_ko) || article.content;
 
 if (!process.env.MICROCMS_SERVICE_DOMAIN) {
   throw new Error('MICROCMS_SERVICE_DOMAIN is required');

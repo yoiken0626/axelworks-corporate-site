@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import { getNewsList } from '@/app/_libs/microcms';
+import { getNewsList, localizedTitle } from '@/app/_libs/microcms';
 import { NEWS_LIST_LIMIT } from '@/app/_constants';
 import { LANG_COOKIE, resolveLang } from '@/app/_libs/lang';
 import NewsList from '@/app/_components/NewsList';
@@ -13,12 +13,12 @@ export default async function Page() {
   });
 
   // 読み上げ対象：記事タイトル一覧（表示言語に合わせる）
-  const segments = data.contents.map((a) => (lang === 'en' && a.title_en) || a.title);
+  const segments = data.contents.map((a) => localizedTitle(a, lang));
 
   return (
     <>
       <PageReadAloud lang={lang} segments={segments} />
-      <NewsList articles={data.contents} />
+      <NewsList articles={data.contents} lang={lang} />
       <Pagination totalCount={data.totalCount} basePath="/news" />
     </>
   );

@@ -10,8 +10,9 @@ export const READ_ALOUD_MAX_RATE = 1.5;
 
 // 女性ボイスらしい名前のヒューリスティック（環境依存のため名前で当たりを付ける）
 const FEMALE_VOICE_RE =
-  /female|woman|women|girl|nanami|ayumi|haruka|sayaka|mizuki|kyoko|o-ren|siri.*(?:女性|female)|salli|joanna|kendra|kimberly|ivy|samantha|victoria|karen|moira|tessa|fiona|serena|zira|jenny|aria|michelle|susan|linda|heather|catherine|allison|ava|emma|amy|google 日本語|google us english|google uk english female/i;
-const MALE_VOICE_RE = /\bmale\b|man\b|otoya|ichiro|david|mark|george|daniel|alex|fred|guy|ryan/i;
+  /female|woman|women|girl|nanami|ayumi|haruka|sayaka|mizuki|kyoko|o-ren|heami|sun-?hi|yuna|siri.*(?:女性|female)|salli|joanna|kendra|kimberly|ivy|samantha|victoria|karen|moira|tessa|fiona|serena|zira|jenny|aria|michelle|susan|linda|heather|catherine|allison|ava|emma|amy|google 日本語|google 한국의|google us english|google uk english female/i;
+const MALE_VOICE_RE =
+  /\bmale\b|man\b|otoya|ichiro|injoon|david|mark|george|daniel|alex|fred|guy|ryan/i;
 
 // 自然さの体感が良い順に並べた優先ボイス名（name の部分一致・小文字）。先頭ほど優先。
 // 日本語はブラウザで自然に出し分かれる:
@@ -20,7 +21,9 @@ const MALE_VOICE_RE = /\bmale\b|man\b|otoya|ichiro|david|mark|george|daniel|alex
 //  2. 'sayaka' … それ以外（Safari / Firefox 等）向けのローカル音声
 //     Microsoft Sayaka（localService=true）。旧 Haruka より抑揚が自然。
 //  3. 以降は環境差のためのフォールバック。
-const VOICE_PREFERENCE: Record<'ja' | 'en', string[]> = {
+// 韓国語も同様に、Chrome のネットワーク音声「Google 한국의」→ ローカルの
+// Microsoft Heami / SunHi（女性）の順で優先する。
+const VOICE_PREFERENCE: Record<'ja' | 'en' | 'ko', string[]> = {
   ja: [
     'google 日本語',
     'google japanese',
@@ -33,6 +36,7 @@ const VOICE_PREFERENCE: Record<'ja' | 'en', string[]> = {
     'o-ren',
   ],
   en: ['zira', 'jenny', 'aria', 'michelle', 'samantha', 'google us english'],
+  ko: ['google 한국의', 'google korean', 'heami', 'sunhi', 'sun-hi', 'yuna'],
 };
 
 // 単語発音1回あたり口を開ける時間 / boundary が無い環境のトグル間隔
@@ -62,6 +66,9 @@ export function useReadAloud(segments: string[], lang: Lang) {
   const [status, setStatus] = useState<ReadAloudStatus>('idle');
   const [rate, setRate] = useState(1);
   const [supported, setSupported] = useState(true);
+  // 表示言語のボイスがこの環境に存在するか（例: 韓国語ボイス未インストールの Windows Chrome）。
+  // ボイス一覧が未取得のうちは楽観的に true にしておく。
+  const [hasLangVoice, setHasLangVoice] = useState(true);
   const [mouthOpen, setMouthOpen] = useState(false);
 
   const voiceRef = useRef<SpeechSynthesisVoice | null>(null);
@@ -81,8 +88,8 @@ export function useReadAloud(segments: string[], lang: Lang) {
   // 最後に口を開いた時刻。boundary パルスが途絶えたことの検知に使う。
   const lastPulseRef = useRef(0);
 
-  const wantLang = resolveLang(lang) === 'en' ? 'en' : 'ja';
-  const utterLang = wantLang === 'en' ? 'en-US' : 'ja-JP';
+  const wantLang = resolveLang(lang);
+  const utterLang = wantLang === 'en' ? 'en-US' : wantLang === 'ko' ? 'ko-KR' : 'ja-JP';
 
   const sentences = useMemo(
     () => segments.flatMap(splitSentences),
@@ -137,6 +144,8 @@ export function useReadAloud(segments: string[], lang: Lang) {
     if (typeof window === 'undefined' || !window.speechSynthesis) return;
     const voices = window.speechSynthesis.getVoices();
     const candidates = voices.filter((v) => v.lang.toLowerCase().startsWith(wantLang));
+    // 一覧が取得済み(voices.length>0)で当該言語のボイスが皆無なら、その言語は読み上げ不可。
+    setHasLangVoice(voices.length === 0 || candidates.length > 0);
     if (candidates.length === 0) {
       voiceRef.current = null;
       return;
@@ -377,6 +386,8 @@ export function useReadAloud(segments: string[], lang: Lang) {
     setRate: changeRate,
     toggle,
     stop,
-    supported,
+    // Web Speech API 非対応、または当該言語のボイスが無い環境では false。
+    // 呼び出し側はこれで読み上げコントロールの表示可否を判断する。
+    supported: supported && hasLangVoice,
   };
 }

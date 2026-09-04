@@ -2,7 +2,7 @@ import crypto from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { client, type News, type TranslationStatus } from '@/app/_libs/microcms';
 import { updateNewsTranslation } from '@/app/_libs/microcms-management';
-import { translateArticleToEnglish } from '@/app/_libs/anthropic';
+import { translateArticle } from '@/app/_libs/anthropic';
 
 const IN_PROGRESS_STATUSES: TranslationStatus[] = ['生成中', '完了'];
 
@@ -40,7 +40,10 @@ export async function POST(request: NextRequest) {
   // カスタムWebhookで {"contentId": "{{contentId}}"} 形式を設定している場合もそれを優先する。
   const contentId = (body.contentId ?? body.id) as string | undefined;
   if (!contentId || typeof contentId !== 'string') {
-    return NextResponse.json({ status: 'error', message: 'contentId is required' }, { status: 400 });
+    return NextResponse.json(
+      { status: 'error', message: 'contentId is required' },
+      { status: 400 },
+    );
   }
 
   let article: News & { id: string };
@@ -64,11 +67,15 @@ export async function POST(request: NextRequest) {
     await updateNewsTranslation(contentId, { translation_status: ['生成中'] });
   } catch (error) {
     console.error('[translate-article] failed to lock article', contentId, error);
-    return NextResponse.json({ status: 'error', message: 'failed to start translation' }, { status: 500 });
+    return NextResponse.json(
+      { status: 'error', message: 'failed to start translation' },
+      { status: 500 },
+    );
   }
 
   try {
-    const { title_en, content_en } = await translateArticleToEnglish({
+    // 1回の呼び出しで英語・韓国語をまとめて生成する
+    const { title_en, content_en, title_ko, content_ko } = await translateArticle({
       title: article.title,
       contentHtml: article.content,
     });
@@ -76,17 +83,23 @@ export async function POST(request: NextRequest) {
     await updateNewsTranslation(contentId, {
       title_en,
       content_en,
+      title_ko,
+      content_ko,
       translation_status: ['完了'],
     });
 
-    return NextResponse.json({ status: 'ok', contentId });
+    return NextResponse.json({ status: 'ok', contentId, langs: ['en', 'ko'] });
   } catch (error) {
     console.error('[translate-article] translation failed', contentId, error);
 
     try {
       await updateNewsTranslation(contentId, { translation_status: ['未処理'] });
     } catch (revertError) {
-      console.error('[translate-article] failed to revert translation_status', contentId, revertError);
+      console.error(
+        '[translate-article] failed to revert translation_status',
+        contentId,
+        revertError,
+      );
     }
 
     return NextResponse.json({ status: 'error', message: 'translation failed' }, { status: 500 });
