@@ -61,7 +61,7 @@ export default async function Page(props: Props) {
   return (
     <>
       <PageReadAloud lang={lang} segments={segments} />
-      <Article data={data} lang={lang} dk={searchParams.dk} />
+      <Article data={data} lang={lang} />
       <div className={styles.footer}>
         <ButtonLink href="/news">{ui('newsListLink', lang)}</ButtonLink>
       </div>

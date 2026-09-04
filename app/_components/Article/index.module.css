@@ -4,13 +4,6 @@
   text-align: left;
 }
 
-.description {
-  font-size: 0.9rem;
-  color: var(--color-text-sub);
-  margin: 24px 0;
-  text-align: left;
-}
-
 .meta {
   display: flex;
   justify-content: flex-start;
@@ -167,12 +160,6 @@
   .title {
     font-size: 1.5rem;
     margin-bottom: 20px;
-  }
-
-  .description {
-    font-size: 0.9rem;
-    color: var(--color-text-sub);
-    margin: 24px 0 40px;
   }
 
   .meta {

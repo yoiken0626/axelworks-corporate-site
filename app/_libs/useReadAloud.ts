@@ -40,6 +40,10 @@ const MOUTH_PULSE_MS = 130;
 const MOUTH_FALLBACK_MS = 170;
 // onstart 後この時間 boundary が来なければトグルにフォールバック
 const BOUNDARY_WAIT_MS = 300;
+// 発話中なのに boundary 由来のパルスがこの時間途絶えたら、監視側でトグルに切り替える。
+// （Chrome は cancel→speak 直後の utterance で onboundary を発火しないことがある＝
+//   一時停止→再開後に口パクが固まる問題への保険）
+const BOUNDARY_STALE_MS = 1200;
 
 const splitSentences = (text: string): string[] =>
   text
@@ -70,8 +74,12 @@ export function useReadAloud(segments: string[], lang: Lang) {
   const mouthCloseTimerRef = useRef<number | null>(null);
   const fallbackArmRef = useRef<number | null>(null);
   const fallbackIntervalRef = useRef<number | null>(null);
-  // このブラウザで onboundary が発火するか（一度確認できたら以後フォールバック不要）
+  // 今回の発話(speakFrom)で onboundary が発火したか。speakFrom ごとに false に戻す。
+  // ※ セッション永続にすると、一時停止→再開後に boundary が来なくなった時に
+  //   フォールバックが無効化されたままになり口パクが固まる。
   const boundarySeenRef = useRef(false);
+  // 最後に口を開いた時刻。boundary パルスが途絶えたことの検知に使う。
+  const lastPulseRef = useRef(0);
 
   const wantLang = resolveLang(lang) === 'en' ? 'en' : 'ja';
   const utterLang = wantLang === 'en' ? 'en-US' : 'ja-JP';
@@ -99,12 +107,30 @@ export function useReadAloud(segments: string[], lang: Lang) {
 
   // 単語発音のたびに口を開け、少し経ったら閉じる
   const pulseMouth = useCallback(() => {
+    lastPulseRef.current = performance.now();
     setMouthOpen(true);
     if (mouthCloseTimerRef.current) window.clearTimeout(mouthCloseTimerRef.current);
     mouthCloseTimerRef.current = window.setTimeout(() => {
       mouthCloseTimerRef.current = null;
       setMouthOpen(false);
     }, MOUTH_PULSE_MS);
+  }, []);
+
+  // boundary が来ない環境／状態向けのトグル型フォールバックを開始する。
+  // 実際の発話が止まる・一時停止する・世代が変わると自己終了する。
+  const startMouthFallback = useCallback((gen: number) => {
+    if (fallbackIntervalRef.current) return;
+    fallbackIntervalRef.current = window.setInterval(() => {
+      const s = window.speechSynthesis;
+      if (gen !== genRef.current || !s.speaking || s.paused) {
+        if (fallbackIntervalRef.current) window.clearInterval(fallbackIntervalRef.current);
+        fallbackIntervalRef.current = null;
+        setMouthOpen(false);
+        return;
+      }
+      lastPulseRef.current = performance.now();
+      setMouthOpen((o) => !o);
+    }, MOUTH_FALLBACK_MS);
   }, []);
 
   const pickVoice = useCallback(() => {
@@ -149,6 +175,9 @@ export function useReadAloud(segments: string[], lang: Lang) {
       const gen = (genRef.current += 1);
       synth.cancel();
       closeMouth();
+      // この発話について boundary の可否を判定し直す（再開・速度変更のたびに再評価）
+      boundarySeenRef.current = false;
+      lastPulseRef.current = performance.now();
       idxRef.current = start;
       const lastIdx = sentences.length - 1;
 
@@ -167,17 +196,7 @@ export function useReadAloud(segments: string[], lang: Lang) {
           fallbackArmRef.current = window.setTimeout(() => {
             fallbackArmRef.current = null;
             if (gen !== genRef.current || boundarySeenRef.current) return;
-            if (fallbackIntervalRef.current) window.clearInterval(fallbackIntervalRef.current);
-            fallbackIntervalRef.current = window.setInterval(() => {
-              // gen が変わった / 実際の発話が止まったら自己終了して口を閉じる
-              if (gen !== genRef.current || !window.speechSynthesis.speaking) {
-                if (fallbackIntervalRef.current) window.clearInterval(fallbackIntervalRef.current);
-                fallbackIntervalRef.current = null;
-                setMouthOpen(false);
-                return;
-              }
-              setMouthOpen((o) => !o);
-            }, MOUTH_FALLBACK_MS);
+            startMouthFallback(gen);
           }, BOUNDARY_WAIT_MS);
         };
 
@@ -217,7 +236,7 @@ export function useReadAloud(segments: string[], lang: Lang) {
       }
       setStatus(sentences.length > 0 ? 'playing' : 'idle');
     },
-    [sentences, utterLang, closeMouth, pulseMouth],
+    [sentences, utterLang, closeMouth, pulseMouth, startMouthFallback],
   );
 
   const play = useCallback(() => {
@@ -293,6 +312,16 @@ export function useReadAloud(segments: string[], lang: Lang) {
     const id = window.setInterval(() => {
       if (synth.speaking || synth.pending) {
         silentTicks = 0;
+        // 発話中なのに boundary 由来のパルスが途絶えている → トグルに切り替える。
+        // （一時停止→再開後に Chrome が onboundary を出さなくなるケースの保険）
+        if (
+          synth.speaking &&
+          !synth.paused &&
+          !fallbackIntervalRef.current &&
+          performance.now() - lastPulseRef.current > BOUNDARY_STALE_MS
+        ) {
+          startMouthFallback(genRef.current);
+        }
         return;
       }
       // 発話が無いのに口が開いていたら即閉じる
@@ -308,7 +337,7 @@ export function useReadAloud(segments: string[], lang: Lang) {
       }
     }, 250);
     return () => window.clearInterval(id);
-  }, [status, clearMouthTimers]);
+  }, [status, clearMouthTimers, startMouthFallback]);
 
   // ステートが再生中でなければ口は必ず閉じる（あらゆる終了経路の最終保険）
   useEffect(() => {

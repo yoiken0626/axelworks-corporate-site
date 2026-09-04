@@ -59,7 +59,7 @@ export default function GlobeLanguageSwitcher({ className }: Props) {
     return () => clearTimeout(timer);
   }, [tooltip]);
 
-  // 記事ページの LanguageToggle と同じく lang Cookie で表示言語を切り替える。
+  // lang Cookie を書き換えて表示言語を切り替える。
   const handleLangSelect = (flag: Flag) => {
     if (!flag.lang) {
       return;
