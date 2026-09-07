@@ -8,46 +8,22 @@ export type ReadAloudStatus = 'idle' | 'playing' | 'paused';
 export const READ_ALOUD_MIN_RATE = 0.75;
 export const READ_ALOUD_MAX_RATE = 1.5;
 
-// 女性ボイスらしい名前のヒューリスティック（環境依存のため名前で当たりを付ける）
-const FEMALE_VOICE_RE =
-  /female|woman|women|girl|nanami|ayumi|haruka|sayaka|mizuki|kyoko|o-ren|heami|sun-?hi|yuna|siri.*(?:女性|female)|salli|joanna|kendra|kimberly|ivy|samantha|victoria|karen|moira|tessa|fiona|serena|zira|jenny|aria|michelle|susan|linda|heather|catherine|allison|ava|emma|amy|google 日本語|google 한국의|google us english|google uk english female/i;
-const MALE_VOICE_RE =
-  /\bmale\b|man\b|otoya|ichiro|injoon|david|mark|george|daniel|alex|fred|guy|ryan/i;
+// 1チャンクの最大バイト数。Google TTS の実上限（5000バイト）に対して十分小さくし、
+// 最初の音が鳴るまでの待ち時間も短くする。日本語で概ね 400〜500 文字。
+const CHUNK_BYTES = 1400;
 
-// 自然さの体感が良い順に並べた優先ボイス名（name の部分一致・小文字）。先頭ほど優先。
-// 日本語はブラウザで自然に出し分かれる:
-//  1. 'google 日本語' … Chrome / Chromium 系だけに存在するネットワーク音声
-//     （lang=ja-JP, localService=false）。最も滑らか。
-//  2. 'sayaka' … それ以外（Safari / Firefox 等）向けのローカル音声
-//     Microsoft Sayaka（localService=true）。旧 Haruka より抑揚が自然。
-//  3. 以降は環境差のためのフォールバック。
-// 韓国語も同様に、Chrome のネットワーク音声「Google 한국의」→ ローカルの
-// Microsoft Heami / SunHi（女性）の順で優先する。
-const VOICE_PREFERENCE: Record<'ja' | 'en' | 'ko', string[]> = {
-  ja: [
-    'google 日本語',
-    'google japanese',
-    'sayaka',
-    'ayumi',
-    'nanami',
-    'mizuki',
-    'kyoko',
-    'haruka',
-    'o-ren',
-  ],
-  en: ['zira', 'jenny', 'aria', 'michelle', 'samantha', 'google us english'],
-  ko: ['google 한국의', 'google korean', 'heami', 'sunhi', 'sun-hi', 'yuna'],
-};
+// 口パクのトグル間隔（ms）。再生位置が進んでいる間だけ開閉を繰り返す。
+const MOUTH_PULSE_MS = 150;
+// currentTime がこの回数連続で進まなければ「音が止まった」とみなして口を閉じる
+const STALL_TICKS = 3;
 
-// 単語発音1回あたり口を開ける時間 / boundary が無い環境のトグル間隔
-const MOUTH_PULSE_MS = 130;
-const MOUTH_FALLBACK_MS = 170;
-// onstart 後この時間 boundary が来なければトグルにフォールバック
-const BOUNDARY_WAIT_MS = 300;
-// 発話中なのに boundary 由来のパルスがこの時間途絶えたら、監視側でトグルに切り替える。
-// （Chrome は cancel→speak 直後の utterance で onboundary を発火しないことがある＝
-//   一時停止→再開後に口パクが固まる問題への保険）
-const BOUNDARY_STALE_MS = 1200;
+// iOS Safari 対策: fetch を挟むと後続の audio.play() がユーザー操作外とみなされ拒否される。
+// 最初の操作時にこの無音を同期再生して <audio> をアンロックしておく。
+const SILENT_WAV =
+  'data:audio/wav;base64,UklGRkQDAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YSADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+
+const encoder = typeof TextEncoder !== 'undefined' ? new TextEncoder() : null;
+const byteLen = (s: string): number => (encoder ? encoder.encode(s).length : s.length);
 
 const splitSentences = (text: string): string[] =>
   text
@@ -55,317 +31,345 @@ const splitSentences = (text: string): string[] =>
     .map((s) => s.trim())
     .filter(Boolean);
 
+// 文の配列を、CHUNK_BYTES に収まる読み上げ単位へまとめ直す。
+// 1文が単独で予算を超える場合は句読点・空白を優先して強制分割する。
+const buildChunks = (sentences: string[]): string[] => {
+  const chunks: string[] = [];
+  let current = '';
+
+  const flush = () => {
+    const trimmed = current.trim();
+    if (trimmed) chunks.push(trimmed);
+    current = '';
+  };
+
+  const pushLongPiece = (piece: string) => {
+    let rest = piece;
+    while (byteLen(rest) > CHUNK_BYTES) {
+      let cut = rest.length;
+      while (cut > 1 && byteLen(rest.slice(0, cut)) > CHUNK_BYTES) {
+        cut -= 8;
+      }
+      const head = rest.slice(0, cut);
+      const breakAt = Math.max(
+        head.lastIndexOf('、'),
+        head.lastIndexOf('，'),
+        head.lastIndexOf(' '),
+        head.lastIndexOf('\n'),
+      );
+      const at = breakAt > cut * 0.5 ? breakAt + 1 : cut;
+      chunks.push(rest.slice(0, at).trim());
+      rest = rest.slice(at);
+    }
+    return rest;
+  };
+
+  for (const sentence of sentences) {
+    let piece = sentence;
+    if (byteLen(piece) > CHUNK_BYTES) {
+      flush();
+      piece = pushLongPiece(piece);
+    }
+    if (current && byteLen(current) + byteLen(piece) + 1 > CHUNK_BYTES) {
+      flush();
+    }
+    current = current ? `${current}\n${piece}` : piece;
+  }
+  flush();
+  return chunks;
+};
+
 /**
- * Web Speech API（window.speechSynthesis）でテキスト配列を順に読み上げるフック。
- * - 女性ボイスを優先（日本語 / 英語は lang に合わせる）
- * - voiceschanged に対応（ボイス取得が遅れる環境向け）
- * - play/pause/stop と速度変更（0.75〜1.5x）
- * - mouthOpen: 発話タイミング（onboundary）に同期。文と文の間の無音では必ず閉じる
+ * Google Cloud Text-to-Speech（/api/tts）で音声を取得し、<audio> 要素で
+ * 順に再生する読み上げフック。
+ * - 日本語 / 英語 / 韓国語すべてで動作（ブラウザや OS のボイスに依存しない）
+ * - play / pause / stop と速度変更（0.75〜1.5x, audio.playbackRate）
+ * - mouthOpen: <audio> の再生状態（play / pause / ended）と currentTime の進行に同期。
+ *   音が止まっている間は必ず口を閉じる（Android Chrome で音だけ消えて口パクが
+ *   続く不具合への対策）
  */
 export function useReadAloud(segments: string[], lang: Lang) {
   const [status, setStatus] = useState<ReadAloudStatus>('idle');
   const [rate, setRate] = useState(1);
-  const [supported, setSupported] = useState(true);
-  // 表示言語のボイスがこの環境に存在するか（例: 韓国語ボイス未インストールの Windows Chrome）。
-  // ボイス一覧が未取得のうちは楽観的に true にしておく。
-  const [hasLangVoice, setHasLangVoice] = useState(true);
   const [mouthOpen, setMouthOpen] = useState(false);
 
-  const voiceRef = useRef<SpeechSynthesisVoice | null>(null);
+  const wantLang = resolveLang(lang);
+
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const rateRef = useRef(rate);
   rateRef.current = rate;
-  const idxRef = useRef(0);
-  // speak をやり直すたびに増やし、古い utterance のコールバックを無効化する
-  const genRef = useRef(0);
-  // 口パク用タイマー
-  const mouthCloseTimerRef = useRef<number | null>(null);
-  const fallbackArmRef = useRef<number | null>(null);
-  const fallbackIntervalRef = useRef<number | null>(null);
-  // 今回の発話(speakFrom)で onboundary が発火したか。speakFrom ごとに false に戻す。
-  // ※ セッション永続にすると、一時停止→再開後に boundary が来なくなった時に
-  //   フォールバックが無効化されたままになり口パクが固まる。
-  const boundarySeenRef = useRef(false);
-  // 最後に口を開いた時刻。boundary パルスが途絶えたことの検知に使う。
-  const lastPulseRef = useRef(0);
 
-  const wantLang = resolveLang(lang);
-  const utterLang = wantLang === 'en' ? 'en-US' : wantLang === 'ko' ? 'ko-KR' : 'ja-JP';
+  // 再生をやり直すたびに増やし、進行中の非同期処理（fetch / play）を無効化する
+  const genRef = useRef(0);
+  const chunksRef = useRef<string[]>([]);
+  const chunkIdxRef = useRef(0);
+  const unlockedRef = useRef(false);
+  // チャンク index -> Object URL（MP3 Blob）。言語 / 本文が変わると破棄する
+  const urlCacheRef = useRef<Map<number, string>>(new Map());
 
   const sentences = useMemo(
     () => segments.flatMap(splitSentences),
     // segments は配列なので中身で依存を判定
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [segments.join('')],
+    [segments.join('')],
   );
 
-  const clearMouthTimers = useCallback(() => {
-    if (mouthCloseTimerRef.current) window.clearTimeout(mouthCloseTimerRef.current);
-    if (fallbackArmRef.current) window.clearTimeout(fallbackArmRef.current);
-    if (fallbackIntervalRef.current) window.clearInterval(fallbackIntervalRef.current);
-    mouthCloseTimerRef.current = null;
-    fallbackArmRef.current = null;
-    fallbackIntervalRef.current = null;
+  const revokeUrls = useCallback(() => {
+    urlCacheRef.current.forEach((url) => URL.revokeObjectURL(url));
+    urlCacheRef.current.clear();
   }, []);
 
-  const closeMouth = useCallback(() => {
-    clearMouthTimers();
-    setMouthOpen(false);
-  }, [clearMouthTimers]);
+  // 指定チャンクの音声を取得して Object URL を返す（取得済みなら再利用）
+  const fetchChunk = useCallback(
+    async (idx: number, gen: number): Promise<string | null> => {
+      const cached = urlCacheRef.current.get(idx);
+      if (cached) return cached;
 
-  // 単語発音のたびに口を開け、少し経ったら閉じる
-  const pulseMouth = useCallback(() => {
-    lastPulseRef.current = performance.now();
-    setMouthOpen(true);
-    if (mouthCloseTimerRef.current) window.clearTimeout(mouthCloseTimerRef.current);
-    mouthCloseTimerRef.current = window.setTimeout(() => {
-      mouthCloseTimerRef.current = null;
-      setMouthOpen(false);
-    }, MOUTH_PULSE_MS);
-  }, []);
+      const text = chunksRef.current[idx];
+      if (!text) return null;
 
-  // boundary が来ない環境／状態向けのトグル型フォールバックを開始する。
-  // 実際の発話が止まる・一時停止する・世代が変わると自己終了する。
-  const startMouthFallback = useCallback((gen: number) => {
-    if (fallbackIntervalRef.current) return;
-    fallbackIntervalRef.current = window.setInterval(() => {
-      const s = window.speechSynthesis;
-      if (gen !== genRef.current || !s.speaking || s.paused) {
-        if (fallbackIntervalRef.current) window.clearInterval(fallbackIntervalRef.current);
-        fallbackIntervalRef.current = null;
-        setMouthOpen(false);
-        return;
+      const res = await fetch('/api/tts', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ text, lang: wantLang }),
+      });
+      if (gen !== genRef.current) return null;
+      if (!res.ok) {
+        throw new Error(`/api/tts responded ${res.status}`);
       }
-      lastPulseRef.current = performance.now();
-      setMouthOpen((o) => !o);
-    }, MOUTH_FALLBACK_MS);
-  }, []);
+      const blob = await res.blob();
+      if (gen !== genRef.current) return null;
 
-  const pickVoice = useCallback(() => {
-    if (typeof window === 'undefined' || !window.speechSynthesis) return;
-    const voices = window.speechSynthesis.getVoices();
-    const candidates = voices.filter((v) => v.lang.toLowerCase().startsWith(wantLang));
-    // 一覧が取得済み(voices.length>0)で当該言語のボイスが皆無なら、その言語は読み上げ不可。
-    setHasLangVoice(voices.length === 0 || candidates.length > 0);
-    if (candidates.length === 0) {
-      voiceRef.current = null;
-      return;
-    }
-    // (1) 優先リストの名前に部分一致する最初のボイス
-    const byPreference = VOICE_PREFERENCE[wantLang]
-      .map((name) => candidates.find((v) => v.name.toLowerCase().includes(name)))
-      .find(Boolean);
-    // (2) なければ女性名ヒューリスティック → (3) 非・男性 → (4) 先頭
-    voiceRef.current =
-      byPreference ??
-      candidates.find((v) => FEMALE_VOICE_RE.test(v.name)) ??
-      candidates.find((v) => !MALE_VOICE_RE.test(v.name)) ??
-      candidates[0];
-  }, [wantLang]);
+      const url = URL.createObjectURL(blob);
+      urlCacheRef.current.set(idx, url);
+      return url;
+    },
+    [wantLang],
+  );
 
-  useEffect(() => {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
-      setSupported(false);
-      return;
-    }
-    pickVoice();
-    const synth = window.speechSynthesis;
-    synth.addEventListener('voiceschanged', pickVoice);
-    return () => {
-      synth.removeEventListener('voiceschanged', pickVoice);
-      synth.cancel();
-      clearMouthTimers();
-      setStatus('idle');
-    };
-  }, [pickVoice, clearMouthTimers]);
+  // idx 番目のチャンクを取得して再生する。成功したら次のチャンクを先読みする。
+  const playFrom = useCallback(
+    async (idx: number, gen: number) => {
+      const audio = audioRef.current;
+      if (!audio) return;
 
-  const speakFrom = useCallback(
-    (start: number) => {
-      const synth = window.speechSynthesis;
-      const gen = (genRef.current += 1);
-      synth.cancel();
-      closeMouth();
-      // この発話について boundary の可否を判定し直す（再開・速度変更のたびに再評価）
-      boundarySeenRef.current = false;
-      lastPulseRef.current = performance.now();
-      idxRef.current = start;
-      const lastIdx = sentences.length - 1;
-
-      for (let i = start; i < sentences.length; i += 1) {
-        const u = new SpeechSynthesisUtterance(sentences[i]);
-        u.lang = utterLang;
-        if (voiceRef.current) u.voice = voiceRef.current;
-        u.rate = rateRef.current;
-        u.pitch = 1.05;
-
-        u.onstart = () => {
-          if (gen !== genRef.current) return;
-          idxRef.current = i;
-          // この文の読み上げ中、boundary が来なければトグルにフォールバック
-          if (fallbackArmRef.current) window.clearTimeout(fallbackArmRef.current);
-          fallbackArmRef.current = window.setTimeout(() => {
-            fallbackArmRef.current = null;
-            if (gen !== genRef.current || boundarySeenRef.current) return;
-            startMouthFallback(gen);
-          }, BOUNDARY_WAIT_MS);
-        };
-
-        u.onboundary = () => {
-          if (gen !== genRef.current) return;
-          boundarySeenRef.current = true;
-          if (fallbackArmRef.current) {
-            window.clearTimeout(fallbackArmRef.current);
-            fallbackArmRef.current = null;
-          }
-          if (fallbackIntervalRef.current) {
-            window.clearInterval(fallbackIntervalRef.current);
-            fallbackIntervalRef.current = null;
-          }
-          pulseMouth();
-        };
-
-        u.onend = () => {
-          if (gen !== genRef.current) return;
-          // 文と文の隙間（無音）は必ず口を閉じる
-          closeMouth();
-          if (i === lastIdx) setStatus('idle');
-        };
-
-        // onend が発火しない失敗経路（synthesis-failed / network / audio-busy 等）。
-        // 自前の cancel 由来（interrupted / canceled）は gen チェックで既に弾かれる。
-        u.onerror = () => {
-          if (gen !== genRef.current) return;
-          genRef.current += 1; // 残りキューのコールバックを無効化
-          synth.cancel();
-          closeMouth();
-          idxRef.current = 0;
+      let url: string | null;
+      try {
+        url = await fetchChunk(idx, gen);
+      } catch (error) {
+        console.error('[useReadAloud] failed to fetch audio', error);
+        if (gen === genRef.current) {
           setStatus('idle');
-        };
-
-        synth.speak(u);
-      }
-      setStatus(sentences.length > 0 ? 'playing' : 'idle');
-    },
-    [sentences, utterLang, closeMouth, pulseMouth, startMouthFallback],
-  );
-
-  const play = useCallback(() => {
-    if (!supported) return;
-    // 一時停止からの再開は、その文の先頭から読み直す
-    // （Windows Chrome / Safari の pause/resume が不安定なため cancel ベースにしている）
-    speakFrom(status === 'paused' ? idxRef.current : 0);
-  }, [supported, status, speakFrom]);
-
-  const pause = useCallback(() => {
-    if (status !== 'playing') return;
-    genRef.current += 1; // 保留中のコールバックを無効化
-    window.speechSynthesis.cancel();
-    closeMouth();
-    setStatus('paused'); // idxRef は現在位置のまま
-  }, [status, closeMouth]);
-
-  const stop = useCallback(() => {
-    genRef.current += 1;
-    if (typeof window !== 'undefined' && window.speechSynthesis) {
-      window.speechSynthesis.cancel();
-    }
-    closeMouth();
-    idxRef.current = 0;
-    setStatus('idle');
-  }, [closeMouth]);
-
-  const toggle = useCallback(() => {
-    if (status === 'playing') pause();
-    else play();
-  }, [status, play, pause]);
-
-  const changeRate = useCallback(
-    (next: number) => {
-      const clamped = Math.min(READ_ALOUD_MAX_RATE, Math.max(READ_ALOUD_MIN_RATE, next));
-      setRate(clamped);
-      rateRef.current = clamped;
-      // 再生中はその文から新しい速度で読み直す。一時停止中は次の再開時に反映される
-      if (status === 'playing') {
-        speakFrom(idxRef.current);
-      }
-    },
-    [status, speakFrom],
-  );
-
-  // Chromium 系は ~15 秒で読み上げが止まる既知の不具合があるため、再生中は定期的に resume する。
-  // Firefox / Safari は不具合が無く、pause/resume が逆効果になり得るので対象外。
-  useEffect(() => {
-    if (status !== 'playing') return;
-    if (typeof navigator === 'undefined' || !/Chrome/.test(navigator.userAgent)) return;
-    const id = window.setInterval(() => {
-      const s = window.speechSynthesis;
-      if (!s.speaking) return;
-      if (s.paused) {
-        // Chrome が勝手に一時停止した場合の復帰
-        s.resume();
-      } else {
-        // 15 秒バグ回避のためのキック
-        s.pause();
-        s.resume();
-      }
-    }, 8000);
-    return () => window.clearInterval(id);
-  }, [status]);
-
-  // 安全装置: onend / onerror が発火しない終了経路（Chrome の長文自動停止、
-  // 音声ドライバ都合の中断、拡張機能の干渉 等）に備える。再生中とみなしているのに
-  // speechSynthesis が何も発話していない状態を検知し、口とステートを戻す。
-  useEffect(() => {
-    if (status !== 'playing') return;
-    const synth = window.speechSynthesis;
-    let silentTicks = 0;
-    const id = window.setInterval(() => {
-      if (synth.speaking || synth.pending) {
-        silentTicks = 0;
-        // 発話中なのに boundary 由来のパルスが途絶えている → トグルに切り替える。
-        // （一時停止→再開後に Chrome が onboundary を出さなくなるケースの保険）
-        if (
-          synth.speaking &&
-          !synth.paused &&
-          !fallbackIntervalRef.current &&
-          performance.now() - lastPulseRef.current > BOUNDARY_STALE_MS
-        ) {
-          startMouthFallback(genRef.current);
+          setMouthOpen(false);
         }
         return;
       }
-      // 発話が無いのに口が開いていたら即閉じる
-      clearMouthTimers();
-      setMouthOpen(false);
-      silentTicks += 1;
-      // ~1 秒継続して無音なら再生状態も解除（文の切れ目の一時的な false を除外）
-      if (silentTicks >= 4) {
-        genRef.current += 1;
-        synth.cancel();
-        idxRef.current = 0;
-        setStatus('idle');
-      }
-    }, 250);
-    return () => window.clearInterval(id);
-  }, [status, clearMouthTimers, startMouthFallback]);
+      if (gen !== genRef.current || !url) return;
 
-  // ステートが再生中でなければ口は必ず閉じる（あらゆる終了経路の最終保険）
+      chunkIdxRef.current = idx;
+      audio.src = url;
+      audio.playbackRate = rateRef.current;
+      try {
+        await audio.play();
+      } catch {
+        // 別の play() や pause() に割り込まれた（AbortError）。gen チェック側で処理済み。
+        return;
+      }
+      if (gen !== genRef.current) return;
+      setStatus('playing');
+
+      // 次チャンクを先読み（失敗しても本再生には影響させない）
+      void fetchChunk(idx + 1, gen).catch(() => {});
+    },
+    [fetchChunk],
+  );
+
+  const playFromRef = useRef(playFrom);
+  playFromRef.current = playFrom;
+
+  // <audio> 要素は一度だけ生成し、イベントリスナは最新クロージャを ref 経由で呼ぶ
   useEffect(() => {
-    if (status !== 'playing' && mouthOpen) {
-      clearMouthTimers();
+    if (typeof Audio === 'undefined') return;
+    const audio = new Audio();
+    audio.preload = 'auto';
+    audioRef.current = audio;
+
+    const handleEnded = () => {
+      const next = chunkIdxRef.current + 1;
+      if (next < chunksRef.current.length) {
+        void playFromRef.current(next, genRef.current);
+      } else {
+        setStatus('idle');
+        chunkIdxRef.current = 0;
+        setMouthOpen(false);
+      }
+    };
+    const handleError = () => {
+      // src を外して load() したときの空ソースエラーは無視する
+      if (!audio.getAttribute('src')) return;
+      genRef.current += 1;
+      setStatus('idle');
+      chunkIdxRef.current = 0;
       setMouthOpen(false);
+    };
+
+    audio.addEventListener('ended', handleEnded);
+    audio.addEventListener('error', handleError);
+    return () => {
+      audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('error', handleError);
+      audio.pause();
+      audio.removeAttribute('src');
+      audio.load();
+      audioRef.current = null;
+    };
+  }, []);
+
+  // 言語 / 本文が変わったら再生を止めてキャッシュを破棄する
+  useEffect(() => {
+    return () => {
+      genRef.current += 1;
+      const audio = audioRef.current;
+      if (audio) {
+        audio.pause();
+        audio.removeAttribute('src');
+        audio.load();
+      }
+      chunkIdxRef.current = 0;
+      revokeUrls();
+      setStatus('idle');
+      setMouthOpen(false);
+    };
+  }, [sentences, wantLang, revokeUrls]);
+
+  // 口パク: 再生中かつ currentTime が進んでいる間だけ開閉を繰り返す。
+  // pause / ended / 音の停止（currentTime 据え置き）では必ず閉じる。
+  useEffect(() => {
+    if (status !== 'playing') {
+      setMouthOpen(false);
+      return;
     }
-  }, [status, mouthOpen, clearMouthTimers]);
+    let lastTime = -1;
+    let stalled = 0;
+    const id = window.setInterval(() => {
+      const audio = audioRef.current;
+      if (!audio || audio.paused || audio.ended) {
+        setMouthOpen(false);
+        return;
+      }
+      if (audio.currentTime === lastTime) {
+        stalled += 1;
+        if (stalled >= STALL_TICKS) {
+          setMouthOpen(false);
+          return;
+        }
+      } else {
+        stalled = 0;
+        lastTime = audio.currentTime;
+      }
+      setMouthOpen((open) => !open);
+    }, MOUTH_PULSE_MS);
+    return () => {
+      window.clearInterval(id);
+      setMouthOpen(false);
+    };
+  }, [status]);
+
+  const play = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    // 一時停止からの再開: 同じチャンクを続きから
+    if (status === 'paused' && audio.src) {
+      const gen = (genRef.current += 1);
+      audio.playbackRate = rateRef.current;
+      audio
+        .play()
+        .then(() => {
+          if (gen === genRef.current) setStatus('playing');
+        })
+        .catch(() => {});
+      return;
+    }
+
+    // 新規再生
+    const gen = (genRef.current += 1);
+    chunksRef.current = buildChunks(sentences);
+    chunkIdxRef.current = 0;
+    if (chunksRef.current.length === 0) return;
+    setStatus('playing');
+    void playFrom(0, gen);
+  }, [status, sentences, playFrom]);
+
+  const pause = useCallback(() => {
+    if (status !== 'playing') return;
+    const audio = audioRef.current;
+    if (!audio) return;
+    genRef.current += 1; // 先読み等の保留処理を無効化
+    audio.pause();
+    setStatus('paused');
+    setMouthOpen(false);
+  }, [status]);
+
+  const stop = useCallback(() => {
+    genRef.current += 1;
+    const audio = audioRef.current;
+    if (audio) {
+      audio.pause();
+      audio.removeAttribute('src');
+      audio.load();
+    }
+    chunkIdxRef.current = 0;
+    setStatus('idle');
+    setMouthOpen(false);
+  }, []);
+
+  // 最初のユーザー操作（クリック）中に同期的に呼び、<audio> を再生可能状態にする
+  const unlockAudio = useCallback(() => {
+    if (unlockedRef.current) return;
+    const audio = audioRef.current;
+    if (!audio) return;
+    unlockedRef.current = true;
+    audio.src = SILENT_WAV;
+    audio
+      .play()
+      .then(() => {
+        // すでに本編の音声に差し替わっていたら何もしない（レース対策）
+        if (audio.getAttribute('src') !== SILENT_WAV) return;
+        audio.pause();
+        audio.currentTime = 0;
+        audio.removeAttribute('src');
+      })
+      .catch(() => {});
+  }, []);
+
+  const toggle = useCallback(() => {
+    if (status === 'playing') {
+      pause();
+    } else {
+      unlockAudio();
+      play();
+    }
+  }, [status, play, pause, unlockAudio]);
+
+  const changeRate = useCallback((next: number) => {
+    const clamped = Math.min(READ_ALOUD_MAX_RATE, Math.max(READ_ALOUD_MIN_RATE, next));
+    setRate(clamped);
+    rateRef.current = clamped;
+    // <audio> の playbackRate は再生中でも即時反映される
+    if (audioRef.current) audioRef.current.playbackRate = clamped;
+  }, []);
 
   // タブ非表示・ページ離脱で読み上げを止めて口を閉じる
   useEffect(() => {
-    if (typeof window === 'undefined' || !window.speechSynthesis) return;
+    if (typeof window === 'undefined') return;
     const stopAll = () => {
       genRef.current += 1;
-      window.speechSynthesis.cancel();
-      clearMouthTimers();
-      setMouthOpen(false);
-      idxRef.current = 0;
+      const audio = audioRef.current;
+      if (audio) audio.pause();
+      chunkIdxRef.current = 0;
       setStatus('idle');
+      setMouthOpen(false);
     };
     const onVisibility = () => {
       if (document.hidden) stopAll();
@@ -376,7 +380,7 @@ export function useReadAloud(segments: string[], lang: Lang) {
       document.removeEventListener('visibilitychange', onVisibility);
       window.removeEventListener('pagehide', stopAll);
     };
-  }, [clearMouthTimers]);
+  }, []);
 
   return {
     status,
@@ -386,8 +390,5 @@ export function useReadAloud(segments: string[], lang: Lang) {
     setRate: changeRate,
     toggle,
     stop,
-    // Web Speech API 非対応、または当該言語のボイスが無い環境では false。
-    // 呼び出し側はこれで読み上げコントロールの表示可否を判断する。
-    supported: supported && hasLangVoice,
   };
 }

@@ -30,54 +30,47 @@ const StopIcon = () => (
 );
 
 export default function HeroSection({ lang, segments }: Props) {
-  const { status, mouthOpen, rate, setRate, toggle, stop, supported } = useReadAloud(
-    segments,
-    lang,
-  );
+  const { status, mouthOpen, rate, setRate, toggle, stop } = useReadAloud(segments, lang);
 
   return (
     <div className={styles.section}>
       <HeroQueen lang={lang} mouthOpen={mouthOpen} />
 
-      {supported && (
-        <div className={styles.control} role="group" aria-label={ui('readAloudPlay', lang)}>
-          <button
-            type="button"
-            className={styles.iconButton}
-            onClick={toggle}
-            aria-pressed={status === 'playing'}
-            aria-label={
-              status === 'playing' ? ui('readAloudPause', lang) : ui('readAloudPlay', lang)
-            }
-          >
-            {status === 'playing' ? <PauseIcon /> : <PlayIcon />}
-          </button>
+      <div className={styles.control} role="group" aria-label={ui('readAloudPlay', lang)}>
+        <button
+          type="button"
+          className={styles.iconButton}
+          onClick={toggle}
+          aria-pressed={status === 'playing'}
+          aria-label={status === 'playing' ? ui('readAloudPause', lang) : ui('readAloudPlay', lang)}
+        >
+          {status === 'playing' ? <PauseIcon /> : <PlayIcon />}
+        </button>
 
-          <button
-            type="button"
-            className={styles.iconButton}
-            onClick={stop}
-            disabled={status === 'idle'}
-            aria-label={ui('readAloudStop', lang)}
-          >
-            <StopIcon />
-          </button>
+        <button
+          type="button"
+          className={styles.iconButton}
+          onClick={stop}
+          disabled={status === 'idle'}
+          aria-label={ui('readAloudStop', lang)}
+        >
+          <StopIcon />
+        </button>
 
-          <span className={styles.divider} aria-hidden="true" />
+        <span className={styles.divider} aria-hidden="true" />
 
-          <input
-            type="range"
-            className={styles.speed}
-            min={READ_ALOUD_MIN_RATE}
-            max={READ_ALOUD_MAX_RATE}
-            step={0.05}
-            value={rate}
-            onChange={(e) => setRate(Number(e.target.value))}
-            aria-label={`${ui('readAloudSpeed', lang)} ${rate.toFixed(2)}x`}
-          />
-          <span className={styles.speedValue}>{rate.toFixed(1)}x</span>
-        </div>
-      )}
+        <input
+          type="range"
+          className={styles.speed}
+          min={READ_ALOUD_MIN_RATE}
+          max={READ_ALOUD_MAX_RATE}
+          step={0.05}
+          value={rate}
+          onChange={(e) => setRate(Number(e.target.value))}
+          aria-label={`${ui('readAloudSpeed', lang)} ${rate.toFixed(2)}x`}
+        />
+        <span className={styles.speedValue}>{rate.toFixed(1)}x</span>
+      </div>
     </div>
   );
 }
