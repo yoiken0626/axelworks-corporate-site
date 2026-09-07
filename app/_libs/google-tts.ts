@@ -113,9 +113,11 @@ export type TtsGender = 'FEMALE' | 'MALE' | 'NEUTRAL';
 //  - de-DE-Neural2-G  … ドイツ語の女性。de-DE の Neural2 女性はこの1種のみ
 //  - fr-FR-Neural2-F  … フランス語の女性。fr-FR の Neural2 女性はこの1種のみ（-G は男性）
 //  - es-ES-Neural2-A  … スペイン語（欧州）の女性。es-ES の Neural2 女性は -A / -E / -H
+//  - ru-RU-Wavenet-A … ロシア語の女性。ru-RU に Neural2 は無いため WaveNet
+//    （女性 WaveNet は -A / -C / -E。-B / -D は男性）
 //    （存在しない name を渡すと Google 側が別ボイス（男性含む）にフォールバック
 //     または 400 を返す。追加時は必ず voices API で実在と性別を確認すること）
-type VoiceKey = 'ja' | 'en' | 'ko' | 'zh' | 'de' | 'fr' | 'es';
+type VoiceKey = 'ja' | 'en' | 'ko' | 'zh' | 'de' | 'fr' | 'es' | 'ru';
 
 const VOICE_BY_LANG: Record<VoiceKey, { languageCode: string; name: string }> = {
   ja: { languageCode: 'ja-JP', name: 'ja-JP-Neural2-B' },
@@ -125,6 +127,7 @@ const VOICE_BY_LANG: Record<VoiceKey, { languageCode: string; name: string }> = 
   de: { languageCode: 'de-DE', name: 'de-DE-Neural2-G' },
   fr: { languageCode: 'fr-FR', name: 'fr-FR-Neural2-F' },
   es: { languageCode: 'es-ES', name: 'es-ES-Neural2-A' },
+  ru: { languageCode: 'ru-RU', name: 'ru-RU-Wavenet-A' },
 };
 
 const isLang = (value: string | undefined): value is VoiceKey =>
@@ -134,13 +137,14 @@ const isLang = (value: string | undefined): value is VoiceKey =>
   value === 'zh' ||
   value === 'de' ||
   value === 'fr' ||
-  value === 'es';
+  value === 'es' ||
+  value === 'ru';
 
 /**
  * リクエストパラメータからボイスを決定する。
  * 優先順位:
  *  1. voiceName が明示されていればそれを使う（languageCode も必須）
- *  2. lang（ja / en / ko / zh / de / fr / es）から上記マップで自動選択
+ *  2. lang（ja / en / ko / zh / de / fr / es / ru）から上記マップで自動選択
  *  3. languageCode のみ指定 → 名前なし（Google 側が gender で自動選択）
  */
 export const resolveVoice = (opts: {

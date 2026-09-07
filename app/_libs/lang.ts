@@ -2,10 +2,10 @@
 // 優先順位: URL の searchParams.lang > lang Cookie > 日本語(既定)
 export const LANG_COOKIE = 'lang';
 
-export type Lang = 'ja' | 'en' | 'ko' | 'zh' | 'de' | 'fr' | 'es';
+export type Lang = 'ja' | 'en' | 'ko' | 'zh' | 'de' | 'fr' | 'es' | 'ru';
 
 // 明示的に対応している言語のみ受け付け、それ以外は日本語にフォールバックする。
-export const SUPPORTED_LANGS: Lang[] = ['ja', 'en', 'ko', 'zh', 'de', 'fr', 'es'];
+export const SUPPORTED_LANGS: Lang[] = ['ja', 'en', 'ko', 'zh', 'de', 'fr', 'es', 'ru'];
 
 export const resolveLang = (value?: string): Lang =>
   value && (SUPPORTED_LANGS as string[]).includes(value) ? (value as Lang) : 'ja';

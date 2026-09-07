@@ -33,6 +33,8 @@ export type News = {
   content_fr?: string;
   title_es?: string;
   content_es?: string;
+  title_ru?: string;
+  content_ru?: string;
   translation_status?: TranslationStatus[];
   thumbnail?: MicroCMSImage;
   category: Category;
@@ -74,6 +76,7 @@ const TITLE_FIELD: Record<string, keyof News> = {
   de: 'title_de',
   fr: 'title_fr',
   es: 'title_es',
+  ru: 'title_ru',
 };
 const CONTENT_FIELD: Record<string, keyof News> = {
   en: 'content_en',
@@ -82,6 +85,7 @@ const CONTENT_FIELD: Record<string, keyof News> = {
   de: 'content_de',
   fr: 'content_fr',
   es: 'content_es',
+  ru: 'content_ru',
 };
 
 export const localizedTitle = (article: News, lang: string): string =>

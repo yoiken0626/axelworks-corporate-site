@@ -1,6 +1,6 @@
 import { resolveLang, type Lang } from './lang';
 
-// UI 文言の多言語辞書。ja / en / ko / zh / de / fr / es を用意する。
+// UI 文言の多言語辞書。ja / en / ko / zh / de / fr / es / ru を用意する。
 // ある言語のキーが無い場合はすべて ja にフォールバックする。
 // ニュース記事のタイトル・本文は microCMS の title_*/content_* 側で翻訳するため、ここには含めない。
 // メール本文・件名・payload のキーは担当者向けなので日本語のまま（辞書対象外）。
@@ -12,6 +12,7 @@ type Localized = {
   de?: string;
   fr?: string;
   es?: string;
+  ru?: string;
 };
 
 const UI_STRINGS = {
@@ -24,6 +25,7 @@ const UI_STRINGS = {
     de: 'Ich nehme die ganze Welt in meine Hände!',
     fr: 'Je vais mener le monde entier à la baguette !',
     es: '¡Voy a tener el mundo entero en mis manos!',
+    ru: 'Весь мир будет у меня в руках!',
   },
 
   // ヘッダー / フッター共通のナビゲーション
@@ -35,6 +37,7 @@ const UI_STRINGS = {
     de: 'Aktuelles',
     fr: 'Actualités',
     es: 'Noticias',
+    ru: 'Новости',
   },
   navBusiness: {
     ja: '事業内容',
@@ -44,6 +47,7 @@ const UI_STRINGS = {
     de: 'Geschäftsfelder',
     fr: 'Activités',
     es: 'Servicios',
+    ru: 'Услуги',
   },
   navMembers: {
     ja: 'メンバー',
@@ -53,6 +57,7 @@ const UI_STRINGS = {
     de: 'Team',
     fr: 'Équipe',
     es: 'Equipo',
+    ru: 'Команда',
   },
   navCareers: {
     ja: '採用情報',
@@ -62,6 +67,7 @@ const UI_STRINGS = {
     de: 'Karriere',
     fr: 'Carrières',
     es: 'Empleo',
+    ru: 'Карьера',
   },
   navContact: {
     ja: 'お問い合わせ',
@@ -71,6 +77,7 @@ const UI_STRINGS = {
     de: 'Kontakt',
     fr: 'Contact',
     es: 'Contacto',
+    ru: 'Контакты',
   },
 
   // フッター
@@ -82,6 +89,7 @@ const UI_STRINGS = {
     de: '© AXelWorks. All Rights Reserved 2026',
     fr: '© AXelWorks. All Rights Reserved 2026',
     es: '© AXelWorks. All Rights Reserved 2026',
+    ru: '© AXelWorks. All Rights Reserved 2026',
   },
 
   // News セクション
@@ -94,6 +102,7 @@ const UI_STRINGS = {
     de: 'Mehr erfahren',
     fr: 'Voir plus',
     es: 'Ver más',
+    ru: 'Подробнее',
   },
   newsListLink: {
     ja: 'ニュース一覧へ',
@@ -103,6 +112,7 @@ const UI_STRINGS = {
     de: 'Alle News ansehen',
     fr: 'Toutes les actualités',
     es: 'Ver todas las noticias',
+    ru: 'Все новости',
   },
 
   // 下層ページのヒーローバナー小見出し（news はバナー廃止済み）
@@ -114,6 +124,7 @@ const UI_STRINGS = {
     de: 'Geschäftsfelder',
     fr: 'Activités',
     es: 'Servicios',
+    ru: 'Услуги',
   },
   membersPageHeading: {
     ja: 'メンバー',
@@ -123,6 +134,7 @@ const UI_STRINGS = {
     de: 'Team',
     fr: 'Équipe',
     es: 'Equipo',
+    ru: 'Команда',
   },
 
   // ページ読み上げコントロール
@@ -134,6 +146,7 @@ const UI_STRINGS = {
     de: 'Diese Seite vorlesen',
     fr: 'Lire cette page à voix haute',
     es: 'Leer esta página en voz alta',
+    ru: 'Озвучить эту страницу',
   },
   readAloudPause: {
     ja: '読み上げを一時停止',
@@ -143,6 +156,7 @@ const UI_STRINGS = {
     de: 'Vorlesen pausieren',
     fr: 'Suspendre la lecture',
     es: 'Pausar la lectura',
+    ru: 'Приостановить озвучивание',
   },
   readAloudStop: {
     ja: '読み上げを停止',
@@ -152,6 +166,7 @@ const UI_STRINGS = {
     de: 'Vorlesen stoppen',
     fr: 'Arrêter la lecture',
     es: 'Detener la lectura',
+    ru: 'Остановить озвучивание',
   },
   readAloudSpeed: {
     ja: '速度',
@@ -161,6 +176,7 @@ const UI_STRINGS = {
     de: 'Tempo',
     fr: 'Vitesse',
     es: 'Velocidad',
+    ru: 'Скорость',
   },
 
   // Business セクション
@@ -173,6 +189,7 @@ const UI_STRINGS = {
     de: 'Unser Angebot',
     fr: 'Notre activité',
     es: 'Nuestra actividad',
+    ru: 'Наша деятельность',
   },
   businessBody1: {
     ja: '当社は、次世代テクノロジーの研究開発・製造・販売を行う革新的な企業です。',
@@ -182,6 +199,7 @@ const UI_STRINGS = {
     de: 'Wir sind ein innovatives Unternehmen für Forschung, Entwicklung, Fertigung und Vertrieb von Technologien der nächsten Generation.',
     fr: 'Nous sommes une entreprise innovante spécialisée dans la recherche, le développement, la fabrication et la commercialisation de technologies de nouvelle génération.',
     es: 'Somos una empresa innovadora dedicada a la investigación, el desarrollo, la fabricación y la venta de tecnología de nueva generación.',
+    ru: 'Мы — инновационная компания, занимающаяся исследованиями, разработкой, производством и продажей технологий нового поколения.',
   },
   businessBody2: {
     ja: 'AI、ロボット工学、自律システムなど、幅広い分野でのソリューション提供を通じて、社会の進化と未来の創造に貢献します。',
@@ -191,6 +209,7 @@ const UI_STRINGS = {
     de: 'Mit Lösungen in vielfältigen Bereichen – KI, Robotik, autonome Systeme und mehr – tragen wir zum Fortschritt der Gesellschaft und zur Gestaltung der Zukunft bei.',
     fr: "Grâce à des solutions dans de nombreux domaines — IA, robotique, systèmes autonomes et bien d'autres —, nous contribuons au progrès de la société et à la construction de l'avenir.",
     es: 'A través de soluciones en una amplia variedad de campos —IA, robótica, sistemas autónomos y más—, contribuimos al avance de la sociedad y a la creación del futuro.',
+    ru: 'Предлагая решения в самых разных областях — искусственный интеллект, робототехника, автономные системы и многое другое, — мы вносим вклад в развитие общества и создание будущего.',
   },
 
   // About Us セクション
@@ -203,6 +222,7 @@ const UI_STRINGS = {
     de: 'Über uns',
     fr: 'Qui nous sommes',
     es: 'Quiénes somos',
+    ru: 'Кто мы',
   },
   aboutMission: {
     ja: '「AIとともに、多言語で世界とつながる」をミッションに掲げ、日々活動をしています。',
@@ -212,6 +232,7 @@ const UI_STRINGS = {
     de: 'Unsere Mission: gemeinsam mit KI und in vielen Sprachen die Welt verbinden – daran arbeiten wir jeden Tag.',
     fr: "Notre mission : nous relier au monde en plusieurs langues, aux côtés de l'IA.",
     es: 'Nuestra misión: conectar con el mundo en muchos idiomas, junto con la IA.',
+    ru: 'Наша миссия — связывать мир на многих языках вместе с искусственным интеллектом.',
   },
   aboutService1: {
     ja: 'AIエージェント実装支援（法人向けコンサルティング）',
@@ -221,6 +242,7 @@ const UI_STRINGS = {
     de: 'Unterstützung bei der Einführung von KI-Agenten (Beratung für Unternehmen)',
     fr: "Accompagnement à la mise en œuvre d'agents IA (conseil aux entreprises)",
     es: 'Apoyo en la implementación de agentes de IA (consultoría para empresas)',
+    ru: 'Поддержка внедрения ИИ-агентов (консалтинг для компаний)',
   },
   aboutService2: {
     ja: 'AI・IT研修事業「AX Academy」（個人向け）',
@@ -230,6 +252,7 @@ const UI_STRINGS = {
     de: 'KI- und IT-Schulungen – „AX Academy“ (für Privatpersonen)',
     fr: 'Formations IA et IT « AX Academy » (pour les particuliers)',
     es: 'Formación en IA e IT «AX Academy» (para particulares)',
+    ru: 'Обучение ИИ и ИТ «AX Academy» (для частных лиц)',
   },
   aboutService3: {
     ja: '受託開発・SaaS開発',
@@ -239,6 +262,7 @@ const UI_STRINGS = {
     de: 'Auftragsentwicklung & SaaS-Entwicklung',
     fr: 'Développement sur mesure et développement SaaS',
     es: 'Desarrollo por encargo y desarrollo SaaS',
+    ru: 'Разработка на заказ и разработка SaaS',
   },
   // About Us の会社情報
   aboutInfoCompany: {
@@ -249,6 +273,7 @@ const UI_STRINGS = {
     de: 'Unternehmen',
     fr: 'Société',
     es: 'Empresa',
+    ru: 'Компания',
   },
   aboutInfoFounded: {
     ja: '設立',
@@ -258,6 +283,7 @@ const UI_STRINGS = {
     de: 'Gegründet',
     fr: 'Création',
     es: 'Fundación',
+    ru: 'Основана',
   },
   aboutInfoLocation: {
     ja: '所在地',
@@ -267,6 +293,7 @@ const UI_STRINGS = {
     de: 'Standort',
     fr: 'Siège',
     es: 'Ubicación',
+    ru: 'Адрес',
   },
   aboutInfoRepresentative: {
     ja: '代表者',
@@ -276,6 +303,7 @@ const UI_STRINGS = {
     de: 'Geschäftsführung',
     fr: 'Dirigeant',
     es: 'Representante',
+    ru: 'Руководитель',
   },
   aboutInfoCapital: {
     ja: '資本金',
@@ -285,6 +313,7 @@ const UI_STRINGS = {
     de: 'Stammkapital',
     fr: 'Capital social',
     es: 'Capital social',
+    ru: 'Уставный капитал',
   },
   aboutInfoTBD: {
     ja: '準備中',
@@ -294,6 +323,7 @@ const UI_STRINGS = {
     de: 'In Vorbereitung',
     fr: 'À venir',
     es: 'Próximamente',
+    ru: 'Уточняется',
   },
   aboutRepName: {
     ja: '吉田 健一',
@@ -303,6 +333,7 @@ const UI_STRINGS = {
     de: 'Kenichi Yoshida',
     fr: 'Kenichi Yoshida',
     es: 'Kenichi Yoshida',
+    ru: 'Кэнъити Ёсида',
   },
 
   // We are hiring セクション
@@ -315,6 +346,7 @@ const UI_STRINGS = {
     de: 'Karriere',
     fr: 'Carrières',
     es: 'Empleo',
+    ru: 'Карьера',
   },
   hiringBody1: {
     ja: '当社では、チャレンジ精神を持った人材を求めています。',
@@ -324,6 +356,7 @@ const UI_STRINGS = {
     de: 'Wir suchen Menschen mit Mut zur Herausforderung.',
     fr: 'Nous recherchons des personnes animées par le goût du défi.',
     es: 'Buscamos personas con espíritu de superación.',
+    ru: 'Мы ищем людей, готовых принимать вызовы.',
   },
   hiringBody2: {
     ja: '新しいアイデアを出し合い、成長する環境で活躍したい方は、ぜひご応募ください。当社でのキャリアを築きながら、技術の最前線で力を発揮しましょう。',
@@ -333,6 +366,7 @@ const UI_STRINGS = {
     de: 'Wenn Sie neue Ideen einbringen und in einem Umfeld wachsen möchten, in dem Sie sich entfalten können, freuen wir uns auf Ihre Bewerbung. Gestalten Sie Ihre Laufbahn bei uns und bringen Sie Ihr Können an vorderster Front der Technologie ein.',
     fr: "Si vous souhaitez partager de nouvelles idées et vous épanouir dans un environnement propice à la croissance, n'hésitez pas à postuler. Construisez votre carrière à nos côtés et mettez vos compétences au service des technologies de pointe.",
     es: 'Si desea aportar nuevas ideas y desarrollarse en un entorno que impulsa el crecimiento, le animamos a inscribirse. Construya su carrera con nosotros y ponga su talento al servicio de la tecnología más avanzada.',
+    ru: 'Если вы хотите делиться новыми идеями и раскрывать свой потенциал в среде, способствующей росту, будем рады вашему отклику. Постройте карьеру вместе с нами и применяйте свои навыки на переднем крае технологий.',
   },
   hiringLink: {
     ja: '採用情報へ',
@@ -342,6 +376,7 @@ const UI_STRINGS = {
     de: 'Zu den Stellenangeboten',
     fr: 'Voir les offres',
     es: 'Ver ofertas de empleo',
+    ru: 'Смотреть вакансии',
   },
 
   // ----- Contact セクション（左カラム） -----
@@ -354,6 +389,7 @@ const UI_STRINGS = {
     de: 'Ihr „kleines Problem“ –',
     fr: 'Ce petit « souci » qui vous bloque,',
     es: 'Ese pequeño «problema» que le frena,',
+    ru: 'Та самая «небольшая загвоздка»,',
   },
   contactHeadingAccent: {
     ja: '聞かせてください。',
@@ -363,6 +399,7 @@ const UI_STRINGS = {
     de: 'erzählen Sie es uns.',
     fr: 'parlons-en ensemble.',
     es: 'cuéntenoslo.',
+    ru: 'расскажите нам о ней.',
   },
   contactLead1: {
     ja: 'まだアイデアが固まっていなくても大丈夫です。',
@@ -372,6 +409,7 @@ const UI_STRINGS = {
     de: 'Es macht nichts, wenn Ihre Idee noch nicht ausgereift ist.',
     fr: "Peu importe si votre idée n'est pas encore aboutie.",
     es: 'No pasa nada si su idea aún no está del todo definida.',
+    ru: 'Ничего страшного, если ваша идея ещё не оформилась.',
   },
   contactLead2: {
     ja: 'できることから、一緒に考えます。',
@@ -381,6 +419,7 @@ const UI_STRINGS = {
     de: 'Wir überlegen gemeinsam den nächsten Schritt.',
     fr: 'Nous réfléchirons ensemble à la prochaine étape.',
     es: 'Pensaremos juntos en el siguiente paso.',
+    ru: 'Вместе подумаем над следующим шагом.',
   },
   contactService1: {
     ja: 'AIエージェント実装支援（法人向けコンサルティング）',
@@ -390,6 +429,7 @@ const UI_STRINGS = {
     de: 'Unterstützung bei der Einführung von KI-Agenten (Beratung für Unternehmen)',
     fr: "Accompagnement à la mise en œuvre d'agents IA (conseil aux entreprises)",
     es: 'Apoyo en la implementación de agentes de IA (consultoría para empresas)',
+    ru: 'Поддержка внедрения ИИ-агентов (консалтинг для компаний)',
   },
   contactService2: {
     ja: '受託開発・SaaS開発',
@@ -399,6 +439,7 @@ const UI_STRINGS = {
     de: 'Auftragsentwicklung & SaaS-Entwicklung',
     fr: 'Développement sur mesure et développement SaaS',
     es: 'Desarrollo por encargo y desarrollo SaaS',
+    ru: 'Разработка на заказ и разработка SaaS',
   },
   contactService3: {
     ja: 'AI・IT研修事業「AX Academy」',
@@ -408,10 +449,20 @@ const UI_STRINGS = {
     de: 'KI- und IT-Schulungen – „AX Academy“',
     fr: 'Formations IA et IT « AX Academy »',
     es: 'Formación en IA e IT «AX Academy»',
+    ru: 'Обучение ИИ и ИТ «AX Academy»',
   },
 
   // ----- Contact フォーム -----
-  formName: { ja: 'お名前', en: 'Name', ko: '이름', zh: '姓名', de: 'Name', fr: 'Nom', es: 'Nombre' },
+  formName: {
+    ja: 'お名前',
+    en: 'Name',
+    ko: '이름',
+    zh: '姓名',
+    de: 'Name',
+    fr: 'Nom',
+    es: 'Nombre',
+    ru: 'Имя',
+  },
   formNamePlaceholder: {
     ja: '山田 太郎',
     en: 'Jane Doe',
@@ -420,6 +471,7 @@ const UI_STRINGS = {
     de: 'Max Mustermann',
     fr: 'Jean Dupont',
     es: 'Juan Pérez',
+    ru: 'Иван Иванов',
   },
   formEmail: {
     ja: 'メールアドレス',
@@ -429,6 +481,7 @@ const UI_STRINGS = {
     de: 'E-Mail-Adresse',
     fr: 'Adresse e-mail',
     es: 'Correo electrónico',
+    ru: 'Электронная почта',
   },
   formConsultation: {
     ja: 'ご相談内容',
@@ -438,6 +491,7 @@ const UI_STRINGS = {
     de: 'Worum geht es?',
     fr: 'Votre demande',
     es: '¿Sobre qué desea hablar?',
+    ru: 'Ваш запрос',
   },
   formConsultationPlaceholder: {
     ja: '選択してください',
@@ -447,6 +501,7 @@ const UI_STRINGS = {
     de: 'Bitte wählen',
     fr: 'Sélectionnez',
     es: 'Seleccione una opción',
+    ru: 'Выберите',
   },
   formMessage: {
     ja: 'メッセージ',
@@ -456,6 +511,7 @@ const UI_STRINGS = {
     de: 'Nachricht',
     fr: 'Message',
     es: 'Mensaje',
+    ru: 'Сообщение',
   },
   formMessagePlaceholder: {
     ja: 'まだぼんやりした内容でも、お気軽にどうぞ。',
@@ -465,6 +521,7 @@ const UI_STRINGS = {
     de: 'Auch eine grobe Idee genügt – schreiben Sie einfach.',
     fr: 'Même une idée encore vague suffit — écrivez-nous librement.',
     es: 'Aunque sea una idea aún vaga, escríbanos sin problema.',
+    ru: 'Даже если идея пока размытая, пишите смело.',
   },
   formRequired: {
     ja: '必須',
@@ -474,6 +531,7 @@ const UI_STRINGS = {
     de: 'Pflichtfeld',
     fr: 'Obligatoire',
     es: 'Obligatorio',
+    ru: 'Обязательно',
   },
   formOptional: {
     ja: '任意',
@@ -483,6 +541,7 @@ const UI_STRINGS = {
     de: 'Optional',
     fr: 'Facultatif',
     es: 'Opcional',
+    ru: 'Необязательно',
   },
   formCalendarLegend: {
     ja: 'Google Meet相談（顔出し不要）の候補日時を選択してください（最大{max}件）',
@@ -492,6 +551,7 @@ const UI_STRINGS = {
     de: 'Wählen Sie bis zu {max} Wunschtermine für ein Google-Meet-Gespräch (Kamera optional)',
     fr: "Choisissez jusqu'à {max} créneaux pour un échange sur Google Meet (caméra facultative)",
     es: 'Elija hasta {max} horarios para una reunión por Google Meet (cámara opcional)',
+    ru: 'Выберите до {max} вариантов даты и времени для встречи в Google Meet (камера по желанию)',
   },
   formCalendarNote: {
     ja: '直近の営業日から自動で3日分表示しています',
@@ -501,6 +561,7 @@ const UI_STRINGS = {
     de: 'Es werden automatisch die nächsten 3 Werktage angezeigt',
     fr: "Les 3 prochains jours ouvrés s'affichent automatiquement",
     es: 'Se muestran automáticamente los próximos 3 días hábiles',
+    ru: 'Автоматически показаны ближайшие 3 рабочих дня',
   },
   formTimeColumn: {
     ja: '時間帯',
@@ -510,6 +571,7 @@ const UI_STRINGS = {
     de: 'Uhrzeit',
     fr: 'Horaire',
     es: 'Franja horaria',
+    ru: 'Время',
   },
   formSlotClosed: {
     ja: '（受付終了）',
@@ -519,6 +581,7 @@ const UI_STRINGS = {
     de: '(geschlossen)',
     fr: '(clôturé)',
     es: '(cerrado)',
+    ru: '(приём закрыт)',
   },
   formSlotsCounter: {
     ja: '{n} / {max}件選択中',
@@ -528,6 +591,7 @@ const UI_STRINGS = {
     de: '{n} von {max} ausgewählt',
     fr: '{n} / {max} sélectionné(s)',
     es: '{n} / {max} seleccionados',
+    ru: 'Выбрано {n} / {max}',
   },
   formSubmit: {
     ja: '相談内容を送る',
@@ -537,6 +601,7 @@ const UI_STRINGS = {
     de: 'Nachricht senden',
     fr: 'Envoyer le message',
     es: 'Enviar mensaje',
+    ru: 'Отправить сообщение',
   },
   formSubmitting: {
     ja: '送信中…',
@@ -546,6 +611,7 @@ const UI_STRINGS = {
     de: 'Wird gesendet…',
     fr: 'Envoi en cours…',
     es: 'Enviando…',
+    ru: 'Отправка…',
   },
   formSubmitNote: {
     ja: '入力内容と選択した候補日時を、担当者へメールで送信します。',
@@ -555,6 +621,7 @@ const UI_STRINGS = {
     de: 'Ihre Angaben und die gewählten Termine werden per E-Mail an unser Team gesendet.',
     fr: 'Vos informations et les créneaux choisis seront transmis par e-mail à notre équipe.',
     es: 'Sus datos y los horarios seleccionados se enviarán por correo a nuestro equipo.',
+    ru: 'Ваши данные и выбранные варианты времени будут отправлены нашей команде по электронной почте.',
   },
   formSuccessTitle: {
     ja: '送信しました。ありがとうございます。',
@@ -564,6 +631,7 @@ const UI_STRINGS = {
     de: 'Gesendet – vielen Dank!',
     fr: 'Envoyé – merci !',
     es: 'Enviado. ¡Gracias!',
+    ru: 'Отправлено. Спасибо!',
   },
   formSuccessBody: {
     ja: '担当者が内容を確認のうえ、いただいたメールアドレス宛に日程のご連絡をいたします。通常2〜3営業日以内にご返信します。',
@@ -573,6 +641,7 @@ const UI_STRINGS = {
     de: 'Unser Team prüft Ihre Nachricht und meldet sich per E-Mail zur Terminabstimmung – in der Regel innerhalb von 2–3 Werktagen.',
     fr: "Notre équipe examinera votre message et vous écrira par e-mail pour convenir d'un rendez-vous, généralement sous 2 à 3 jours ouvrés.",
     es: 'Nuestro equipo revisará su mensaje y le escribirá por correo para concertar una cita, normalmente en un plazo de 2 a 3 días hábiles.',
+    ru: 'Наша команда рассмотрит ваше сообщение и напишет вам на указанный адрес электронной почты, чтобы согласовать время — обычно в течение 2–3 рабочих дней.',
   },
 
   // ご相談内容の選択肢
@@ -584,6 +653,7 @@ const UI_STRINGS = {
     de: 'Einführung von KI-Agenten',
     fr: "Mise en œuvre d'agents IA",
     es: 'Implementación de agentes de IA',
+    ru: 'Внедрение ИИ-агентов',
   },
   consultDev: {
     ja: '受託開発・SaaS開発相談',
@@ -593,6 +663,7 @@ const UI_STRINGS = {
     de: 'Auftrags- / SaaS-Entwicklung',
     fr: 'Développement sur mesure / SaaS',
     es: 'Desarrollo por encargo / SaaS',
+    ru: 'Разработка на заказ / SaaS',
   },
   consultTraining: {
     ja: 'AI・IT研修相談（AX Academy）',
@@ -602,6 +673,7 @@ const UI_STRINGS = {
     de: 'KI- & IT-Schulungen (AX Academy)',
     fr: 'Formations IA et IT (AX Academy)',
     es: 'Formación en IA e IT (AX Academy)',
+    ru: 'Обучение ИИ и ИТ (AX Academy)',
   },
   consultOther: {
     ja: 'その他',
@@ -611,6 +683,7 @@ const UI_STRINGS = {
     de: 'Sonstiges',
     fr: 'Autre',
     es: 'Otro',
+    ru: 'Другое',
   },
 
   // バリデーションエラー
@@ -622,6 +695,7 @@ const UI_STRINGS = {
     de: 'Bitte geben Sie Ihren Namen ein.',
     fr: 'Veuillez saisir votre nom.',
     es: 'Introduzca su nombre.',
+    ru: 'Введите ваше имя.',
   },
   errEmailRequired: {
     ja: 'メールアドレスを入力してください',
@@ -631,6 +705,7 @@ const UI_STRINGS = {
     de: 'Bitte geben Sie Ihre E-Mail-Adresse ein.',
     fr: 'Veuillez saisir votre adresse e-mail.',
     es: 'Introduzca su correo electrónico.',
+    ru: 'Введите адрес электронной почты.',
   },
   errEmailInvalid: {
     ja: 'メールアドレスの形式が正しくありません',
@@ -640,6 +715,7 @@ const UI_STRINGS = {
     de: 'Bitte geben Sie eine gültige E-Mail-Adresse ein.',
     fr: 'Veuillez saisir une adresse e-mail valide.',
     es: 'Introduzca un correo electrónico válido.',
+    ru: 'Введите корректный адрес электронной почты.',
   },
   errConsultationRequired: {
     ja: 'ご相談内容を選択してください',
@@ -649,6 +725,7 @@ const UI_STRINGS = {
     de: 'Bitte wählen Sie ein Thema.',
     fr: 'Veuillez sélectionner un sujet.',
     es: 'Seleccione un tema.',
+    ru: 'Выберите тему.',
   },
   errSlotsRequired: {
     ja: '候補日時を1件以上選択してください',
@@ -658,6 +735,7 @@ const UI_STRINGS = {
     de: 'Bitte wählen Sie mindestens einen Termin.',
     fr: 'Veuillez sélectionner au moins un créneau.',
     es: 'Seleccione al menos un horario.',
+    ru: 'Выберите хотя бы один вариант времени.',
   },
   errSubmitFailed: {
     ja: '送信に失敗しました。お手数ですが時間をおいて再度お試しいただくか、直接メールにてご連絡ください。',
@@ -667,6 +745,7 @@ const UI_STRINGS = {
     de: 'Etwas ist schiefgelaufen. Bitte versuchen Sie es später erneut oder kontaktieren Sie uns direkt per E-Mail.',
     fr: "Une erreur s'est produite. Veuillez réessayer plus tard ou nous contacter directement par e-mail.",
     es: 'Se ha producido un error. Vuelva a intentarlo más tarde o contáctenos directamente por correo.',
+    ru: 'Произошла ошибка. Повторите попытку позже или свяжитесь с нами напрямую по электронной почте.',
   },
   errNetwork: {
     ja: 'ネットワークエラーにより送信できませんでした。通信環境をご確認のうえ再度お試しください。',
@@ -676,6 +755,7 @@ const UI_STRINGS = {
     de: 'Aufgrund eines Netzwerkfehlers konnte nicht gesendet werden. Bitte prüfen Sie Ihre Verbindung und versuchen Sie es erneut.',
     fr: "L'envoi a échoué en raison d'une erreur réseau. Veuillez vérifier votre connexion et réessayer.",
     es: 'No se pudo enviar debido a un error de red. Compruebe su conexión e inténtelo de nuevo.',
+    ru: 'Не удалось отправить из-за сетевой ошибки. Проверьте подключение и повторите попытку.',
   },
   errNotConfigured: {
     ja: '送信設定が未完了のため送信できませんでした。お手数ですが時間をおいて再度お試しください。',
@@ -685,6 +765,7 @@ const UI_STRINGS = {
     de: 'Das Formular ist noch nicht vollständig konfiguriert. Bitte versuchen Sie es später erneut.',
     fr: "Le formulaire n'est pas encore entièrement configuré. Veuillez réessayer plus tard.",
     es: 'El formulario aún no está del todo configurado. Vuelva a intentarlo más tarde.',
+    ru: 'Форма ещё не полностью настроена. Повторите попытку позже.',
   },
 } satisfies Record<string, Localized>;
 

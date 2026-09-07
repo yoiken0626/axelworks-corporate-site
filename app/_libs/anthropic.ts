@@ -1,9 +1,9 @@
 const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
 const ANTHROPIC_VERSION = '2023-06-01';
 const DEFAULT_MODEL = 'claude-sonnet-5';
-// 1回の応答で英語・韓国語・中国語・ドイツ語・フランス語・スペイン語のタイトル＋
-// 本文HTML（計10フィールド）を返すため多めに確保する
-const DEFAULT_MAX_TOKENS = 40960;
+// 1回の応答で英語・韓国語・中国語・ドイツ語・フランス語・スペイン語・ロシア語の
+// タイトル＋本文HTML（計12フィールド）を返すため多めに確保する
+const DEFAULT_MAX_TOKENS = 49152;
 
 type TranslationInput = {
   title: string;
@@ -23,19 +23,21 @@ export type TranslationResult = {
   content_fr: string;
   title_es: string;
   content_es: string;
+  title_ru: string;
+  content_ru: string;
 };
 
 const TRANSLATION_TOOL_NAME = 'submit_translation';
 
-const SYSTEM_PROMPT = `あなたはIT/AI業界のコーポレートサイト記事を、日本語から英語・韓国語・中国語（簡体字）・ドイツ語・フランス語・スペイン語に翻訳するプロフェッショナル翻訳者です。
+const SYSTEM_PROMPT = `あなたはIT/AI業界のコーポレートサイト記事を、日本語から英語・韓国語・中国語（簡体字）・ドイツ語・フランス語・スペイン語・ロシア語に翻訳するプロフェッショナル翻訳者です。
 以下のルールを厳守してください。
 
-- 英語は自然で専門的なビジネス英語に、韓国語は自然で丁寧なビジネス韓国語（하십시오体/합니다体ベース）に、中国語は自然で丁寧なビジネス中国語（簡体字・大陸標準）に、ドイツ語は自然で専門的なビジネスドイツ語（丁寧形 Sie ベース）に、フランス語は自然で専門的なビジネスフランス語（丁寧形 vous ベース）に、スペイン語は自然で丁寧なビジネススペイン語（丁寧形 usted ベース・欧州スペイン語）に翻訳すること。
+- 英語は自然で専門的なビジネス英語に、韓国語は自然で丁寧なビジネス韓国語（하십시오体/합니다体ベース）に、中国語は自然で丁寧なビジネス中国語（簡体字・大陸標準）に、ドイツ語は自然で専門的なビジネスドイツ語（丁寧形 Sie ベース）に、フランス語は自然で専門的なビジネスフランス語（丁寧形 vous ベース）に、スペイン語は自然で丁寧なビジネススペイン語（丁寧形 usted ベース・欧州スペイン語）に、ロシア語は自然で丁寧なビジネスロシア語（敬称 вы ベース）に翻訳すること。
 - IT/AI関連の専門用語、製品名、固有名詞、サービス名は無理に訳さず、原語（一般的に使われる表記）のまま残すこと。
 - content_* の入力はHTML文字列です。タグ構造・属性は一切変更せず、タグの中のテキストのみを翻訳すること。タグを追加/削除/並べ替えしないこと。
-- 出力は必ず submit_translation ツールを呼び出して構造化データとして返すこと。英語(title_en/content_en)・韓国語(title_ko/content_ko)・中国語(title_zh/content_zh)・ドイツ語(title_de/content_de)・フランス語(title_fr/content_fr)・スペイン語(title_es/content_es)の10フィールドすべてを埋めること。`;
+- 出力は必ず submit_translation ツールを呼び出して構造化データとして返すこと。英語(title_en/content_en)・韓国語(title_ko/content_ko)・中国語(title_zh/content_zh)・ドイツ語(title_de/content_de)・フランス語(title_fr/content_fr)・スペイン語(title_es/content_es)・ロシア語(title_ru/content_ru)の12フィールドすべてを埋めること。`;
 
-const TARGET_LANGS = ['en', 'ko', 'zh', 'de', 'fr', 'es'] as const;
+const TARGET_LANGS = ['en', 'ko', 'zh', 'de', 'fr', 'es', 'ru'] as const;
 
 export const translateArticle = async ({
   title,
@@ -60,7 +62,7 @@ export const translateArticle = async ({
         {
           role: 'user',
           content: [
-            '以下の記事タイトルと本文（HTML）を、英語・韓国語・中国語（簡体字）・ドイツ語・フランス語・スペイン語に翻訳してください。',
+            '以下の記事タイトルと本文（HTML）を、英語・韓国語・中国語（簡体字）・ドイツ語・フランス語・スペイン語・ロシア語に翻訳してください。',
             '',
             '## title',
             title,
@@ -74,7 +76,7 @@ export const translateArticle = async ({
         {
           name: TRANSLATION_TOOL_NAME,
           description:
-            '翻訳結果（英語・韓国語・中国語・ドイツ語・フランス語・スペイン語のタイトルと本文HTML）を送信する',
+            '翻訳結果（英語・韓国語・中国語・ドイツ語・フランス語・スペイン語・ロシア語のタイトルと本文HTML）を送信する',
           input_schema: {
             type: 'object',
             properties: {
@@ -111,6 +113,12 @@ export const translateArticle = async ({
                 description:
                   '入力と同じHTMLタグ構造を保ったまま、テキスト部分のみスペイン語訳した本文',
               },
+              title_ru: { type: 'string', description: 'ロシア語訳された記事タイトル' },
+              content_ru: {
+                type: 'string',
+                description:
+                  '入力と同じHTMLタグ構造を保ったまま、テキスト部分のみロシア語訳した本文',
+              },
             },
             required: [
               'title_en',
@@ -125,6 +133,8 @@ export const translateArticle = async ({
               'content_fr',
               'title_es',
               'content_es',
+              'title_ru',
+              'content_ru',
             ],
           },
         },
@@ -168,5 +178,7 @@ export const translateArticle = async ({
     content_fr: result.content_fr!,
     title_es: result.title_es!,
     content_es: result.content_es!,
+    title_ru: result.title_ru!,
+    content_ru: result.content_ru!,
   };
 };
