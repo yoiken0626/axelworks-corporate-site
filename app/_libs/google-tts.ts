@@ -20,9 +20,23 @@ const loadCredentials = (): ServiceAccount => {
   if (credentialsCache) {
     return credentialsCache;
   }
-  const raw = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON;
-  if (!raw) {
+  const rawEnv = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON;
+  if (!rawEnv || !rawEnv.trim()) {
     throw new Error('GOOGLE_APPLICATION_CREDENTIALS_JSON is not set');
+  }
+
+  let raw = rawEnv.trim();
+  // 管理画面（Vercel 等）で .env の値をクォートごと貼り付けてしまったケースを救済する。
+  // 例: '{"type":...}' や "{"type":...}" → 外側のクォートを外す
+  if (
+    raw.length > 1 &&
+    (raw[0] === "'" || raw[0] === '"') &&
+    raw[raw.length - 1] === raw[0]
+  ) {
+    const inner = raw.slice(1, -1).trim();
+    if (inner.startsWith('{')) {
+      raw = inner;
+    }
   }
 
   let parsed: ServiceAccount;

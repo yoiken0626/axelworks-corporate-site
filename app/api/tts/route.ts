@@ -65,10 +65,11 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('[tts] synthesis failed', error);
-    const notConfigured =
-      error instanceof Error && /GOOGLE_APPLICATION_CREDENTIALS_JSON/.test(error.message);
+    const message = error instanceof Error ? error.message : String(error);
+    const notConfigured = /GOOGLE_APPLICATION_CREDENTIALS_JSON/.test(message);
     return NextResponse.json(
-      { error: notConfigured ? 'TTS is not configured' : 'TTS synthesis failed' },
+      // 設定不備はデプロイ時の診断用に理由もそのまま返す（秘匿情報は含まれない）
+      { error: notConfigured ? 'TTS is not configured' : 'TTS synthesis failed', detail: notConfigured ? message : undefined },
       { status: notConfigured ? 503 : 502 },
     );
   }
