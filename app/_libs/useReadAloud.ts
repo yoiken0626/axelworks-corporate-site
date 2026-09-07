@@ -82,7 +82,7 @@ const buildChunks = (sentences: string[]): string[] => {
 /**
  * Google Cloud Text-to-Speech（/api/tts）で音声を取得し、<audio> 要素で
  * 順に再生する読み上げフック。
- * - 日本語 / 英語 / 韓国語すべてで動作（ブラウザや OS のボイスに依存しない）
+ * - 対応言語すべて（日 / 英 / 韓 / 中 / 独 / 仏 / 西）で動作（ブラウザや OS のボイスに依存しない）
  * - play / pause / stop と速度変更（0.75〜1.5x, audio.playbackRate）
  * - mouthOpen: <audio> の再生状態（play / pause / ended）と currentTime の進行に同期。
  *   音が止まっている間は必ず口を閉じる（Android Chrome で音だけ消えて口パクが

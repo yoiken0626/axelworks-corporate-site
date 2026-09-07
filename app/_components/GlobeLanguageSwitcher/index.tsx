@@ -19,15 +19,15 @@ type Flag = {
   lang?: Lang;
 };
 
-// 日・英・韓・中・独に対応。他は「準備中」ツールチップを表示する
+// 日・英・韓・中・独・仏・西に対応。他は「準備中」ツールチップを表示する
 const FLAGS: Flag[] = [
   { code: 'ja', icon: 'jp', label: '日本語', lang: 'ja' },
   { code: 'en', icon: 'us', label: 'English', lang: 'en' },
   { code: 'ko', icon: 'kr', label: '한국어', lang: 'ko' },
   { code: 'zh', icon: 'cn', label: '中文', lang: 'zh' },
-  { code: 'es', icon: 'es', label: 'Español' },
+  { code: 'es', icon: 'es', label: 'Español', lang: 'es' },
   { code: 'de', icon: 'de', label: 'Deutsch', lang: 'de' },
-  { code: 'fr', icon: 'fr', label: 'Français' },
+  { code: 'fr', icon: 'fr', label: 'Français', lang: 'fr' },
   { code: 'ru', icon: 'ru', label: 'Русский' },
 ];
 

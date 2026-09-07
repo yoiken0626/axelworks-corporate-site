@@ -2,7 +2,7 @@ import { createClient } from 'microcms-js-sdk';
 import type { News } from './microcms';
 
 // 書き込み専用クライアント。
-// title_(en|ko|zh|de) / content_(en|ko|zh|de) / translation_status の更新にのみ使用する。
+// title_(en|ko|zh|de|fr|es) / content_(en|ko|zh|de|fr|es) / translation_status の更新にのみ使用する。
 // PATCH権限のみを付与した、閲覧用(MICROCMS_API_KEY)とは別のAPIキーを想定している。
 // フロント表示に使う app/_libs/microcms.ts とは分離し、
 // このモジュールを読み込まないページのビルドがMICROCMS_MANAGEMENT_API_KEY未設定で
@@ -41,6 +41,10 @@ type NewsTranslationFields = Partial<
     | 'content_zh'
     | 'title_de'
     | 'content_de'
+    | 'title_fr'
+    | 'content_fr'
+    | 'title_es'
+    | 'content_es'
     | 'translation_status'
   >
 >;

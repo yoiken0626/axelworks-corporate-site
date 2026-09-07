@@ -12,12 +12,14 @@ export type AppointmentDay = {
 export const APPOINTMENT_TIMES = ['9:00', '13:00', '16:00'] as const;
 export const MAX_SELECTIONS = 3;
 
-const WEEKDAY: Record<'ja' | 'en' | 'ko' | 'zh' | 'de', string[]> = {
+const WEEKDAY: Record<'ja' | 'en' | 'ko' | 'zh' | 'de' | 'fr' | 'es', string[]> = {
   ja: ['日', '月', '火', '水', '木', '金', '土'],
   en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
   ko: ['일', '월', '화', '수', '목', '금', '토'],
   zh: ['日', '一', '二', '三', '四', '五', '六'],
   de: ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'],
+  fr: ['dim.', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.'],
+  es: ['dom.', 'lun.', 'mar.', 'mié.', 'jue.', 'vie.', 'sáb.'],
 };
 
 const isBusinessDay = (d: Date) => {

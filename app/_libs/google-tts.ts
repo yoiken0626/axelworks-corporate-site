@@ -104,15 +104,18 @@ const getAccessToken = async (): Promise<string> => {
 
 export type TtsGender = 'FEMALE' | 'MALE' | 'NEUTRAL';
 
-// 表示言語ごとの自然な女性ボイス。
+// 表示言語ごとの自然な女性ボイス。voices API（GET .../v1/voices?languageCode=xx-XX）で
+// name と ssmlGender=FEMALE を実機確認したうえで指定している。
 //  - ja-JP-Neural2-B  … 落ち着いた女性。ニュース読み上げに向く
 //  - en-US-Neural2-F  … 明瞭で自然な女性
 //  - ko-KR-Neural2-A  … 標準的で聞き取りやすい女性
 //  - cmn-CN-Wavenet-A … 大陸標準（簡体字）の女性。cmn-CN に Neural2 は無いため WaveNet
 //  - de-DE-Neural2-G  … ドイツ語の女性。de-DE の Neural2 女性はこの1種のみ
-//    （-A〜-F は現在提供されておらず、存在しない name を渡すと Google 側が
-//     男性ボイスにフォールバックしてしまう点に注意）
-type VoiceKey = 'ja' | 'en' | 'ko' | 'zh' | 'de';
+//  - fr-FR-Neural2-F  … フランス語の女性。fr-FR の Neural2 女性はこの1種のみ（-G は男性）
+//  - es-ES-Neural2-A  … スペイン語（欧州）の女性。es-ES の Neural2 女性は -A / -E / -H
+//    （存在しない name を渡すと Google 側が別ボイス（男性含む）にフォールバック
+//     または 400 を返す。追加時は必ず voices API で実在と性別を確認すること）
+type VoiceKey = 'ja' | 'en' | 'ko' | 'zh' | 'de' | 'fr' | 'es';
 
 const VOICE_BY_LANG: Record<VoiceKey, { languageCode: string; name: string }> = {
   ja: { languageCode: 'ja-JP', name: 'ja-JP-Neural2-B' },
@@ -120,6 +123,8 @@ const VOICE_BY_LANG: Record<VoiceKey, { languageCode: string; name: string }> = 
   ko: { languageCode: 'ko-KR', name: 'ko-KR-Neural2-A' },
   zh: { languageCode: 'cmn-CN', name: 'cmn-CN-Wavenet-A' },
   de: { languageCode: 'de-DE', name: 'de-DE-Neural2-G' },
+  fr: { languageCode: 'fr-FR', name: 'fr-FR-Neural2-F' },
+  es: { languageCode: 'es-ES', name: 'es-ES-Neural2-A' },
 };
 
 const isLang = (value: string | undefined): value is VoiceKey =>
@@ -127,13 +132,15 @@ const isLang = (value: string | undefined): value is VoiceKey =>
   value === 'en' ||
   value === 'ko' ||
   value === 'zh' ||
-  value === 'de';
+  value === 'de' ||
+  value === 'fr' ||
+  value === 'es';
 
 /**
  * リクエストパラメータからボイスを決定する。
  * 優先順位:
  *  1. voiceName が明示されていればそれを使う（languageCode も必須）
- *  2. lang（ja / en / ko）から上記マップで自動選択
+ *  2. lang（ja / en / ko / zh / de / fr / es）から上記マップで自動選択
  *  3. languageCode のみ指定 → 名前なし（Google 側が gender で自動選択）
  */
 export const resolveVoice = (opts: {
