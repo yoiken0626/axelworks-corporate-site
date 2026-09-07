@@ -30,6 +30,14 @@ body {
   overflow-x: hidden;
 }
 
+/* 目次（TableOfContents）などページ内リンクのスムーズスクロール。
+   動きを減らす設定のユーザーには適用しない。 */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', YuGothic, 'ヒラギノ角ゴ ProN W3',
     Hiragino Kaku Gothic ProN, Arial, 'メイリオ', Meiryo, sans-serif;

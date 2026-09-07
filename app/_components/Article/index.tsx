@@ -1,9 +1,11 @@
 import Image from 'next/image';
 import { formatRichText } from '@/app/_libs/utils';
+import { buildToc, TOC_MIN_HEADINGS } from '@/app/_libs/toc';
 import { type Article, localizedTitle, localizedContent } from '@/app/_libs/microcms';
 import PublishedDate from '../Date';
 import styles from './index.module.css';
 import Category from '../Category';
+import TableOfContents from '../TableOfContents';
 
 type Props = {
   data: Article;
@@ -14,6 +16,10 @@ export default function Article({ data, lang }: Props) {
   const title = localizedTitle(data, lang ?? 'ja');
   const content = localizedContent(data, lang ?? 'ja');
 
+  // 表示言語の本文から H2 / H3 を抽出し、見出しにアンカー ID を付与する。
+  const { html, toc } = buildToc(formatRichText(content));
+  const showToc = toc.length >= TOC_MIN_HEADINGS;
+
   return (
     <main>
       <h1 className={styles.title}>{title}</h1>
@@ -21,6 +27,7 @@ export default function Article({ data, lang }: Props) {
         <Category category={data.category} />
         <PublishedDate date={data.publishedAt || data.createdAt} />
       </div>
+      {showToc && <TableOfContents items={toc} lang={lang} />}
       {data.thumbnail && (
         <Image
           src={data.thumbnail?.url}
@@ -33,7 +40,7 @@ export default function Article({ data, lang }: Props) {
       <div
         className={styles.content}
         dangerouslySetInnerHTML={{
-          __html: `${formatRichText(content)}`,
+          __html: html,
         }}
       />
     </main>

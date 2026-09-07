@@ -23,6 +23,11 @@
   margin-top: 0;
 }
 
+/* 目次からジャンプしたとき、見出しが画面最上部にぴったり付かないよう余白を取る */
+.content :is(h2, h3)[id] {
+  scroll-margin-top: 24px;
+}
+
 .content > h1 {
   font-size: 2rem;
   font-weight: bold;

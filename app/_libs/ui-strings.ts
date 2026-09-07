@@ -115,6 +115,18 @@ const UI_STRINGS = {
     ru: 'Все новости',
   },
 
+  // 記事詳細ページの目次
+  tocHeading: {
+    ja: '目次',
+    en: 'Contents',
+    ko: '목차',
+    zh: '目录',
+    de: 'Inhalt',
+    fr: 'Sommaire',
+    es: 'Índice',
+    ru: 'Содержание',
+  },
+
   // 下層ページのヒーローバナー小見出し（news はバナー廃止済み）
   businessPageHeading: {
     ja: '事業内容',

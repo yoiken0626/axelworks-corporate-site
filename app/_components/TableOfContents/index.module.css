@@ -1,0 +1,56 @@
+.toc {
+  background-color: var(--color-bg-sub);
+  border-radius: var(--border-radius);
+  padding: 24px 28px;
+  margin-bottom: 64px;
+}
+
+.heading {
+  font-size: 0.9rem;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+  color: var(--color-text-sub);
+  margin-bottom: 12px;
+}
+
+.list {
+  list-style: none;
+}
+
+.item,
+.sub {
+  line-height: 1.7;
+}
+
+.item + .item,
+.item + .sub,
+.sub + .item,
+.sub + .sub {
+  margin-top: 8px;
+}
+
+.sub {
+  padding-left: 1.25rem;
+}
+
+.link {
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s ease;
+}
+
+.link:hover {
+  border-bottom-color: var(--color-text-main);
+}
+
+.sub .link {
+  font-size: 0.95rem;
+  color: var(--color-text-sub);
+}
+
+@media (max-width: 640px) {
+  .toc {
+    padding: 20px;
+    margin-bottom: 40px;
+  }
+}
