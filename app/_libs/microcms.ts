@@ -25,6 +25,10 @@ export type News = {
   content_en?: string;
   title_ko?: string;
   content_ko?: string;
+  title_zh?: string;
+  content_zh?: string;
+  title_de?: string;
+  content_de?: string;
   translation_status?: TranslationStatus[];
   thumbnail?: MicroCMSImage;
   category: Category;
@@ -59,11 +63,24 @@ export type Meta = {
 export type Article = News & MicroCMSContentId & MicroCMSDate;
 
 // 記事のタイトル / 本文を表示言語に合わせて返す。未翻訳（空）の場合は日本語にフォールバックする。
+const TITLE_FIELD: Record<string, keyof News> = {
+  en: 'title_en',
+  ko: 'title_ko',
+  zh: 'title_zh',
+  de: 'title_de',
+};
+const CONTENT_FIELD: Record<string, keyof News> = {
+  en: 'content_en',
+  ko: 'content_ko',
+  zh: 'content_zh',
+  de: 'content_de',
+};
+
 export const localizedTitle = (article: News, lang: string): string =>
-  (lang === 'en' && article.title_en) || (lang === 'ko' && article.title_ko) || article.title;
+  (TITLE_FIELD[lang] && (article[TITLE_FIELD[lang]] as string | undefined)) || article.title;
 
 export const localizedContent = (article: News, lang: string): string =>
-  (lang === 'en' && article.content_en) || (lang === 'ko' && article.content_ko) || article.content;
+  (CONTENT_FIELD[lang] && (article[CONTENT_FIELD[lang]] as string | undefined)) || article.content;
 
 if (!process.env.MICROCMS_SERVICE_DOMAIN) {
   throw new Error('MICROCMS_SERVICE_DOMAIN is required');

@@ -104,19 +104,30 @@ const getAccessToken = async (): Promise<string> => {
 
 export type TtsGender = 'FEMALE' | 'MALE' | 'NEUTRAL';
 
-// 日本語・英語・韓国語それぞれの自然な女性ボイス。
-// いずれも Neural2（WaveNet 後継の高品質ニューラル音声）。
-//  - ja-JP-Neural2-B … 落ち着いた女性。ニュース読み上げに向く
-//  - en-US-Neural2-F … 明瞭で自然な女性
-//  - ko-KR-Neural2-A … 標準的で聞き取りやすい女性
-const VOICE_BY_LANG: Record<'ja' | 'en' | 'ko', { languageCode: string; name: string }> = {
+// 表示言語ごとの自然な女性ボイス。
+//  - ja-JP-Neural2-B  … 落ち着いた女性。ニュース読み上げに向く
+//  - en-US-Neural2-F  … 明瞭で自然な女性
+//  - ko-KR-Neural2-A  … 標準的で聞き取りやすい女性
+//  - cmn-CN-Wavenet-A … 大陸標準（簡体字）の女性。cmn-CN に Neural2 は無いため WaveNet
+//  - de-DE-Neural2-G  … ドイツ語の女性。de-DE の Neural2 女性はこの1種のみ
+//    （-A〜-F は現在提供されておらず、存在しない name を渡すと Google 側が
+//     男性ボイスにフォールバックしてしまう点に注意）
+type VoiceKey = 'ja' | 'en' | 'ko' | 'zh' | 'de';
+
+const VOICE_BY_LANG: Record<VoiceKey, { languageCode: string; name: string }> = {
   ja: { languageCode: 'ja-JP', name: 'ja-JP-Neural2-B' },
   en: { languageCode: 'en-US', name: 'en-US-Neural2-F' },
   ko: { languageCode: 'ko-KR', name: 'ko-KR-Neural2-A' },
+  zh: { languageCode: 'cmn-CN', name: 'cmn-CN-Wavenet-A' },
+  de: { languageCode: 'de-DE', name: 'de-DE-Neural2-G' },
 };
 
-const isLang = (value: string | undefined): value is 'ja' | 'en' | 'ko' =>
-  value === 'ja' || value === 'en' || value === 'ko';
+const isLang = (value: string | undefined): value is VoiceKey =>
+  value === 'ja' ||
+  value === 'en' ||
+  value === 'ko' ||
+  value === 'zh' ||
+  value === 'de';
 
 /**
  * リクエストパラメータからボイスを決定する。

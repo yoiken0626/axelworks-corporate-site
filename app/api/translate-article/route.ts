@@ -74,21 +74,18 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    // 1回の呼び出しで英語・韓国語をまとめて生成する
-    const { title_en, content_en, title_ko, content_ko } = await translateArticle({
+    // 1回の呼び出しで英語・韓国語・中国語・ドイツ語をまとめて生成する
+    const translation = await translateArticle({
       title: article.title,
       contentHtml: article.content,
     });
 
     await updateNewsTranslation(contentId, {
-      title_en,
-      content_en,
-      title_ko,
-      content_ko,
+      ...translation,
       translation_status: ['完了'],
     });
 
-    return NextResponse.json({ status: 'ok', contentId, langs: ['en', 'ko'] });
+    return NextResponse.json({ status: 'ok', contentId, langs: ['en', 'ko', 'zh', 'de'] });
   } catch (error) {
     console.error('[translate-article] translation failed', contentId, error);
 
