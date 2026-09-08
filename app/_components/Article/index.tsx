@@ -39,6 +39,7 @@ export default function Article({ data, lang }: Props) {
       )}
       <div
         className={styles.content}
+        data-read-aloud-body
         dangerouslySetInnerHTML={{
           __html: html,
         }}

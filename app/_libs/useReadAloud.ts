@@ -25,7 +25,7 @@ const SILENT_WAV =
 const encoder = typeof TextEncoder !== 'undefined' ? new TextEncoder() : null;
 const byteLen = (s: string): number => (encoder ? encoder.encode(s).length : s.length);
 
-const splitSentences = (text: string): string[] =>
+export const splitSentences = (text: string): string[] =>
   text
     .split(/(?<=[。．.!?！？\n])/)
     .map((s) => s.trim())
@@ -92,6 +92,11 @@ export function useReadAloud(segments: string[], lang: Lang) {
   const [status, setStatus] = useState<ReadAloudStatus>('idle');
   const [rate, setRate] = useState(1);
   const [mouthOpen, setMouthOpen] = useState(false);
+  // いま再生中のチャンク index（idle / 停止時は -1、一時停止中は保持）。
+  const [activeChunk, setActiveChunk] = useState(-1);
+  // アクティブチャンク内の再生進捗（currentTime / duration, 0〜1）。
+  // ハイライト側が「チャンク内のどの文か」を文字数割合から推定するのに使う。
+  const [chunkProgress, setChunkProgress] = useState(0);
 
   const wantLang = resolveLang(lang);
 
@@ -107,12 +112,21 @@ export function useReadAloud(segments: string[], lang: Lang) {
   // チャンク index -> Object URL（MP3 Blob）。言語 / 本文が変わると破棄する
   const urlCacheRef = useRef<Map<number, string>>(new Map());
 
-  const sentences = useMemo(
-    () => segments.flatMap(splitSentences),
+  // 読み上げ単位（チャンク）の一覧。segment（タイトル / 本文…）はまたがず、
+  // segment ごとに buildChunks する。各チャンクに元 segment の index を持たせて
+  // おき、ハイライト側が「本文チャンクだけ」を DOM に対応づけられるようにする。
+  const chunkPlan = useMemo(
+    () =>
+      segments.flatMap((seg, segIndex) =>
+        buildChunks(splitSentences(seg)).map((text) => ({ text, segIndex })),
+      ),
     // segments は配列なので中身で依存を判定
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [segments.join('')],
   );
+
+  const chunkTexts = useMemo(() => chunkPlan.map((c) => c.text), [chunkPlan]);
+  const chunkSegments = useMemo(() => chunkPlan.map((c) => c.segIndex), [chunkPlan]);
 
   const revokeUrls = useCallback(() => {
     urlCacheRef.current.forEach((url) => URL.revokeObjectURL(url));
@@ -161,6 +175,8 @@ export function useReadAloud(segments: string[], lang: Lang) {
         if (gen === genRef.current) {
           setStatus('idle');
           setMouthOpen(false);
+          setActiveChunk(-1);
+          setChunkProgress(0);
         }
         return;
       }
@@ -177,6 +193,8 @@ export function useReadAloud(segments: string[], lang: Lang) {
       }
       if (gen !== genRef.current) return;
       setStatus('playing');
+      setActiveChunk(idx);
+      setChunkProgress(0);
 
       // 次チャンクを先読み（失敗しても本再生には影響させない）
       void fetchChunk(idx + 1, gen).catch(() => {});
@@ -202,6 +220,8 @@ export function useReadAloud(segments: string[], lang: Lang) {
         setStatus('idle');
         chunkIdxRef.current = 0;
         setMouthOpen(false);
+        setActiveChunk(-1);
+        setChunkProgress(0);
       }
     };
     const handleError = () => {
@@ -211,13 +231,24 @@ export function useReadAloud(segments: string[], lang: Lang) {
       setStatus('idle');
       chunkIdxRef.current = 0;
       setMouthOpen(false);
+      setActiveChunk(-1);
+      setChunkProgress(0);
+    };
+    // アクティブチャンク内の再生進捗（0〜1）。ハイライトのスクロール追従で使う。
+    const handleTimeUpdate = () => {
+      const d = audio.duration;
+      if (Number.isFinite(d) && d > 0) {
+        setChunkProgress(Math.min(1, audio.currentTime / d));
+      }
     };
 
     audio.addEventListener('ended', handleEnded);
     audio.addEventListener('error', handleError);
+    audio.addEventListener('timeupdate', handleTimeUpdate);
     return () => {
       audio.removeEventListener('ended', handleEnded);
       audio.removeEventListener('error', handleError);
+      audio.removeEventListener('timeupdate', handleTimeUpdate);
       audio.pause();
       audio.removeAttribute('src');
       audio.load();
@@ -239,8 +270,10 @@ export function useReadAloud(segments: string[], lang: Lang) {
       revokeUrls();
       setStatus('idle');
       setMouthOpen(false);
+      setActiveChunk(-1);
+      setChunkProgress(0);
     };
-  }, [sentences, wantLang, revokeUrls]);
+  }, [chunkTexts, wantLang, revokeUrls]);
 
   // 口パク: 再生中かつ currentTime が進んでいる間だけ開閉を繰り返す。
   // pause / ended / 音の停止（currentTime 据え置き）では必ず閉じる。
@@ -294,12 +327,12 @@ export function useReadAloud(segments: string[], lang: Lang) {
 
     // 新規再生
     const gen = (genRef.current += 1);
-    chunksRef.current = buildChunks(sentences);
+    chunksRef.current = chunkTexts;
     chunkIdxRef.current = 0;
     if (chunksRef.current.length === 0) return;
     setStatus('playing');
     void playFrom(0, gen);
-  }, [status, sentences, playFrom]);
+  }, [status, chunkTexts, playFrom]);
 
   const pause = useCallback(() => {
     if (status !== 'playing') return;
@@ -322,6 +355,8 @@ export function useReadAloud(segments: string[], lang: Lang) {
     chunkIdxRef.current = 0;
     setStatus('idle');
     setMouthOpen(false);
+    setActiveChunk(-1);
+    setChunkProgress(0);
   }, []);
 
   // 最初のユーザー操作（クリック）中に同期的に呼び、<audio> を再生可能状態にする
@@ -370,6 +405,8 @@ export function useReadAloud(segments: string[], lang: Lang) {
       chunkIdxRef.current = 0;
       setStatus('idle');
       setMouthOpen(false);
+      setActiveChunk(-1);
+      setChunkProgress(0);
     };
     const onVisibility = () => {
       if (document.hidden) stopAll();
@@ -390,5 +427,10 @@ export function useReadAloud(segments: string[], lang: Lang) {
     setRate: changeRate,
     toggle,
     stop,
+    // テキストハイライト用
+    chunks: chunkTexts,
+    chunkSegments,
+    activeChunk,
+    chunkProgress,
   };
 }

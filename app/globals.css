@@ -49,6 +49,13 @@ code {
   font-family: menlo, inconsolata, monospace;
 }
 
+/* ページ読み上げ中に、いま読んでいるチャンクを本文上で薄い青にハイライトする
+   （CSS Custom Highlight API / useReadAloudHighlight）。 */
+::highlight(read-aloud) {
+  background-color: rgba(56, 132, 255, 0.18);
+  color: inherit;
+}
+
 a {
   color: inherit;
   text-decoration: none;

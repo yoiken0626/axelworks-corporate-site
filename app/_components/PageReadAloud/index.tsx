@@ -4,6 +4,7 @@ import GlobeLanguageSwitcher from '@/app/_components/GlobeLanguageSwitcher';
 import { ui } from '@/app/_libs/ui-strings';
 import { type Lang } from '@/app/_libs/lang';
 import { useReadAloud, READ_ALOUD_MIN_RATE, READ_ALOUD_MAX_RATE } from '@/app/_libs/useReadAloud';
+import { useReadAloudHighlight } from '@/app/_libs/useReadAloudHighlight';
 import styles from './index.module.css';
 
 type Props = {
@@ -35,7 +36,12 @@ const StopIcon = () => (
  * ContactGlobe と同じ position:fixed パターン。口パク同期は無し（コントロールのみ）。
  */
 export default function PageReadAloud({ lang, segments }: Props) {
-  const { status, rate, setRate, toggle, stop } = useReadAloud(segments, lang);
+  const { status, rate, setRate, toggle, stop, chunks, chunkSegments, activeChunk, chunkProgress } =
+    useReadAloud(segments, lang);
+
+  // 読み上げ中のチャンクを本文（[data-read-aloud-body]）上でハイライトし、
+  // 再生位置を画面内に追従させる。本文が無いページでは何もしない。
+  useReadAloudHighlight({ chunks, chunkSegments, activeChunk, chunkProgress, follow: true });
 
   return (
     <div className={styles.bar}>
