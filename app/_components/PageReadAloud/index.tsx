@@ -44,45 +44,54 @@ export default function PageReadAloud({ lang, segments }: Props) {
   useReadAloudHighlight({ chunks, chunkSegments, activeChunk, chunkProgress, follow: true });
 
   return (
-    <div className={styles.bar}>
-      <div className={styles.control} role="group" aria-label={ui('readAloudPlay', lang)}>
-        <button
-          type="button"
-          className={styles.iconButton}
-          onClick={toggle}
-          aria-pressed={status === 'playing'}
-          aria-label={status === 'playing' ? ui('readAloudPause', lang) : ui('readAloudPlay', lang)}
-        >
-          {status === 'playing' ? <PauseIcon /> : <PlayIcon />}
-        </button>
-
-        <button
-          type="button"
-          className={styles.iconButton}
-          onClick={stop}
-          disabled={status === 'idle'}
-          aria-label={ui('readAloudStop', lang)}
-        >
-          <StopIcon />
-        </button>
-
-        <span className={styles.divider} aria-hidden="true" />
-
-        <input
-          type="range"
-          className={styles.speed}
-          min={READ_ALOUD_MIN_RATE}
-          max={READ_ALOUD_MAX_RATE}
-          step={0.05}
-          value={rate}
-          onChange={(e) => setRate(Number(e.target.value))}
-          aria-label={`${ui('readAloudSpeed', lang)} ${rate.toFixed(2)}x`}
-        />
-        <span className={styles.speedValue}>{rate.toFixed(1)}x</span>
+    // 本文シート（.container）と同じ幅・センタリングで固定表示する枠。
+    // この枠の左右パディング相当の余白（＝ヘッダー画像の左右の白い部分）に
+    // 地球儀・読み上げコントロールを置くので、ビューポート幅が変わっても
+    // 画像の左上・右上の角に追従する。枠自体はクリックを透過させる。
+    <div className={styles.frame}>
+      {/* 地球儀はヘッダー画像の左上の余白、読み上げコントロールは右上の余白に置く。 */}
+      <div className={styles.globeBar}>
+        <div className={styles.globe}>
+          <GlobeLanguageSwitcher />
+        </div>
       </div>
 
-      <div className={styles.globe}>
-        <GlobeLanguageSwitcher />
+      <div className={styles.controlBar}>
+        <div className={styles.control} role="group" aria-label={ui('readAloudPlay', lang)}>
+          <button
+            type="button"
+            className={styles.iconButton}
+            onClick={toggle}
+            aria-pressed={status === 'playing'}
+            aria-label={status === 'playing' ? ui('readAloudPause', lang) : ui('readAloudPlay', lang)}
+          >
+            {status === 'playing' ? <PauseIcon /> : <PlayIcon />}
+          </button>
+
+          <button
+            type="button"
+            className={styles.iconButton}
+            onClick={stop}
+            disabled={status === 'idle'}
+            aria-label={ui('readAloudStop', lang)}
+          >
+            <StopIcon />
+          </button>
+
+          <span className={styles.divider} aria-hidden="true" />
+
+          <input
+            type="range"
+            className={styles.speed}
+            min={READ_ALOUD_MIN_RATE}
+            max={READ_ALOUD_MAX_RATE}
+            step={0.05}
+            value={rate}
+            onChange={(e) => setRate(Number(e.target.value))}
+            aria-label={`${ui('readAloudSpeed', lang)} ${rate.toFixed(2)}x`}
+          />
+          <span className={styles.speedValue}>{rate.toFixed(1)}x</span>
+        </div>
       </div>
     </div>
   );

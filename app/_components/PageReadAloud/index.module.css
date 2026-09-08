@@ -1,15 +1,39 @@
-/* ContactGlobe と同じく、ページに対して固定表示する右上バー。
-   [読み上げコントロール] [地球儀] の順で横並び（地球儀を右端に置き、
-   展開する国旗リングが画面外へ出ないよう right に余裕を持たせる）。
-   デスクトップでは記事タイトル(h1)とほぼ同じ高さに揃える。 */
-.bar {
+/* 本文シート（app/news/layout.module.css の .container）と同じ幅・
+   センタリングで固定表示する枠。スクロールに追従して画面上に残る。
+   この枠の左右の内側余白 ≒ ヘッダー画像（サムネイル）の左右の白い部分
+   なので、そこに地球儀（左上）と読み上げコントロール（右上）を置くと、
+   ビューポート幅が変わっても画像の左上・右上の角に追従する。
+   枠自体は空でクリックを透過させ、子だけがクリックを受ける。 */
+.frame {
   position: fixed;
-  top: 116px;
-  right: 44px;
+  top: 40px; /* = .container の margin-top */
+  left: 0;
+  right: 0;
   z-index: 900;
+  margin: 0 auto;
+  width: 840px; /* = .container の width */
+  max-width: calc(100% - 80px); /* = .container の max-width */
+  height: 0;
+  pointer-events: none;
+}
+
+.globeBar,
+.controlBar {
+  position: absolute;
+  /* .container の padding-top(64px) の帯（画像の上の白い余白）の中に収める */
+  top: 12px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  pointer-events: auto;
+}
+
+/* .container の左右 padding(80px) の中 = 画像の左右の白い余白 */
+.globeBar {
+  left: 18px;
+}
+
+.controlBar {
+  right: 18px;
 }
 
 .control {
@@ -75,11 +99,28 @@
   filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.28));
 }
 
-@media (max-width: 640px) {
-  .bar {
-    top: 70px;
-    right: 30px;
-    gap: 6px;
+/* スマホ縦向き・横向き（およびタブレット）。デスクトップ（>950px）は不変。
+   横向きも縦向きと同じ地球儀サイズ・同じ余白にするため、1つの条件で
+   縦横を両方カバーする（横向き = 812〜932px 幅も含める）。 */
+@media (max-width: 950px) {
+  .frame {
+    top: 24px; /* = スマホの .container margin-top */
+    max-width: calc(100% - 32px); /* = スマホの .container max-width */
+  }
+
+  /* 地球儀・読み上げコントロールは .container の広い上パディング（156px）の
+     白い帯の中、画像のすぐ上に置く。globe 中心 Y ≈ 24(frame) + 96 + 26 = 146px。
+     国旗リング（中心から約74px）の上端 ≈ 72px となり、ヘッダー下端（約56px）
+     より下に収まる（＝位置の微調整ではなく上パディングでロゴとの重なりを解消）。
+     リング左端 ≈ globe中心X(84) − 74 ≈ 10px で画面内。 */
+  .globeBar {
+    left: 42px;
+    top: 96px;
+  }
+
+  .controlBar {
+    right: 4px;
+    top: 96px;
   }
 
   .control {
@@ -105,9 +146,13 @@
     display: none;
   }
 
+  /* スマホは指で押しやすいよう地球儀 UI 全体を拡大する（縦横で同一サイズ）。
+     国旗アイコン 1 つ = --gls-size * --gls-flag-size ≒ 52 * 0.77 ≒ 40px
+     （拡大前は 34 * 0.42 ≒ 14px。タップ目安 44px にできるだけ近づける）。
+     リング半径も本体・アイコンに合わせて拡大。 */
   .globe {
-    --gls-size: 34px;
-    --gls-ring-radius: 82%;
-    --gls-flag-size: 42%;
+    --gls-size: 52px;
+    --gls-ring-radius: 104%;
+    --gls-flag-size: 77%;
   }
 }
