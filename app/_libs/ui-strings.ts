@@ -16,6 +16,18 @@ type Localized = {
 };
 
 const UI_STRINGS = {
+  // トップページの h1（視覚的には隠し、スクリーンリーダー / SEO 向け）
+  homeHeading: {
+    ja: 'AXelWorks｜AIとともに、多言語で世界とつながる',
+    en: 'AXelWorks — connecting with the world in many languages, together with AI',
+    ko: 'AXelWorks｜AI와 함께, 다국어로 세계와 연결된다',
+    zh: 'AXelWorks｜与 AI 一同，用多种语言连接世界',
+    de: 'AXelWorks – gemeinsam mit KI und in vielen Sprachen die Welt verbinden',
+    fr: "AXelWorks — se relier au monde en plusieurs langues, aux côtés de l'IA",
+    es: 'AXelWorks — conectar con el mundo en muchos idiomas, junto con la IA',
+    ru: 'AXelWorks — связываем мир на многих языках вместе с ИИ',
+  },
+
   // ヘッダー / フッター共通のナビゲーション
   navNews: {
     ja: 'ニュース',
@@ -82,6 +94,17 @@ const UI_STRINGS = {
 
   // News セクション
   newsHeading: { ja: 'News' },
+  // ニュース一覧ページ（/news, /news/p/N）の h1
+  newsListHeading: {
+    ja: 'ニュース一覧',
+    en: 'News',
+    ko: '뉴스 목록',
+    zh: '新闻列表',
+    de: 'Aktuelles',
+    fr: 'Actualités',
+    es: 'Noticias',
+    ru: 'Новости',
+  },
   seeMore: {
     ja: 'もっとみる',
     en: 'See more',

@@ -8,16 +8,25 @@
   --gls-ring-radius: 108%;
   --gls-flag-size: 54%;
   opacity: 0;
+  /* 非表示時はキーボード Tab / スクリーンリーダーからも外す。
+     フェードアウトを見せるため visibility の切替は 0.25s 遅らせる。 */
+  visibility: hidden;
   transform: translateY(-10px);
   transition:
     opacity 0.25s ease,
-    transform 0.25s ease;
+    transform 0.25s ease,
+    visibility 0s linear 0.25s;
   pointer-events: none;
 }
 
 .fixed[data-visible='true'] {
   opacity: 1;
+  visibility: visible;
   transform: translateY(0);
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease,
+    visibility 0s;
   pointer-events: auto;
 }
 

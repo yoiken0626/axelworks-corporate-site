@@ -21,7 +21,8 @@ export default function Article({ data, lang }: Props) {
   const showToc = toc.length >= TOC_MIN_HEADINGS;
 
   return (
-    <main>
+    // ランドマークの <main> は app/layout.tsx 側にあるので、ここは <div>（入れ子回避）
+    <div>
       <h1 className={styles.title} data-read-aloud-title>{title}</h1>
       <div className={styles.meta}>
         <Category category={data.category} />
@@ -44,6 +45,6 @@ export default function Article({ data, lang }: Props) {
           __html: html,
         }}
       />
-    </main>
+    </div>
   );
 }

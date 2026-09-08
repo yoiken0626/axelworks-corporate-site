@@ -36,6 +36,8 @@ export default function HeroSection({ lang, segments, latestNews }: Props) {
 
   return (
     <div className={styles.section}>
+      {/* ページの主題を表す h1。デザインを崩さないよう視覚的には隠す（SR / SEO 向け） */}
+      <h1 className="srOnly">{ui('homeHeading', lang)}</h1>
       <HeroQueen lang={lang} mouthOpen={mouthOpen} latestNews={latestNews} />
 
       <div className={styles.control} role="group" aria-label={ui('readAloudPlay', lang)}>

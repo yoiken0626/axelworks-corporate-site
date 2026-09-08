@@ -4,6 +4,7 @@ import { NEWS_LIST_LIMIT } from '@/app/_constants';
 import { LANG_COOKIE, resolveLang } from '@/app/_libs/lang';
 import Pagination from '@/app/_components/Pagination';
 import ArticleList from '@/app/_components/NewsList';
+import NewsListHeading from '@/app/_components/NewsListHeading';
 import PageReadAloud from '@/app/_components/PageReadAloud';
 
 type Props = {
@@ -26,6 +27,7 @@ export default async function Page(props: Props) {
   return (
     <>
       <PageReadAloud lang={lang} segments={segments} />
+      <NewsListHeading lang={lang} />
       <ArticleList articles={data.contents} lang={lang} />
       <Pagination totalCount={data.totalCount} current={current} basePath="/news" />
     </>

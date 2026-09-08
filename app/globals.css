@@ -65,3 +65,16 @@ ol,
 ul {
   list-style: none;
 }
+
+/* 視覚的には隠すが、スクリーンリーダー・SEO には見える見出し等に使う */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}

@@ -3,6 +3,7 @@ import { getNewsList, localizedTitle } from '@/app/_libs/microcms';
 import { NEWS_LIST_LIMIT } from '@/app/_constants';
 import { LANG_COOKIE, resolveLang } from '@/app/_libs/lang';
 import NewsList from '@/app/_components/NewsList';
+import NewsListHeading from '@/app/_components/NewsListHeading';
 import Pagination from '@/app/_components/Pagination';
 import PageReadAloud from '@/app/_components/PageReadAloud';
 
@@ -18,6 +19,7 @@ export default async function Page() {
   return (
     <>
       <PageReadAloud lang={lang} segments={segments} />
+      <NewsListHeading lang={lang} />
       <NewsList articles={data.contents} lang={lang} />
       <Pagination totalCount={data.totalCount} basePath="/news" />
     </>
