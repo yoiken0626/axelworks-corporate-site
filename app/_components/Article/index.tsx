@@ -22,12 +22,11 @@ export default function Article({ data, lang }: Props) {
 
   return (
     <main>
-      <h1 className={styles.title}>{title}</h1>
+      <h1 className={styles.title} data-read-aloud-title>{title}</h1>
       <div className={styles.meta}>
         <Category category={data.category} />
         <PublishedDate date={data.publishedAt || data.createdAt} />
       </div>
-      {showToc && <TableOfContents items={toc} lang={lang} />}
       {data.thumbnail && (
         <Image
           src={data.thumbnail?.url}
@@ -37,6 +36,7 @@ export default function Article({ data, lang }: Props) {
           height={data.thumbnail?.height}
         />
       )}
+      {showToc && <TableOfContents items={toc} lang={lang} />}
       <div
         className={styles.content}
         data-read-aloud-body

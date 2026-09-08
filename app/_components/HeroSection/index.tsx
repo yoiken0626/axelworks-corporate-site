@@ -9,6 +9,8 @@ import styles from './index.module.css';
 type Props = {
   lang: Lang;
   segments: string[];
+  /** ヒーローの吹き出しに出す最新記事（無ければ null） */
+  latestNews: { slug: string; title: string } | null;
 };
 
 const PlayIcon = () => (
@@ -29,12 +31,12 @@ const StopIcon = () => (
   </svg>
 );
 
-export default function HeroSection({ lang, segments }: Props) {
+export default function HeroSection({ lang, segments, latestNews }: Props) {
   const { status, mouthOpen, rate, setRate, toggle, stop } = useReadAloud(segments, lang);
 
   return (
     <div className={styles.section}>
-      <HeroQueen lang={lang} mouthOpen={mouthOpen} />
+      <HeroQueen lang={lang} mouthOpen={mouthOpen} latestNews={latestNews} />
 
       <div className={styles.control} role="group" aria-label={ui('readAloudPlay', lang)}>
         <button

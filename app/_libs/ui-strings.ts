@@ -16,18 +16,6 @@ type Localized = {
 };
 
 const UI_STRINGS = {
-  // ヒーローの吹き出し
-  heroSpeech: {
-    ja: '世界を手玉にとるわよ！',
-    en: "I'll take the whole world in my hands!",
-    ko: '온 세상을 손안에 넣을 거예요!',
-    zh: '要把整个世界都掌握在手中！',
-    de: 'Ich nehme die ganze Welt in meine Hände!',
-    fr: 'Je vais mener le monde entier à la baguette !',
-    es: '¡Voy a tener el mundo entero en mis manos!',
-    ru: 'Весь мир будет у меня в руках!',
-  },
-
   // ヘッダー / フッター共通のナビゲーション
   navNews: {
     ja: 'ニュース',

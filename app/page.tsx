@@ -15,12 +15,18 @@ export default async function Page() {
   const lang = resolveLang(cookieStore.get(LANG_COOKIE)?.value);
   const data = await getNewsList({
     limit: TOP_NEWS_LIMIT,
+    orders: '-publishedAt',
   });
+
+  // ヒーローの吹き出し：最新記事（公開日が最も新しい1件）のタイトルへのリンク
+  const latest = data.contents[0];
+  const latestNews = latest
+    ? { slug: latest.id, title: localizedTitle(latest, lang) }
+    : null;
 
   // 読み上げ対象：トップページの主要テキスト（ui-strings の文言＋記事タイトル）を表示順に
   const newsTitles = data.contents.map((a) => localizedTitle(a, lang));
   const readSegments = [
-    ui('heroSpeech', lang),
     ui('newsHeading', lang),
     ...newsTitles,
     ui('businessSubtitle', lang),
@@ -39,7 +45,7 @@ export default async function Page() {
   return (
     <>
       <section className={styles.top}>
-        <HeroSection lang={lang} segments={readSegments} />
+        <HeroSection lang={lang} segments={readSegments} latestNews={latestNews} />
       </section>
       <section className={styles.news}>
         <h2 className={styles.newsTitle}>{ui('newsHeading', lang)}</h2>

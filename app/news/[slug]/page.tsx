@@ -5,6 +5,7 @@ import Article from '@/app/_components/Article';
 import { LANG_COOKIE, resolveLang } from '@/app/_libs/lang';
 import { ui } from '@/app/_libs/ui-strings';
 import { htmlToPlainText } from '@/app/_libs/utils';
+import { stripEmoji } from '@/app/_libs/emoji';
 import styles from './page.module.css';
 import ButtonLink from '@/app/_components/ButtonLink';
 import PageReadAloud from '@/app/_components/PageReadAloud';
@@ -53,10 +54,11 @@ export default async function Page(props: Props) {
     draftKey: searchParams.dk,
   });
 
-  // 読み上げ対象：記事タイトル＋本文（表示言語に合わせる。未翻訳なら日本語）
+  // 読み上げ対象：記事タイトル＋本文（表示言語に合わせる。未翻訳なら日本語）。
+  // 絵文字は発音されると不自然なのでタイトル・本文とも取り除く（表示側の h1 / 目次は元のまま）。
   const title = localizedTitle(data, lang);
   const content = localizedContent(data, lang);
-  const segments = [title, htmlToPlainText(content || '')].filter(Boolean);
+  const segments = [stripEmoji(title), htmlToPlainText(content || '')].filter(Boolean);
 
   return (
     <>

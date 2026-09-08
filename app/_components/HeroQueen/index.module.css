@@ -49,34 +49,54 @@
 }
 
 /* --- 思考の泡（thought bubble） --- */
+/* .thought は position:absolute なので、吹き出しが縦に伸びても
+   地球儀・読み上げコントロール等のレイアウトには影響しない（重なりだけ注意）。 */
 .thought {
   position: absolute;
   left: 2.5%;
   top: 3%;
-  width: 30%;
+  width: 32%;
   z-index: 2;
   /* 雲の実際の輪郭に沿って影を落とす */
   filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.18));
 }
 
-/* モコモコした雲。テキストボックスより一回り大きく広げて膨らみを外に出す */
+/* モコモコした雲。高さはテキスト（.bubbleText）の高さに追従して伸び縮みする
+   （.thought の高さ = .bubbleText の高さ、.cloud はその % で伸縮）。 */
 .cloud {
   position: absolute;
-  top: -22%;
+  top: -15%;
   left: -12%;
   width: 124%;
-  height: 148%;
+  height: 130%;
 }
 
 .bubbleText {
   position: relative;
   margin: 0;
-  padding: 5cqw 5.5cqw;
+  padding: 3.6cqw 3cqw;
   color: var(--color-text-main);
-  font-size: clamp(0.66rem, 2.7cqw, 0.9rem);
+  font-size: clamp(0.56rem, 2.5cqw, 0.86rem);
   font-weight: bold;
-  line-height: 1.5;
+  line-height: 1.4;
   text-align: center;
+  /* 独・仏などの長い単語が雲からはみ出さないよう折る */
+  overflow-wrap: break-word;
+  /* タイトルは全文表示が基本。6 行相当（line-height 1.4 × 6 = 8.4em）＋上下
+     パディングを超えた分だけ隠す（省略記号は付けず、単純に見えなくする）。 */
+  max-height: calc(8.4em + 7.2cqw);
+  overflow: hidden;
+}
+
+/* 吹き出し内の最新記事リンク。リンクだと分かるよう下線を付ける */
+.bubbleLink {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.bubbleLink:hover {
+  opacity: 0.7;
 }
 
 /* --- GlobeLanguageSwitcher をイラストの球体に重ねる枠 --- */
@@ -103,22 +123,28 @@
 
   /* 横長画像が短くなるスマホでは吹き出し・地球儀リングを調整する。
      読み上げコントロール（右上）に雲がかからないよう幅と右側のはみ出しを抑える。 */
+  /* スマホはヒーロー画像が短く（375px 幅で高さ約 196px）、右上に読み上げコントロール、
+     中央に地球儀があるため、吹き出しに使える領域が狭い。ここでは 2 行相当で打ち切る。 */
   .thought {
-    left: 3%;
-    top: 7%;
+    left: 2%;
+    top: 5%;
     width: 44%;
   }
 
   .cloud {
-    top: -15%;
-    left: -14%;
-    width: 116%;
-    height: 130%;
+    top: -24%;
+    left: -9%;
+    width: 117%;
+    height: 192%;
   }
 
   .bubbleText {
-    padding: 3.5cqw 4cqw;
-    font-size: clamp(0.56rem, 3cqw, 0.76rem);
+    /* 左右パディングを広めに取り、テキスト列を雲の白い部分の中に収める */
+    padding: 7px 8%;
+    font-size: clamp(0.46rem, 2.7cqw, 0.7rem);
+    line-height: 1.35;
+    /* 2 行相当（line-height 1.35 × 2 = 2.7em）＋上パディングで打ち切る */
+    max-height: calc(2.7em + 7px);
   }
 
   .globeSlot {
