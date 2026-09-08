@@ -10,8 +10,11 @@ export default function Hero({ title, sub }: Props) {
   return (
     <section className={styles.container}>
       <div>
-        <h1 className={styles.title}>{title}</h1>
-        <p className={styles.sub}>{sub}</p>
+        {/* 装飾の英字ラベル。意味は下の h1（表示言語）が担うので支援技術からは隠す */}
+        <p className={styles.title} aria-hidden="true">
+          {title}
+        </p>
+        <h1 className={styles.sub}>{sub}</h1>
       </div>
       <Image
         className={styles.bgimg}

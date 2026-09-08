@@ -4,6 +4,7 @@ import { getMeta } from '@/app/_libs/microcms';
 import { LANG_COOKIE, resolveLang } from '@/app/_libs/lang';
 import Footer from '@/app/_components/Footer';
 import Header from '@/app/_components/Header';
+import { ui } from '@/app/_libs/ui-strings';
 import './globals.css';
 import styles from './layout.module.css';
 
@@ -38,8 +39,13 @@ export default async function RootLayout({ children }: Props) {
   return (
     <html lang={lang}>
       <body className={styles.body}>
+        <a href="#main" className="skipLink">
+          {ui('skipToContent', lang)}
+        </a>
         <Header lang={lang} />
-        <main>{children}</main>
+        <main id="main" tabIndex={-1}>
+          {children}
+        </main>
         <Footer lang={lang} />
       </body>
     </html>

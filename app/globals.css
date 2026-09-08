@@ -78,3 +78,27 @@ ul {
   white-space: nowrap;
   border: 0;
 }
+
+/* スキップリンク: 通常は画面外、キーボードフォーカス時のみ左上に表示 */
+.skipLink {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 2000;
+  padding: 10px 16px;
+  background: var(--color-bg-main);
+  color: var(--color-text-main);
+  border: 2px solid var(--color-border-dark);
+  border-radius: var(--border-radius);
+  font-weight: bold;
+  transform: translateY(-150%);
+}
+
+.skipLink:focus {
+  transform: translateY(0);
+}
+
+/* スキップリンクの飛び先。フォーカスは受けるがリングは出さない */
+main:focus {
+  outline: none;
+}

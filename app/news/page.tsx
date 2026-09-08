@@ -21,7 +21,7 @@ export default async function Page() {
       <PageReadAloud lang={lang} segments={segments} />
       <NewsListHeading lang={lang} />
       <NewsList articles={data.contents} lang={lang} />
-      <Pagination totalCount={data.totalCount} basePath="/news" />
+      <Pagination totalCount={data.totalCount} basePath="/news" lang={lang} />
     </>
   );
 }

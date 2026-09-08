@@ -10,7 +10,7 @@ type Props = {
 export default function Footer({ lang }: Props) {
   return (
     <footer className={styles.footer}>
-      <nav className={styles.nav}>
+      <nav className={styles.nav} aria-label={ui('navFooter', lang)}>
         <ul className={styles.items}>
           <li className={styles.item}>
             <Link href="/news">{ui('navNews', lang)}</Link>

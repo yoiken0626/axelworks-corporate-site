@@ -29,7 +29,7 @@ export default async function Page(props: Props) {
       <PageReadAloud lang={lang} segments={segments} />
       <NewsListHeading lang={lang} />
       <ArticleList articles={data.contents} lang={lang} />
-      <Pagination totalCount={data.totalCount} current={current} basePath="/news" />
+      <Pagination totalCount={data.totalCount} current={current} basePath="/news" lang={lang} />
     </>
   );
 }
