@@ -1,0 +1,20 @@
+/* ヒーローバナー（「Business／事業内容」）を廃止し、ニュースページと同じく
+   ヘッダー（position:absolute）直下から本文シート（白カード）を始める。 */
+.container {
+  position: relative;
+  background-color: #fff;
+  width: 840px;
+  max-width: calc(100% - 80px);
+  margin: 40px auto 0;
+  /* 上パディングでヘッダー分の帯を確保する */
+  padding: 72px 80px 80px;
+  border-radius: 8px;
+}
+
+@media (max-width: 640px) {
+  .container {
+    max-width: calc(100% - 32px);
+    margin: 24px auto 0;
+    padding: 64px 16px 40px;
+  }
+}

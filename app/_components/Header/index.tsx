@@ -11,10 +11,14 @@ type Props = {
 };
 
 export default function Header({ lang }: Props) {
-  // トップページの最上部と、ヒーローバナーを廃止したニュースページは明るい背景。
-  // それ以外（business / members）は暗いヒーロー画像なので、ナビ・ロゴの色を出し分ける。
+  // トップページの最上部と、ヒーローバナーを廃止したニュース／事業内容ページは明るい背景。
+  // それ以外（members）は暗いヒーロー画像なので、ナビ・ロゴの色を出し分ける。
   const pathname = usePathname();
-  const isLightBg = pathname === '/' || pathname === '/news' || pathname.startsWith('/news/');
+  const isLightBg =
+    pathname === '/' ||
+    pathname === '/news' ||
+    pathname.startsWith('/news/') ||
+    pathname === '/business';
   const variant = isLightBg ? 'light' : 'dark';
 
   return (

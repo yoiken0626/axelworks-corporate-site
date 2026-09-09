@@ -1,46 +1,142 @@
-.list {
+.sections {
+  margin-bottom: 120px;
+}
+
+/* 1セット = 画像 + テキスト。デスクトップは左右分割。
+   DOM 順は「画像 → テキスト」。基本は row-reverse で画像を右／テキストを左に置き、
+   偶数番目だけ row に戻して画像を左／テキストを右にする。
+   → 1・3・5: 画像右／テキスト左、2・4: 画像左／テキスト右 */
+.section {
   display: flex;
-  align-items: flex-start;
-  gap: 40px;
-  margin-bottom: 160px;
-}
-
-.list:nth-child(even) {
   flex-direction: row-reverse;
+  align-items: center;
+  gap: 48px;
+  margin-bottom: 120px;
 }
 
-.logo {
-  height: 40px;
-  width: auto;
+.section:last-child {
+  margin-bottom: 0;
+}
+
+.section:nth-of-type(even) {
+  flex-direction: row;
+}
+
+/* --- アイキャッチ画像（next/image fill + object-fit: cover の枠） --- */
+.media {
+  position: relative;
+  flex: 0 0 44%;
+  aspect-ratio: 4 / 3;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: var(--color-bg-sub);
 }
 
 .image {
-  width: 240px;
-  height: auto;
-  border-radius: var(--border-radius);
+  object-fit: cover;
 }
 
-.flex {
+/* --- テキスト側 --- */
+.body {
   flex: 1;
+  min-width: 0;
 }
 
-.name {
-  margin-bottom: 24px;
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.num {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--color-text-sub);
+}
+
+.badge {
+  font-size: 0.75rem;
+  line-height: 1.6;
+  padding: 2px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+}
+
+.badge[data-status='提供中'] {
+  background-color: var(--color-bg-painted);
+  color: var(--color-text-unpainted);
+  border-color: var(--color-bg-painted);
+}
+
+.badge[data-status='開発中'] {
+  background-color: var(--color-bg-main);
+  color: var(--color-text-main);
+  border-color: var(--color-border-dark);
+}
+
+.badge[data-status='提供準備中'] {
+  background-color: var(--color-bg-sub);
+  color: var(--color-text-sub);
+}
+
+.tag {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--color-text-sub);
+}
+
+.title {
+  font-size: 1.6rem;
+  font-weight: bold;
+  line-height: 1.45;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-size: 1rem;
+  margin-bottom: 16px;
 }
 
 .description {
   font-size: 0.9rem;
+  margin-bottom: 24px;
 }
 
-.action {
+.related {
+  border-top: 1px solid var(--color-border);
+  padding-top: 16px;
+}
+
+.relatedHeading {
+  display: block;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--color-text-sub);
+  margin-bottom: 8px;
+}
+
+.relatedList {
   display: flex;
-  margin-top: 40px;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.85rem;
 }
 
-.list:nth-child(even) .action {
-  justify-content: flex-end;
+.relatedList a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  color: var(--color-text-main);
 }
 
+.relatedList a:hover {
+  color: var(--color-text-sub);
+}
+
+/* --- フッター（既存の採用募集セクション） --- */
 .footer {
   display: flex;
   flex-direction: column;
@@ -56,24 +152,26 @@
   font-weight: bold;
 }
 
-.empty {
-  margin-bottom: 40px;
-}
-
+/* --- スマホ幅（~375px）: 画像が上、テキストが下に縦積み --- */
 @media (max-width: 640px) {
-  .list {
-    display: flex;
-    flex-direction: column-reverse;
-    align-items: center;
-    gap: 40px;
-    margin-bottom: 120px;
+  .sections {
+    margin-bottom: 80px;
   }
 
-  .list:nth-child(even) {
-    flex-direction: column-reverse;
+  .section,
+  .section:nth-of-type(even) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 20px;
+    margin-bottom: 72px;
   }
 
-  .name {
-    text-align: center;
+  .media {
+    flex-basis: auto;
+    width: 100%;
+  }
+
+  .title {
+    font-size: 1.35rem;
   }
 }
