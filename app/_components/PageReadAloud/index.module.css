@@ -25,6 +25,15 @@
   display: flex;
   align-items: center;
   pointer-events: auto;
+  /* スクロールでドック状態へ切り替わるとき、位置変化を滑らかにする */
+  transition: top 0.32s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .globeBar,
+  .controlBar {
+    transition: none;
+  }
 }
 
 /* .container の左右 padding(80px) の中 = 画像の左右の白い余白 */
@@ -35,6 +44,11 @@
 .controlBar {
   right: 18px;
 }
+
+/* デスクトップ（>950px）: 非ドック時点で既に globe 上端 ≈ y52（ヘッダー下端
+   ≈ y53 のすぐ下）＝実質ドック位置なので、ドック時に動かす必要がない。
+   スクロールでヘッダー（position:absolute）が画面外へ出た後も、globe は
+   本文シートの左パディング（白い余白）の上に留まり本文と重ならない。 */
 
 .control {
   display: flex;
@@ -121,6 +135,15 @@
   .controlBar {
     right: 4px;
     top: 96px;
+  }
+
+  /* ドック: ヘッダー画像を過ぎてスクロールすると、画面最上部へせり上げる。
+     この時点でヘッダー（position:absolute）は画面外なので、リング上端が
+     y ≈ 6px（globe 中心 y80 − リング半径 74）でも干渉しない。
+     左右位置は変えない（左へ寄せるとリング左端が画面外へ出るため）。 */
+  .frame[data-docked='true'] .globeBar,
+  .frame[data-docked='true'] .controlBar {
+    top: 30px;
   }
 
   .control {

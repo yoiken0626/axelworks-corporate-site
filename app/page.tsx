@@ -7,7 +7,7 @@ import { ui } from '@/app/_libs/ui-strings';
 import NewsList from '@/app/_components/NewsList';
 import styles from './page.module.css';
 import ButtonLink from '@/app/_components/ButtonLink';
-import HeroSection from '@/app/_components/HeroSection';
+import TopReadAloud from '@/app/_components/TopReadAloud';
 import ContactSection from '@/app/_components/ContactSection';
 
 export default async function Page() {
@@ -45,16 +45,16 @@ export default async function Page() {
   return (
     <>
       <section className={styles.top}>
-        <HeroSection lang={lang} segments={readSegments} latestNews={latestNews} />
+        <TopReadAloud lang={lang} segments={readSegments} latestNews={latestNews} />
       </section>
-      <section className={styles.news}>
+      <section className={styles.news} data-read-aloud-body>
         <h2 className={styles.newsTitle}>{ui('newsHeading', lang)}</h2>
         <NewsList articles={data.contents} lang={lang} />
         <div className={styles.newsLink}>
           <ButtonLink href="/news">{ui('seeMore', lang)}</ButtonLink>
         </div>
       </section>
-      <section className={styles.section}>
+      <section className={styles.section} data-read-aloud-body>
         <div className={styles.horizontal}>
           <div>
             <h2 className={styles.sectionTitleEn}>{ui('businessHeading', lang)}</h2>
@@ -76,7 +76,7 @@ export default async function Page() {
         </div>
       </section>
       <div className={styles.aboutus}>
-        <section className={styles.section}>
+        <section className={styles.section} data-read-aloud-body>
           <div className={styles.horizontal}>
             <Image
               className={styles.aboutusImg}
@@ -118,7 +118,7 @@ export default async function Page() {
           </div>
         </section>
       </div>
-      <section className={styles.section}>
+      <section className={styles.section} data-read-aloud-body>
         <div className={styles.horizontal}>
           <div>
             <h2 className={styles.sectionTitleEn}>{ui('hiringHeading', lang)}</h2>

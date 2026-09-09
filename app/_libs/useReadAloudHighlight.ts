@@ -9,8 +9,10 @@ import { stripReadAloudMarks } from './read-aloud-marks';
  * 読み上げ中の「文」をタイトル・本文上でハイライトするフック（CSS Custom Highlight API）。
  *
  * - 対象は `[data-read-aloud-title]`（記事タイトル H1）と `[data-read-aloud-body]`
- *   （本文）の中のテキスト。目次は対象外。タイトルは句点が無いことが多いので
- *   チャンク全体を 1 文として扱う。
+ *   （本文）の中のテキスト。`[data-read-aloud-body]` は文書内に複数あってもよい
+ *   （例: トップページの News/Business/About/Hiring 各セクション）。querySelectorAll
+ *   の返す文書順がそのままチャンクの表示順と対応する前提。目次は対象外。
+ *   タイトルは句点が無いことが多いのでチャンク全体を 1 文として扱う。
  * - 読み上げ単位（チャンク）は複数の文を含むため、チャンク丸ごとを点灯すると
  *   記事の半分ほどが光ってしまう。そこでハイライトは「文単位」にする:
  *   - どのチャンクを再生中かは `activeChunk`。
@@ -30,6 +32,13 @@ const HIGHLIGHT_NAME = 'read-aloud';
 const TITLE_SELECTOR = '[data-read-aloud-title]';
 const BODY_SELECTOR = '[data-read-aloud-body]';
 const SKIP_SELECTOR = 'pre, code, script, style';
+
+// TODO(debug): 読み上げハイライトが出ない件の調査用ログ。原因確定後に削除する。
+// ブラウザのコンソールで "[read-aloud-highlight]" で絞り込める。
+const DBG = '[read-aloud-highlight]';
+const dbg = (...args: unknown[]): void => {
+  if (typeof console !== 'undefined') console.log(DBG, ...args);
+};
 
 const stripWs = (s: string): string => s.replace(/\s+/g, '');
 
@@ -145,17 +154,45 @@ export function useReadAloudHighlight({
   const chunksKey = chunks.join(' ');
   const segmentsKey = chunkSegments.join(',');
 
+  // (0) フック配線の調査ログ（1回だけ）。このログが出ないページ =
+  //     useReadAloudHighlight がそもそも呼ばれていない。
+  useEffect(() => {
+    dbg('hook mounted', {
+      path: typeof location !== 'undefined' ? location.pathname : '(ssr)',
+      highlightApiSupported: isSupported(),
+      segments: chunks.length,
+      titleEls: document.querySelectorAll(TITLE_SELECTOR).length,
+      bodyEls: document.querySelectorAll(BODY_SELECTOR).length,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // (1) タイトル / 本文 DOM とチャンク集合から「文ごとの Range」を組み立てる
   useEffect(() => {
-    if (!isSupported()) return;
+    if (!isSupported()) {
+      dbg('effect(1): Highlight API 非対応のため何もしない');
+      return;
+    }
     const titleEl = document.querySelector<HTMLElement>(TITLE_SELECTOR);
-    const bodyEl = document.querySelector<HTMLElement>(BODY_SELECTOR);
+    const bodyEls = Array.from(document.querySelectorAll<HTMLElement>(BODY_SELECTOR));
     // タイトル → 本文の順。チャンク（segment 0 = タイトル, 1+ = 本文）と並びを合わせる。
-    const roots = [titleEl, bodyEl].filter((el): el is HTMLElement => el != null);
-    if (roots.length === 0) return;
+    // 本文はページ内に複数箇所（トップページの News/Business/About/Hiring 各セクション等）
+    // 散らばっていてもよい。querySelectorAll は文書順を返すので、そのままチャンクの
+    // 表示順と一致する。
+    const roots = [titleEl, ...bodyEls].filter((el): el is HTMLElement => el != null);
+    if (roots.length === 0) {
+      dbg('effect(1): [data-read-aloud-title]/[data-read-aloud-body] が両方見つからない → ハイライト対象なし', {
+        titleEl: !!titleEl,
+        bodyEls: bodyEls.length,
+      });
+      return;
+    }
 
     const { chars, flat, flatToChar } = buildCharIndex(roots);
-    if (chars.length === 0) return;
+    if (chars.length === 0) {
+      dbg('effect(1): 対象要素にテキストが無い（chars.length === 0）');
+      return;
+    }
 
     const sentenceRanges: SentenceRange[] = [];
     const chunkTotals = new Map<number, number>();
@@ -203,6 +240,11 @@ export function useReadAloudHighlight({
     sentenceRangesRef.current = sentenceRanges;
     chunkTotalsRef.current = chunkTotals;
     activeIdxRef.current = -1;
+    dbg('effect(1): 文ごとの Range 構築', {
+      roots: roots.length,
+      chars: chars.length,
+      sentenceRanges: sentenceRanges.length,
+    });
 
     return () => {
       sentenceRangesRef.current = [];
@@ -223,16 +265,21 @@ export function useReadAloudHighlight({
       activeIdxRef.current = idx;
       if (idx < 0) {
         clearHighlight();
+        dbg('setActive: ハイライト消灯');
         return;
       }
       try {
         CSS.highlights.set(HIGHLIGHT_NAME, new Highlight(list[idx].range));
-      } catch {
-        /* noop */
+        dbg('setActive: ハイライト点灯', { idx, text: list[idx].range.toString().slice(0, 30) });
+      } catch (e) {
+        dbg('setActive: CSS.highlights.set が例外', e);
       }
     };
 
     if (activeChunk < 0 || list.length === 0) {
+      if (activeChunk >= 0 && list.length === 0) {
+        dbg('effect(2): 再生中だが sentenceRanges が空 → 点灯できない');
+      }
       setActive(-1);
       return;
     }
@@ -240,6 +287,7 @@ export function useReadAloudHighlight({
     const inChunk = list.filter((s) => s.chunkIndex === activeChunk);
     if (inChunk.length === 0) {
       // このチャンクに対応する DOM 範囲が取れなかった（タイトル要素なし等）：ハイライトなし
+      dbg('effect(2): activeChunk に対応する Range が無い', { activeChunk });
       setActive(-1);
       return;
     }

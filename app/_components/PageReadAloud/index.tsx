@@ -5,6 +5,7 @@ import { ui } from '@/app/_libs/ui-strings';
 import { type Lang } from '@/app/_libs/lang';
 import { useReadAloud, READ_ALOUD_MIN_RATE, READ_ALOUD_MAX_RATE } from '@/app/_libs/useReadAloud';
 import { useReadAloudHighlight } from '@/app/_libs/useReadAloudHighlight';
+import { useScrollDock } from '@/app/_libs/useScrollDock';
 import styles from './index.module.css';
 
 type Props = {
@@ -32,8 +33,13 @@ const StopIcon = () => (
 );
 
 /**
- * ページ右上に固定表示する「地球儀の言語スイッチャー + 読み上げコントロール」。
+ * ページ上部に固定表示する「地球儀の言語スイッチャー + 読み上げコントロール」。
  * ContactGlobe と同じ position:fixed パターン。口パク同期は無し（コントロールのみ）。
+ *
+ * スクロール位置に応じて表示位置を切り替える:
+ * - ページ上部（ヘッダー画像に重なる高さ）にいる間は、画像の左右の白い余白に配置
+ * - ヘッダー画像の下端（センチネル）を過ぎたら、画面最上部へせり上げる（ドック）
+ *   ヘッダーは position:absolute でこの時点では画面外なのでリングと干渉しない。
  */
 export default function PageReadAloud({ lang, segments }: Props) {
   const { status, rate, setRate, toggle, stop, chunks, chunkSegments, activeChunk, chunkProgress } =
@@ -43,12 +49,15 @@ export default function PageReadAloud({ lang, segments }: Props) {
   // 再生位置を画面内に追従させる。本文が無いページでは何もしない。
   useReadAloudHighlight({ chunks, chunkSegments, activeChunk, chunkProgress, follow: true });
 
+  // ヘッダー画像直後のセンチネルが画面上端より上へ出たら「ドック」状態にする。
+  const docked = useScrollDock();
+
   return (
     // 本文シート（.container）と同じ幅・センタリングで固定表示する枠。
     // この枠の左右パディング相当の余白（＝ヘッダー画像の左右の白い部分）に
     // 地球儀・読み上げコントロールを置くので、ビューポート幅が変わっても
     // 画像の左上・右上の角に追従する。枠自体はクリックを透過させる。
-    <div className={styles.frame}>
+    <div className={styles.frame} data-docked={docked}>
       {/* 地球儀はヘッダー画像の左上の余白、読み上げコントロールは右上の余白に置く。 */}
       <div className={styles.globeBar}>
         <div className={styles.globe}>

@@ -4,12 +4,18 @@
   margin: 0 auto;
 }
 
-/* --- ヒーロー画像の右上に重ねる小型フローティングコントロール --- */
+/* ヒーロー画像の右上に重ねる小型の再生コントロール。地球儀は既にイラストに
+   埋め込まれているので、ここには置かない（News/記事ページの PageReadAloud とは
+   異なり地球儀バーは無し）。常に position:fixed でビューポート基準に固定表示し、
+   スクロールしても画面上の同じ位置に留まる。見た目上は .section（ヒーロー画像の
+   コンテナ）の右上角に重なって見えるよう、実際の top/right は index.tsx 側で
+   .section の実測値から計算して inline style で上書きする。ここでの top/right
+   は JS 実行前（SSR/ハイドレーション前）の暫定値（デスクトップ想定）。 */
 .control {
-  position: absolute;
+  position: fixed;
   top: 10px;
   right: 10px;
-  z-index: 3;
+  z-index: 900;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -64,18 +70,20 @@
   text-align: right;
 }
 
-@media (max-width: 640px) {
+/* スマホ（縦・横どちらも 950px 以下。記事・ニュース一覧の PageReadAloud と同じ
+   しきい値で、横向き 812〜932px 幅も含める）。top/right は JS 実行前の暫定値
+   （index.tsx が .section の実測値から計算した値で上書きする）。サイズは
+   タップしやすいよう調整する。 */
+@media (max-width: 950px) {
   .section {
     width: 100%;
   }
 
-  /* 地球儀・吹き出しと重ならないよう、右上で1行のまま小さくまとめる */
   .control {
     top: 6px;
     right: 6px;
     gap: 3px;
     padding: 3px 5px 3px 3px;
-    border-radius: 999px;
   }
 
   /* スマホは指で押しやすいよう最低 44x44 のタップ領域を確保 */

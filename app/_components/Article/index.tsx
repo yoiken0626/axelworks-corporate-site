@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { formatRichText } from '@/app/_libs/utils';
 import { buildToc, TOC_MIN_HEADINGS } from '@/app/_libs/toc';
 import { type Article, localizedTitle, localizedContent } from '@/app/_libs/microcms';
+import { SCROLL_DOCK_SENTINEL_ID } from '@/app/_libs/scroll-dock';
 import PublishedDate from '../Date';
 import styles from './index.module.css';
 import Category from '../Category';
@@ -32,6 +33,9 @@ export default function Article({ data, lang }: Props) {
           height={data.thumbnail?.height}
         />
       )}
+      {/* ヘッダー画像の下端。ここが画面上端より上へ出たら PageReadAloud が
+          地球儀・読み上げ UI を画面最上部へせり上げる（app/_libs/scroll-dock.ts）。 */}
+      <div id={SCROLL_DOCK_SENTINEL_ID} aria-hidden="true" />
       <h1 className={styles.title} data-read-aloud-title>{title}</h1>
       <div className={styles.meta}>
         <Category category={data.category} />

@@ -6,6 +6,7 @@ import Pagination from '@/app/_components/Pagination';
 import ArticleList from '@/app/_components/NewsList';
 import NewsListHeading from '@/app/_components/NewsListHeading';
 import PageReadAloud from '@/app/_components/PageReadAloud';
+import { SCROLL_DOCK_SENTINEL_ID } from '@/app/_libs/scroll-dock';
 
 type Props = {
   params: Promise<{
@@ -28,6 +29,9 @@ export default async function Page(props: Props) {
     <>
       <PageReadAloud lang={lang} segments={segments} />
       <NewsListHeading lang={lang} />
+      {/* 見出しの下端。ここが画面上端より上へ出たら地球儀・読み上げ UI を
+          画面最上部へせり上げる（app/_libs/scroll-dock.ts）。 */}
+      <div id={SCROLL_DOCK_SENTINEL_ID} aria-hidden="true" />
       <ArticleList articles={data.contents} lang={lang} />
       <Pagination totalCount={data.totalCount} current={current} basePath="/news" lang={lang} />
     </>
