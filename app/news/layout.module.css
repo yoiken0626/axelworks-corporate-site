@@ -11,7 +11,11 @@
   width: 840px;
   max-width: calc(100% - 80px);
   margin: 40px auto 0;
-  padding: 64px 80px 80px;
+  /* 上パディングで「ヘッダー分＋地球儀・読み上げUI の帯」を確保する。
+     地球儀を全ブレークポイントで同じ大きさ（--gls-size: 52px）に統一した
+     ため、国旗リングの最大展開分もこの余白に収まるよう 116px 取る
+     （PageReadAloud .globeBar の top: 56px と対応。スマホは下の @media 参照）。 */
+  padding: 116px 80px 80px;
   border-radius: 8px;
 }
 

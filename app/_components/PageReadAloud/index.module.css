@@ -20,8 +20,12 @@
 .globeBar,
 .controlBar {
   position: absolute;
-  /* .container の padding-top(64px) の帯（画像の上の白い余白）の中に収める */
-  top: 12px;
+  /* .container の padding-top(116px) の帯（画像の上の白い余白）の中に収める。
+     地球儀を全ブレークポイントで同じ大きさ（--gls-size: 52px）にした結果、
+     国旗リングを最大展開したときの上端 ≈ frame(40) + 56 + 26 − 54(リング) − 20
+     ≈ y48 となり、ヘッダーロゴ下端（≈ y41）より下に収まる（＝スマホと同じく
+     上パディングでロゴとの重なりを解消する）。 */
+  top: 56px;
   display: flex;
   align-items: center;
   pointer-events: auto;
@@ -45,10 +49,9 @@
   right: 18px;
 }
 
-/* デスクトップ（>950px）: 非ドック時点で既に globe 上端 ≈ y52（ヘッダー下端
-   ≈ y53 のすぐ下）＝実質ドック位置なので、ドック時に動かす必要がない。
-   スクロールでヘッダー（position:absolute）が画面外へ出た後も、globe は
-   本文シートの左パディング（白い余白）の上に留まり本文と重ならない。 */
+/* デスクトップ（>950px）: globe 上端 ≈ y96。ドック時に動かす必要はない
+   （スクロールでヘッダーが画面外へ出た後、globe は画面上部・本文シートの
+   左パディング＝白い余白の上に留まり本文と重ならない）。 */
 
 .control {
   display: flex;
@@ -107,15 +110,20 @@
 
 .globe {
   flex-shrink: 0;
-  --gls-size: 42px;
-  --gls-ring-radius: 100%;
-  --gls-flag-size: 50%;
+  /* 地球儀は全ブレークポイント（PC・スマホ横・スマホ縦）で同じ大きさに
+     統一する。指で押しやすいよう大きめに取る:
+     国旗アイコン 1 つ ≒ --gls-size * --gls-flag-size ≒ 52 * 0.77 ≒ 40px
+     （タップ目安 44px に近づける）。リング半径も本体に合わせて拡大。 */
+  --gls-size: 52px;
+  --gls-ring-radius: 104%;
+  --gls-flag-size: 77%;
   filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.28));
 }
 
-/* スマホ縦向き・横向き（およびタブレット）。デスクトップ（>950px）は不変。
-   横向きも縦向きと同じ地球儀サイズ・同じ余白にするため、1つの条件で
-   縦横を両方カバーする（横向き = 812〜932px 幅も含める）。 */
+/* スマホ縦向き・横向き（およびタブレット）。地球儀の大きさ（--gls-size）は
+   全ブレークポイント共通なので、ここでは帯（.frame / .globeBar / .controlBar）
+   の位置・余白だけをスマホ用に上書きする。横向きも縦向きと同じ扱いにするため
+   1つの条件で縦横を両方カバーする（横向き = 812〜932px 幅も含める）。 */
 @media (max-width: 950px) {
   .frame {
     top: 24px; /* = スマホの .container margin-top */
@@ -167,15 +175,5 @@
 
   .speedValue {
     display: none;
-  }
-
-  /* スマホは指で押しやすいよう地球儀 UI 全体を拡大する（縦横で同一サイズ）。
-     国旗アイコン 1 つ = --gls-size * --gls-flag-size ≒ 52 * 0.77 ≒ 40px
-     （拡大前は 34 * 0.42 ≒ 14px。タップ目安 44px にできるだけ近づける）。
-     リング半径も本体・アイコンに合わせて拡大。 */
-  .globe {
-    --gls-size: 52px;
-    --gls-ring-radius: 104%;
-    --gls-flag-size: 77%;
   }
 }
