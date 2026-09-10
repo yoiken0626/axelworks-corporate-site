@@ -484,6 +484,38 @@ const UI_STRINGS = {
     ru: 'Смотреть вакансии',
   },
 
+  // 事業内容ページ末尾の問い合わせ誘導セクション（トップの商談予約フォームへ遷移）
+  businessContactHeading: {
+    ja: 'お問い合わせ',
+    en: 'Contact',
+    ko: '문의하기',
+    zh: '联系我们',
+    de: 'Kontakt',
+    fr: 'Contact',
+    es: 'Contacto',
+    ru: 'Связаться с нами',
+  },
+  businessContactBody: {
+    ja: 'ご相談・お見積もりなど、お気軽にお問い合わせください。',
+    en: 'Questions, estimates, or an idea to talk through — feel free to get in touch.',
+    ko: '상담·견적 등 무엇이든 편하게 문의해 주세요.',
+    zh: '咨询、报价或任何想法，都欢迎随时与我们联系。',
+    de: 'Ob Beratung, Kostenvoranschlag oder erste Idee – kontaktieren Sie uns gern.',
+    fr: 'Questions, devis ou simple idée à échanger : n’hésitez pas à nous contacter.',
+    es: 'Consultas, presupuestos o cualquier idea que quiera comentar: escríbanos sin compromiso.',
+    ru: 'Консультация, смета или просто идея для обсуждения — напишите нам.',
+  },
+  businessContactLink: {
+    ja: 'お問い合わせフォームへ',
+    en: 'Go to the contact form',
+    ko: '문의 폼으로 이동',
+    zh: '前往咨询表单',
+    de: 'Zum Kontaktformular',
+    fr: 'Accéder au formulaire de contact',
+    es: 'Ir al formulario de contacto',
+    ru: 'Перейти к форме обращения',
+  },
+
   // ----- Contact セクション（左カラム） -----
   contactEyebrow: { ja: 'CONTACT' },
   contactHeadingLead: {

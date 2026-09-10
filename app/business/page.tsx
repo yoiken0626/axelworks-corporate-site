@@ -1,4 +1,7 @@
 import Image from 'next/image';
+import { cookies } from 'next/headers';
+import { LANG_COOKIE, resolveLang } from '@/app/_libs/lang';
+import { ui } from '@/app/_libs/ui-strings';
 import styles from './page.module.css';
 import ButtonLink from '@/app/_components/ButtonLink';
 
@@ -30,7 +33,16 @@ const sections: Section[] = [
       '顧客ごとに一から作り直すのではなく、まず自分自身が最初のユーザーになり、動くものを作った上で、複数の企業に展開できる構造に設計します。自分自身のnote.comのフォロワーデータを分析するアプリとして開発をスタートし、現在は複数アカウントを横断的に分析できる、マルチテナント型のSaaSへと発展させています。',
     image: '/business-saas.png',
     imageAlt: 'マルチテナント型SaaS開発のイメージ',
-    links: [],
+    links: [
+      {
+        label: '記事「マルチテナント型SaaSの開発はまず自分から：デモサイト有り」を読む',
+        href: 'https://note.com/gentle_hawk873/n/nef80514fd7b0',
+      },
+      {
+        label: '記事「GeminiとGASで作るnoteフォロワー推移グラフ」を読む',
+        href: 'https://note.com/gentle_hawk873/n/nf146ceb16654',
+      },
+    ],
   },
   {
     status: '提供中',
@@ -41,7 +53,20 @@ const sections: Section[] = [
       'このAXelWorksのサイト自体が、まさにその実例です。日本語で記事を書くだけで7言語へ自動翻訳される仕組み、3D地球儀のUIでの言語切り替え、音声読み上げ機能まで、すべて自社サイトで実装・運用しています。',
     image: '/business-multilingual.png',
     imageAlt: '8か国語対応コーポレートサイト・LP制作のイメージ',
-    links: [],
+    links: [
+      {
+        label: '記事「Claude Code Proプランでもここまでできた──相談→指示→実装のリレー開発術」を読む',
+        href: 'https://note.com/gentle_hawk873/n/n5086a0dbc182',
+      },
+      {
+        label: '記事「口パクつき音声読み上げ機能（日英韓）を追加してみた」を読む',
+        href: 'https://note.com/gentle_hawk873/n/n6aa293158c5c',
+      },
+      {
+        label: '記事「ChatGPTのSites機能でメンバーシップ誘導LPを作ってみた」を読む',
+        href: 'https://note.com/gentle_hawk873/n/n143f9e9008d1',
+      },
+    ],
   },
   {
     status: '提供中',
@@ -52,7 +77,16 @@ const sections: Section[] = [
       '候補日時をその場で選んで送信するだけで、アポイントが確定します。メールでの日程調整という時間のかかるやり取りを省略できる仕組みで、コーポレートサイト、サービスサイト、LPなど、あらゆる媒体に組み込むことで、成約までの導線を強化します。このサイトの一番下にある予約フォームも、この仕組みそのものです。',
     image: '/business-booking.png',
     imageAlt: '商談予約フォームの仕組みのイメージ',
-    links: [],
+    links: [
+      {
+        label: '記事「ココナラで受託開発と保守をサブスク販売する」を読む',
+        href: 'https://note.com/gentle_hawk873/n/n0e780bf4ea8a',
+      },
+      {
+        label: '記事「ChatGPTのSitesで作るマイクロ法人サイト」を読む',
+        href: 'https://note.com/gentle_hawk873/n/nbe92d60095ce',
+      },
+    ],
   },
   {
     status: '提供中',
@@ -63,7 +97,16 @@ const sections: Section[] = [
       '生成AIの基本的な使い方から、業務別のプロンプト活用、安全に使うためのルールまで、専門用語ではなく体験を通じてお伝えします。30年以上にわたる指導実績を持つタッチタイピング研修も、AI時代の入力スキルとしてご提供しています。',
     image: '/business-training.png',
     imageAlt: 'AI・IT研修、タッチタイピング研修のイメージ',
-    links: [],
+    links: [
+      {
+        label: '記事「1週間バーチャルIT&AI留学 Day1：英会話×タイピング×AI活用」を読む',
+        href: 'https://note.com/gentle_hawk873/n/n2fb44870b7a7',
+      },
+      {
+        label: '記事「AI時代のタッチタイピング Vol.1 手元を見ない勇気」を読む',
+        href: 'https://note.com/gentle_hawk873/n/n3491ab90f4b0',
+      },
+    ],
   },
   {
     status: '提供中',
@@ -74,11 +117,41 @@ const sections: Section[] = [
       'サイトやシステムは、作って終わりではなく、育てていくものだと考えています。公開後の定期的なメンテナンス、不具合対応、機能追加まで、継続的な保守運用サービスとして提供しています。',
     image: '/business-maintenance.png',
     imageAlt: '保守運用のイメージ',
-    links: [],
+    links: [
+      {
+        label: '記事「ココナラで受託開発と保守をサブスク販売する」を読む',
+        href: 'https://note.com/gentle_hawk873/n/n0e780bf4ea8a',
+      },
+      {
+        label: '記事「エージェント経由でも中抜きされない受託体制の作り方」を読む',
+        href: 'https://note.com/gentle_hawk873/n/n3fe63d2efef3',
+      },
+    ],
+  },
+  {
+    status: '提供中',
+    category: 'FOR BUSINESS',
+    title: 'AX/DX 社内ナレッジマネジメント・リスキリング支援',
+    subtitle: '現場の「気づき」を、チームの資産に変える',
+    description:
+      'エンジニアに頼らなくても、現場の担当者自身がAIを使って自分の業務を改善できます。人間専用になってしまったExcelをAIが読み書きできる形に整えるところから始め、属人化したノウハウをチームで共有・活用できる「ナレッジが循環する仕組み」まで、実践的にご支援します。',
+    image: '/business-knowledge.png',
+    imageAlt: 'AX/DX 社内ナレッジマネジメント・リスキリング支援のイメージ',
+    links: [
+      {
+        label: '記事「あなたのExcelは『人間専用』になっていませんか？」を読む',
+        href: 'https://note.com/gentle_hawk873/n/nf7fe1dcadce6',
+      },
+      {
+        label: '記事「なぜナレッジは個人の頭の中に留まるのか」を読む',
+        href: 'https://note.com/gentle_hawk873/n/n5345b20fd0e4',
+      },
+    ],
   },
 ];
 
-export default function Page() {
+export default async function Page() {
+  const lang = resolveLang((await cookies()).get(LANG_COOKIE)?.value);
   return (
     <>
       <div className={styles.sections}>
@@ -115,7 +188,9 @@ export default function Page() {
                     <ul className={styles.relatedList}>
                       {section.links.map((link) => (
                         <li key={link.label}>
-                          <a href={link.href}>{link.label}</a>
+                          <a href={link.href} target="_blank" rel="noopener noreferrer">
+                            {link.label}
+                          </a>
                         </li>
                       ))}
                     </ul>
@@ -128,9 +203,9 @@ export default function Page() {
       </div>
 
       <div className={styles.footer}>
-        <h2 className={styles.message}>We are hiring</h2>
-        <p>私たちは共にチャレンジする仲間を募集しています。</p>
-        <ButtonLink href="">採用情報へ</ButtonLink>
+        <h2 className={styles.message}>{ui('businessContactHeading', lang)}</h2>
+        <p>{ui('businessContactBody', lang)}</p>
+        <ButtonLink href="/#contact-form">{ui('businessContactLink', lang)}</ButtonLink>
       </div>
     </>
   );
