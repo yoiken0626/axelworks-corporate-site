@@ -16,13 +16,16 @@ export default function Footer({ lang }: Props) {
             <Link href="/news">{ui('navNews', lang)}</Link>
           </li>
           <li className={styles.item}>
-            <Link href="/members">{ui('navMembers', lang)}</Link>
-          </li>
-          <li className={styles.item}>
-            <Link href="">{ui('navCareers', lang)}</Link>
+            <Link href="/company">{ui('navAbout', lang)}</Link>
           </li>
           <li className={styles.item}>
             <Link href="/#contact-form">{ui('navContact', lang)}</Link>
+          </li>
+          <li className={styles.item}>
+            <Link href="/terms">{ui('navTerms', lang)}</Link>
+          </li>
+          <li className={styles.item}>
+            <Link href="/privacy">{ui('navPrivacy', lang)}</Link>
           </li>
         </ul>
       </nav>

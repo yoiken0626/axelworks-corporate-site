@@ -1,0 +1,69 @@
+.lead {
+  font-size: 1.9rem;
+  font-weight: bold;
+  line-height: 1.6;
+  margin-bottom: 56px;
+}
+
+.block {
+  margin-bottom: 56px;
+}
+
+.block:last-of-type {
+  margin-bottom: 0;
+}
+
+.heading {
+  font-size: 1.6rem;
+  font-weight: bold;
+  line-height: 1.45;
+  margin-bottom: 16px;
+}
+
+.subheading {
+  font-size: 1.25rem;
+  font-weight: bold;
+  line-height: 1.45;
+  margin-bottom: 16px;
+}
+
+.body {
+  font-size: 0.95rem;
+  line-height: 2;
+}
+
+.repName {
+  margin-top: 32px;
+  font-weight: bold;
+}
+
+.repOrg {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  color: var(--color-text-sub);
+  margin-top: 4px;
+}
+
+.repNote {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
+  font-size: 0.8rem;
+  color: var(--color-text-sub);
+}
+
+@media (max-width: 640px) {
+  .lead {
+    font-size: 1.5rem;
+    margin-bottom: 40px;
+  }
+
+  .block {
+    margin-bottom: 40px;
+  }
+
+  .heading {
+    font-size: 1.35rem;
+  }
+}

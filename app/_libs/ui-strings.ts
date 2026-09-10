@@ -49,25 +49,15 @@ const UI_STRINGS = {
     es: 'Servicios',
     ru: 'Услуги',
   },
-  navMembers: {
-    ja: 'メンバー',
-    en: 'Members',
-    ko: '멤버',
-    zh: '成员',
-    de: 'Team',
-    fr: 'Équipe',
-    es: 'Equipo',
-    ru: 'Команда',
-  },
-  navCareers: {
-    ja: '採用情報',
-    en: 'Careers',
-    ko: '채용 정보',
-    zh: '招聘信息',
-    de: 'Karriere',
-    fr: 'Carrières',
-    es: 'Empleo',
-    ru: 'Карьера',
+  navAbout: {
+    ja: '私たちについて',
+    en: 'Who we are',
+    ko: '회사 소개',
+    zh: '关于我们',
+    de: 'Über uns',
+    fr: 'Qui nous sommes',
+    es: 'Quiénes somos',
+    ru: 'Кто мы',
   },
   navContact: {
     ja: 'お問い合わせ',
@@ -162,7 +152,9 @@ const UI_STRINGS = {
     ru: '(откроется в новой вкладке)',
   },
 
-  // フッター
+  // フッター（法的ページのリンク。日本語のみ）
+  navTerms: { ja: '利用規約' },
+  navPrivacy: { ja: '個人情報保護方針' },
   footerCopyright: {
     ja: '© AXelWorks. All Rights Reserved 2026',
     en: '© AXelWorks. All Rights Reserved 2026',
@@ -230,16 +222,6 @@ const UI_STRINGS = {
     fr: 'Activités',
     es: 'Servicios',
     ru: 'Услуги',
-  },
-  membersPageHeading: {
-    ja: 'メンバー',
-    en: 'Members',
-    ko: '멤버',
-    zh: '成员',
-    de: 'Team',
-    fr: 'Équipe',
-    es: 'Equipo',
-    ru: 'Команда',
   },
 
   // ページ読み上げコントロール

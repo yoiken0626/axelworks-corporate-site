@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-// /news/*・/business・/members はヘッダー/フッターや本文が lang Cookie で
+// /news/*・/business・/company・/terms・/privacy はヘッダー/フッターや本文が lang Cookie で
 // 切り替わる（＝リクエストごとにパーソナライズされる）ため、CDN の公開ISR
 // キャッシュを行わない。
 //
@@ -18,5 +18,5 @@ export function middleware() {
 }
 
 export const config = {
-  matcher: ['/news/:path*', '/business', '/members'],
+  matcher: ['/news/:path*', '/business', '/company', '/terms', '/privacy'],
 };

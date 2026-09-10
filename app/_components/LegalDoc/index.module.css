@@ -1,0 +1,98 @@
+/* 利用規約・個人情報保護方針など、法的文書ページ共通のレイアウト。
+   ヒーローバナーは置かず、ニュース／事業内容ページと同じ白カードで表示する。 */
+.container {
+  position: relative;
+  background-color: #fff;
+  width: 840px;
+  max-width: calc(100% - 80px);
+  margin: 40px auto 0;
+  padding: 72px 80px 80px;
+  border-radius: 8px;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  line-height: 1.4;
+  margin-bottom: 32px;
+}
+
+.notice {
+  font-size: 0.85rem;
+  line-height: 1.9;
+  color: var(--color-text-sub);
+  background-color: var(--color-bg-sub);
+  padding: 16px 20px;
+  border-radius: var(--border-radius);
+  margin-bottom: 8px;
+}
+
+.doc {
+  font-size: 0.95rem;
+}
+
+.doc > :first-child {
+  margin-top: 0;
+}
+
+.doc h2 {
+  font-size: 1.4rem;
+  font-weight: bold;
+  line-height: 1.5;
+  margin: 3rem 0 1rem;
+}
+
+.doc h3 {
+  font-size: 1.15rem;
+  font-weight: bold;
+  line-height: 1.5;
+  margin: 2.4rem 0 0.8rem;
+}
+
+.doc p {
+  margin: 1rem 0;
+  line-height: 2;
+}
+
+.doc ul,
+.doc ol {
+  margin: 1rem 0 1rem 1.6rem;
+  line-height: 2;
+}
+
+.doc ul > li {
+  list-style: disc;
+}
+
+.doc ol > li {
+  list-style: decimal;
+}
+
+.doc li {
+  margin: 0.4rem 0;
+}
+
+.doc a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  .container {
+    max-width: calc(100% - 32px);
+    margin: 24px auto 0;
+    padding: 64px 16px 40px;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .doc h2 {
+    font-size: 1.25rem;
+  }
+
+  .doc h3 {
+    font-size: 1.1rem;
+  }
+}
