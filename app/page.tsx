@@ -33,10 +33,8 @@ export default async function Page() {
     ui('businessBody1', lang),
     ui('businessBody2', lang),
     ui('aboutSubtitle', lang),
-    ui('aboutMission', lang),
-    ui('aboutService1', lang),
-    ui('aboutService2', lang),
-    ui('aboutService3', lang),
+    ui('aboutLead', lang),
+    ui('aboutSummary', lang),
     ui('hireMeSubtitle', lang),
     ui('hireMeBody1', lang),
     ui('hireMeBody2', lang),
@@ -88,32 +86,12 @@ export default async function Page() {
             <div>
               <h2 className={styles.sectionTitleEn}>{ui('aboutHeading', lang)}</h2>
               <p className={styles.sectionTitleJa}>{ui('aboutSubtitle', lang)}</p>
-              <p className={styles.sectionDescription}>{ui('aboutMission', lang)}</p>
-              <ul className={styles.businessList}>
-                <li>{ui('aboutService1', lang)}</li>
-                <li>{ui('aboutService2', lang)}</li>
-                <li>{ui('aboutService3', lang)}</li>
-              </ul>
-              <dl className={styles.info}>
-                <dt className={styles.infoTitle}>{ui('aboutInfoCompany', lang)}</dt>
-                <dd className={styles.infoDescription}>AXelWorks</dd>
-              </dl>
-              <dl className={styles.info}>
-                <dt className={styles.infoTitle}>{ui('aboutInfoFounded', lang)}</dt>
-                <dd className={styles.infoDescription}>{ui('aboutInfoTBD', lang)}</dd>
-              </dl>
-              <dl className={styles.info}>
-                <dt className={styles.infoTitle}>{ui('aboutInfoLocation', lang)}</dt>
-                <dd className={styles.infoDescription}>{ui('aboutInfoTBD', lang)}</dd>
-              </dl>
-              <dl className={styles.info}>
-                <dt className={styles.infoTitle}>{ui('aboutInfoRepresentative', lang)}</dt>
-                <dd className={styles.infoDescription}>{ui('aboutRepName', lang)}</dd>
-              </dl>
-              <dl className={styles.info}>
-                <dt className={styles.infoTitle}>{ui('aboutInfoCapital', lang)}</dt>
-                <dd className={styles.infoDescription}>{ui('aboutInfoTBD', lang)}</dd>
-              </dl>
+              <p className={styles.sectionDescription}>
+                {ui('aboutLead', lang)}
+                <br />
+                {ui('aboutSummary', lang)}
+              </p>
+              <ButtonLink href="/company">{ui('seeMore', lang)}</ButtonLink>
             </div>
           </div>
         </section>
