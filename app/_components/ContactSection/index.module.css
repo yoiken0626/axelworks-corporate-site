@@ -5,7 +5,8 @@
   --field-bg: #eef1f8;
   --field-border: #d6dbea;
 
-  background: linear-gradient(150deg, #14142e 0%, #1c1740 55%, #191534 100%);
+  /* 左上（紫）→ 右下（水色）の斜めグラデーション */
+  background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 42%, #2563eb 68%, #22d3ee 100%);
   padding: 120px 24px;
 }
 
@@ -31,7 +32,7 @@
   font-size: 0.8rem;
   font-weight: bold;
   letter-spacing: 0.2em;
-  color: var(--cyan);
+  color: #fff;
   margin-bottom: 24px;
 }
 
@@ -39,7 +40,7 @@
   content: '';
   width: 32px;
   height: 1px;
-  background: var(--cyan);
+  background: #fff;
 }
 
 .heading {
@@ -50,13 +51,13 @@
 }
 
 .headingAccent {
-  color: var(--cyan);
+  color: #fff;
 }
 
 .lead {
   font-size: 0.95rem;
   line-height: 1.9;
-  color: rgba(255, 255, 255, 0.72);
+  color: rgba(255, 255, 255, 0.85);
   margin-bottom: 36px;
 }
 
@@ -72,15 +73,15 @@
   gap: 12px;
   padding: 14px 18px;
   font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.9);
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #fff;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.28);
   border-radius: 12px;
 }
 
 .serviceIcon {
   display: flex;
-  color: var(--cyan);
+  color: #fff;
   flex-shrink: 0;
 }
 
@@ -89,7 +90,7 @@
   background: #fff;
   border-radius: 20px;
   padding: 40px;
-  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 24px 60px rgba(23, 15, 61, 0.3);
 }
 
 .fieldRow {
