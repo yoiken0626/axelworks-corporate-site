@@ -10,7 +10,7 @@ import { stripReadAloudMarks } from './read-aloud-marks';
  *
  * - 対象は `[data-read-aloud-title]`（記事タイトル H1）と `[data-read-aloud-body]`
  *   （本文）の中のテキスト。`[data-read-aloud-body]` は文書内に複数あってもよい
- *   （例: トップページの News/Business/About/Hiring 各セクション）。querySelectorAll
+ *   （例: トップページの News/Business/About/HireMe 各セクション）。querySelectorAll
  *   の返す文書順がそのままチャンクの表示順と対応する前提。目次は対象外。
  *   タイトルは句点が無いことが多いのでチャンク全体を 1 文として扱う。
  * - 読み上げ単位（チャンク）は複数の文を含むため、チャンク丸ごとを点灯すると
@@ -176,7 +176,7 @@ export function useReadAloudHighlight({
     const titleEl = document.querySelector<HTMLElement>(TITLE_SELECTOR);
     const bodyEls = Array.from(document.querySelectorAll<HTMLElement>(BODY_SELECTOR));
     // タイトル → 本文の順。チャンク（segment 0 = タイトル, 1+ = 本文）と並びを合わせる。
-    // 本文はページ内に複数箇所（トップページの News/Business/About/Hiring 各セクション等）
+    // 本文はページ内に複数箇所（トップページの News/Business/About/HireMe 各セクション等）
     // 散らばっていてもよい。querySelectorAll は文書順を返すので、そのままチャンクの
     // 表示順と一致する。
     const roots = [titleEl, ...bodyEls].filter((el): el is HTMLElement => el != null);

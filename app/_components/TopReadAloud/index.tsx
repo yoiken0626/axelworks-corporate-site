@@ -15,7 +15,7 @@ type Props = {
 /**
  * トップページ用の読み上げ配線。HeroQueen の口パクと再生コントロールが同じ音声を
  * 共有するよう useReadAloud はここで 1 つだけ呼び、HeroSection へ渡す。
- * 本文側のハイライト（News/Business/About/Hiring 各セクションの [data-read-aloud-body]）
+ * 本文側のハイライト（News/Business/About/HireMe 各セクションの [data-read-aloud-body]）
  * もここで配線する。
  *
  * 記事・ニュース一覧ページの PageReadAloud と異なり、スクロール位置に応じた

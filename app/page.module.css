@@ -112,7 +112,7 @@
   flex: 1;
 }
 
-.hiringImg {
+.hireMeImg {
   width: 480px;
   height: auto;
   border-radius: var(--border-radius);
@@ -193,7 +193,7 @@
     margin-left: 0;
   }
 
-  .hiringImg {
+  .hireMeImg {
     width: 100%;
     height: auto;
   }

@@ -1,0 +1,97 @@
+/* 通常の記事的レイアウト。事業内容ページ・利用規約ページと同じ白カード上の
+   プローズスタイルに合わせる。 */
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  line-height: 1.4;
+  margin-bottom: 32px;
+}
+
+.body {
+  font-size: 0.95rem;
+}
+
+.body > :first-child {
+  margin-top: 0;
+}
+
+/* タイトル直後の最初の H2 は区切り線・上余白なし */
+.body > h2:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.body h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  line-height: 1.5;
+  margin: 3.2rem 0 1rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.body h3 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  line-height: 1.5;
+  margin: 2.4rem 0 0.8rem;
+}
+
+.body p {
+  margin: 1rem 0;
+  line-height: 2;
+}
+
+.body ul {
+  margin: 1.2rem 0 1.2rem 1.6rem;
+  line-height: 2;
+}
+
+.body ul > li {
+  list-style: disc;
+  margin: 0.4rem 0;
+}
+
+.body a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.body a:hover {
+  color: var(--color-text-sub);
+}
+
+/* --- 末尾のお問い合わせ誘導（事業内容ページと同じ作り） --- */
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-top: 1px solid var(--color-border);
+  margin-top: 64px;
+  padding-top: 40px;
+  text-align: center;
+  gap: 24px;
+}
+
+.message {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+@media (max-width: 640px) {
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .body h2 {
+    font-size: 1.3rem;
+  }
+
+  .body h3 {
+    font-size: 1.1rem;
+  }
+
+  .message {
+    font-size: 1.6rem;
+  }
+}

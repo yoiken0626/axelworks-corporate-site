@@ -37,9 +37,9 @@ export default async function Page() {
     ui('aboutService1', lang),
     ui('aboutService2', lang),
     ui('aboutService3', lang),
-    ui('hiringSubtitle', lang),
-    ui('hiringBody1', lang),
-    ui('hiringBody2', lang),
+    ui('hireMeSubtitle', lang),
+    ui('hireMeBody1', lang),
+    ui('hireMeBody2', lang),
   ];
 
   return (
@@ -121,17 +121,17 @@ export default async function Page() {
       <section className={styles.section} data-read-aloud-body>
         <div className={styles.horizontal}>
           <div>
-            <h2 className={styles.sectionTitleEn}>{ui('hiringHeading', lang)}</h2>
-            <p className={styles.sectionTitleJa}>{ui('hiringSubtitle', lang)}</p>
+            <h2 className={styles.sectionTitleEn}>{ui('hireMeHeading', lang)}</h2>
+            <p className={styles.sectionTitleJa}>{ui('hireMeSubtitle', lang)}</p>
             <p className={styles.sectionDescription}>
-              {ui('hiringBody1', lang)}
+              {ui('hireMeBody1', lang)}
               <br />
-              {ui('hiringBody2', lang)}
+              {ui('hireMeBody2', lang)}
             </p>
-            <ButtonLink href="">{ui('hiringLink', lang)}</ButtonLink>
+            <ButtonLink href="/hire-me">{ui('hireMeLink', lang)}</ButtonLink>
           </div>
           <Image
-            className={styles.hiringImg}
+            className={styles.hireMeImg}
             src="/img-hiring.jpg"
             alt=""
             width={960}

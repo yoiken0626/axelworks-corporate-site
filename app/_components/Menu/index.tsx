@@ -87,6 +87,11 @@ export default function Menu({ lang }: Props) {
             </Link>
           </li>
           <li>
+            <Link href="/hire-me" onClick={closeForNav}>
+              {ui('navHireMe', lang)}
+            </Link>
+          </li>
+          <li>
             <Link href="/#contact-form" onClick={closeForNav}>
               {ui('navContact', lang)}
             </Link>

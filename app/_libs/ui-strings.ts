@@ -152,18 +152,22 @@ const UI_STRINGS = {
     ru: '(откроется в новой вкладке)',
   },
 
+  // ヘッダーナビ（/hire-me。日本語のみ）
+  navHireMe: { ja: '私を採用情報' },
+
   // フッター（法的ページのリンク。日本語のみ）
   navTerms: { ja: '利用規約' },
   navPrivacy: { ja: '個人情報保護方針' },
+  // {year} は Footer 側で現在の年（new Date().getFullYear()）に置換する
   footerCopyright: {
-    ja: '© AXelWorks. All Rights Reserved 2026',
-    en: '© AXelWorks. All Rights Reserved 2026',
-    ko: '© AXelWorks. All Rights Reserved 2026',
-    zh: '© AXelWorks. All Rights Reserved 2026',
-    de: '© AXelWorks. All Rights Reserved 2026',
-    fr: '© AXelWorks. All Rights Reserved 2026',
-    es: '© AXelWorks. All Rights Reserved 2026',
-    ru: '© AXelWorks. All Rights Reserved 2026',
+    ja: '© {year} AXelWorks',
+    en: '© {year} AXelWorks',
+    ko: '© {year} AXelWorks',
+    zh: '© {year} AXelWorks',
+    de: '© {year} AXelWorks',
+    fr: '© {year} AXelWorks',
+    es: '© {year} AXelWorks',
+    ru: '© {year} AXelWorks',
   },
 
   // News セクション
@@ -423,47 +427,18 @@ const UI_STRINGS = {
     ru: 'Кэнъити Ёсида',
   },
 
-  // We are hiring セクション
-  hiringHeading: { ja: 'We are hiring' },
-  hiringSubtitle: {
-    ja: '採用情報',
-    en: 'Careers',
-    ko: '채용 정보',
-    zh: '招聘信息',
-    de: 'Karriere',
-    fr: 'Carrières',
-    es: 'Empleo',
-    ru: 'Карьера',
+  // トップページの「私を採用情報」誘導セクション（/hire-me へ）。
+  // 「私を採用情報」は日本語の言葉遊びのため subtitle / body / link は日本語のみ。
+  hireMeHeading: { ja: 'Hire me' },
+  hireMeSubtitle: { ja: '私を採用情報' },
+  hireMeBody1: {
+    ja: '「採用情報」という言葉ですが、このページで採用されようとしているのは私です。受託でも、雇用でも、私と、一緒に働くAIエージェントたちを、あなたの仕事に組み込んでみませんか。',
   },
-  hiringBody1: {
-    ja: '当社では、チャレンジ精神を持った人材を求めています。',
-    en: 'We are looking for people with a spirit of challenge.',
-    ko: '당사는 도전 정신을 가진 인재를 찾고 있습니다.',
-    zh: '我们正在寻找富有挑战精神的人才。',
-    de: 'Wir suchen Menschen mit Mut zur Herausforderung.',
-    fr: 'Nous recherchons des personnes animées par le goût du défi.',
-    es: 'Buscamos personas con espíritu de superación.',
-    ru: 'Мы ищем людей, готовых принимать вызовы.',
+  hireMeBody2: {
+    ja: '39年のIT業界での経験と、AIエージェントとの新しい働き方について、詳しくご紹介しています。',
   },
-  hiringBody2: {
-    ja: '新しいアイデアを出し合い、成長する環境で活躍したい方は、ぜひご応募ください。当社でのキャリアを築きながら、技術の最前線で力を発揮しましょう。',
-    en: 'If you want to share new ideas and thrive in an environment where you can grow, we encourage you to apply. Build your career with us and put your skills to work at the forefront of technology.',
-    ko: '새로운 아이디어를 함께 나누고 성장하는 환경에서 활약하고 싶은 분은 꼭 지원해 주세요. 당사에서 커리어를 쌓으며 기술의 최전선에서 역량을 발휘해 보세요.',
-    zh: '如果你希望与团队共同碰撞新想法、在不断成长的环境中大展身手，欢迎应聘。在这里成就你的职业生涯，在技术最前沿施展才华。',
-    de: 'Wenn Sie neue Ideen einbringen und in einem Umfeld wachsen möchten, in dem Sie sich entfalten können, freuen wir uns auf Ihre Bewerbung. Gestalten Sie Ihre Laufbahn bei uns und bringen Sie Ihr Können an vorderster Front der Technologie ein.',
-    fr: "Si vous souhaitez partager de nouvelles idées et vous épanouir dans un environnement propice à la croissance, n'hésitez pas à postuler. Construisez votre carrière à nos côtés et mettez vos compétences au service des technologies de pointe.",
-    es: 'Si desea aportar nuevas ideas y desarrollarse en un entorno que impulsa el crecimiento, le animamos a inscribirse. Construya su carrera con nosotros y ponga su talento al servicio de la tecnología más avanzada.',
-    ru: 'Если вы хотите делиться новыми идеями и раскрывать свой потенциал в среде, способствующей росту, будем рады вашему отклику. Постройте карьеру вместе с нами и применяйте свои навыки на переднем крае технологий.',
-  },
-  hiringLink: {
-    ja: '採用情報へ',
-    en: 'View careers',
-    ko: '채용 정보 보기',
-    zh: '查看招聘信息',
-    de: 'Zu den Stellenangeboten',
-    fr: 'Voir les offres',
-    es: 'Ver ofertas de empleo',
-    ru: 'Смотреть вакансии',
+  hireMeLink: {
+    ja: '私を採用情報へ',
   },
 
   // 事業内容ページ末尾の問い合わせ誘導セクション（トップの商談予約フォームへ遷移）
