@@ -13,12 +13,12 @@ type Props = {
   lang?: string;
 };
 
-export default function Article({ data, lang }: Props) {
+export default async function Article({ data, lang }: Props) {
   const title = localizedTitle(data, lang ?? 'ja');
   const content = localizedContent(data, lang ?? 'ja');
 
   // 表示言語の本文から H2 / H3 を抽出し、見出しにアンカー ID を付与する。
-  const { html, toc } = buildToc(formatRichText(content));
+  const { html, toc } = buildToc(await formatRichText(content));
   const showToc = toc.length >= TOC_MIN_HEADINGS;
 
   return (

@@ -4,7 +4,7 @@ import { getNewsDetail, localizedTitle, localizedContent } from '@/app/_libs/mic
 import Article from '@/app/_components/Article';
 import { LANG_COOKIE, resolveLang } from '@/app/_libs/lang';
 import { ui } from '@/app/_libs/ui-strings';
-import { htmlToPlainText } from '@/app/_libs/utils';
+import { htmlToPlainText, formatRichText } from '@/app/_libs/utils';
 import { stripEmoji } from '@/app/_libs/emoji';
 import styles from './page.module.css';
 import ButtonLink from '@/app/_components/ButtonLink';
@@ -56,9 +56,13 @@ export default async function Page(props: Props) {
 
   // 読み上げ対象：記事タイトル＋本文（表示言語に合わせる。未翻訳なら日本語）。
   // 絵文字は発音されると不自然なのでタイトル・本文とも取り除く（表示側の h1 / 目次は元のまま）。
+  // formatRichText() 済みの HTML を渡すことで、リンクカード（data-read-aloud-skip）を
+  // 読み上げ対象から除外する（Article 側の formatRichText 呼び出しとは別に評価されるが、
+  // 内部のOGP取得は Next.js の fetch キャッシュにより重複しない）。
   const title = localizedTitle(data, lang);
   const content = localizedContent(data, lang);
-  const segments = [stripEmoji(title), htmlToPlainText(content || '')].filter(Boolean);
+  const formattedContent = await formatRichText(content || '');
+  const segments = [stripEmoji(title), htmlToPlainText(formattedContent)].filter(Boolean);
 
   return (
     <>

@@ -1,13 +1,9 @@
-import { formatInTimeZone } from 'date-fns-tz';
 import { load } from 'cheerio';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/hybrid.css';
 import { stripEmoji } from './emoji';
 import { READ_ALOUD_PAUSE_MARK, READ_ALOUD_LIST_MARK } from './read-aloud-marks';
-
-export const formatDate = (date: string) => {
-  return formatInTimeZone(new Date(date), 'Asia/Tokyo', 'yyyy/MM/dd');
-};
+import { convertLinkCards } from './link-cards';
 
 // 自サイトのホスト名（記事本文の外部リンク判定で「外部」に含めない）
 const SITE_HOSTNAMES = new Set(['axel-works.com', 'www.axel-works.com', 'localhost']);
@@ -42,7 +38,8 @@ const addExternalLinkAttrs = ($: ReturnType<typeof load>) => {
   });
 };
 
-export const formatRichText = (richText: string) => {
+// 非同期（OGPカード変換のためリンク先を取得する）。呼び出し元は await する必要がある。
+export const formatRichText = async (richText: string): Promise<string> => {
   const $ = load(richText, null, false);
   $('pre code').each((_, elm) => {
     const lang = $(elm).attr('class');
@@ -51,6 +48,9 @@ export const formatRichText = (richText: string) => {
       : hljs.highlightAuto($(elm).text());
     $(elm).html(res.value);
   });
+  // リンクだけの段落をOGPカードに変換する（この後の addExternalLinkAttrs が
+  // カードの <a> にも target="_blank" 等を通常のリンクと同じロジックで付与する）
+  await convertLinkCards($);
   addExternalLinkAttrs($);
   return $.html();
 };
@@ -61,9 +61,12 @@ export const formatRichText = (richText: string) => {
 // 取り除く（目次ラベルには影響しない。buildToc はこの関数を通さない）。
 // 見出し（H1〜H6）とリスト項目（LI）の直前には不可視マーカーを差し込み、読み上げ側が
 // それぞれを独立した単位にして直後に間を置けるようにする。
+// 呼び出し側は formatRichText() 済みの HTML を渡すこと（[data-read-aloud-skip] は
+// formatRichText が作る要素、例えばリンクカードに付く。コード整形・外部リンク属性の
+// 付与はテキスト抽出結果に影響しないため、生の CMS 本文を渡した場合と結果は変わらない）。
 export const htmlToPlainText = (richText: string): string => {
   const $ = load(richText, null, false);
-  $('pre, code, script, style').remove();
+  $('pre, code, script, style, [data-read-aloud-skip]').remove();
   $('p, h1, h2, h3, h4, h5, h6, li, blockquote, figcaption, br, tr').each((_, elm) => {
     $(elm).append('\n');
   });

@@ -31,7 +31,7 @@ import { stripReadAloudMarks } from './read-aloud-marks';
 const HIGHLIGHT_NAME = 'read-aloud';
 const TITLE_SELECTOR = '[data-read-aloud-title]';
 const BODY_SELECTOR = '[data-read-aloud-body]';
-const SKIP_SELECTOR = 'pre, code, script, style';
+const SKIP_SELECTOR = 'pre, code, script, style, [data-read-aloud-skip]';
 
 // TODO(debug): 読み上げハイライトが出ない件の調査用ログ。原因確定後に削除する。
 // ブラウザのコンソールで "[read-aloud-highlight]" で絞り込める。

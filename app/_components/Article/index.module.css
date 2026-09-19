@@ -161,6 +161,84 @@
   padding: 1rem;
 }
 
+/* --- リンクカード（noteなどへの単独リンク段落をOGP情報付きカードに変換したもの） ---
+   app/_libs/link-cards.ts が data-link-card* 属性付きの HTML を生成する。
+   CMS本文由来の要素と同様、CSS Modulesのハッシュ化class名ではなく
+   プレーンな属性セレクタで当てる（.content div[data-filename] と同じ流儀）。 */
+.content > [data-link-card] {
+  margin: 2rem 0;
+}
+
+.content [data-link-card] > a {
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  background-color: var(--color-bg-main);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  text-decoration: none;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.content [data-link-card] > a:hover,
+.content [data-link-card] > a:focus-visible {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
+}
+
+.content [data-link-card-image] {
+  width: 240px;
+  flex-shrink: 0;
+  aspect-ratio: 1.9 / 1;
+  object-fit: cover;
+  display: block;
+}
+
+.content [data-link-card-body] {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+  padding: 16px 20px;
+}
+
+.content [data-link-card-title] {
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--color-text-main);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.content [data-link-card-description] {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--color-text-sub);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.content [data-link-card-sitename] {
+  font-size: 0.75rem;
+  color: var(--color-text-sub);
+}
+
+@media (max-width: 640px) {
+  .content [data-link-card] > a {
+    flex-direction: column;
+  }
+
+  .content [data-link-card-image] {
+    width: 100%;
+  }
+}
+
 @media (max-width: 640px) {
   .title {
     font-size: 1.5rem;
