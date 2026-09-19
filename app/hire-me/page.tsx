@@ -113,7 +113,7 @@ export default function Page() {
       <div className={styles.footer}>
         <h2 className={styles.message}>お問い合わせ</h2>
         <p>ご相談内容が固まっていなくても大丈夫です。お気軽にご連絡ください。</p>
-        <ButtonLink href="/#contact-form">お問い合わせ</ButtonLink>
+        <ButtonLink href="/contact">お問い合わせ</ButtonLink>
       </div>
     </>
   );

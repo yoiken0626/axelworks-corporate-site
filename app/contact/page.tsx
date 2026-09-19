@@ -1,15 +1,8 @@
-import styles from './page.module.css';
-import ContactForm from '@/app/_components/ContactForm';
+import { cookies } from 'next/headers';
+import { LANG_COOKIE, resolveLang } from '@/app/_libs/lang';
+import ContactSection from '@/app/_components/ContactSection';
 
-export default function Page() {
-  return (
-    <div className={styles.container}>
-      <p className={styles.text}>
-        ご質問、ご相談は下記フォームよりお問い合わせください。
-        <br />
-        内容確認後、担当者より通常3営業日以内にご連絡いたします。
-      </p>
-      <ContactForm />
-    </div>
-  );
+export default async function Page() {
+  const lang = resolveLang((await cookies()).get(LANG_COOKIE)?.value);
+  return <ContactSection lang={lang} />;
 }

@@ -205,7 +205,7 @@ export default async function Page() {
       <div className={styles.footer}>
         <h2 className={styles.message}>{ui('businessContactHeading', lang)}</h2>
         <p>{ui('businessContactBody', lang)}</p>
-        <ButtonLink href="/#contact-form">{ui('businessContactLink', lang)}</ButtonLink>
+        <ButtonLink href="/contact">{ui('businessContactLink', lang)}</ButtonLink>
       </div>
     </>
   );
