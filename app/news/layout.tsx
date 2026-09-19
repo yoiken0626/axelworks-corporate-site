@@ -5,9 +5,9 @@ import styles from './layout.module.css';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: 'ニュース｜シンプルなコーポレートサイト',
+  title: '記事一覧｜AXelWorks',
   openGraph: {
-    title: 'ニュース｜シンプルなコーポレートサイト',
+    title: '記事一覧｜AXelWorks',
   },
   alternates: {
     canonical: '/news',

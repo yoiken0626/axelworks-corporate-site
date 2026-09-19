@@ -5,9 +5,9 @@ import styles from './layout.module.css';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: '私を採用情報｜シンプルなコーポレートサイト',
+  title: '私を採用情報｜AXelWorks',
   openGraph: {
-    title: '私を採用情報｜シンプルなコーポレートサイト',
+    title: '私を採用情報｜AXelWorks',
   },
   alternates: {
     canonical: '/hire-me',

@@ -1,3 +1,4 @@
+import { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { getNewsList, localizedTitle } from '@/app/_libs/microcms';
 import { TOP_NEWS_LIMIT } from '@/app/_constants';
@@ -6,6 +7,19 @@ import { ui } from '@/app/_libs/ui-strings';
 import NewsGrid from '@/app/_components/NewsGrid';
 import styles from './page.module.css';
 import TopReadAloud from '@/app/_components/TopReadAloud';
+
+// ルートlayout.tsxはmicroCMSの「meta」エンドポイントからtitleを取得するが、
+// 現状そのコンテンツタイプが無く空になるため、トップページ独自のmetadataで
+// 確実に <title>AXelWorks</title> が出るようにする（layout側のgetMeta()呼び出しは
+// 変更しない。将来「meta」を用意すればそちらが優先される）。
+export const metadata: Metadata = {
+  title: 'AXelWorks',
+  description: 'AIとともに、多言語で世界とつながる',
+  openGraph: {
+    title: 'AXelWorks',
+    description: 'AIとともに、多言語で世界とつながる',
+  },
+};
 
 export default async function Page() {
   const cookieStore = await cookies();

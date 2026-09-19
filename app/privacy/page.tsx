@@ -4,9 +4,9 @@ import LegalDoc from '@/app/_components/LegalDoc';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: '個人情報保護方針｜シンプルなコーポレートサイト',
+  title: '個人情報保護方針｜AXelWorks',
   openGraph: {
-    title: '個人情報保護方針｜シンプルなコーポレートサイト',
+    title: '個人情報保護方針｜AXelWorks',
   },
   alternates: {
     canonical: '/privacy',

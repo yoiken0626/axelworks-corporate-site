@@ -3,9 +3,9 @@ import { LANG_COOKIE, resolveLang } from '@/app/_libs/lang';
 import { ui } from '@/app/_libs/ui-strings';
 
 export const metadata = {
-  title: 'コンタクト｜シンプルなコーポレートサイト',
+  title: 'お問い合わせ｜AXelWorks',
   openGraph: {
-    title: 'コンタクト｜シンプルなコーポレートサイト',
+    title: 'お問い合わせ｜AXelWorks',
   },
   alternates: {
     canonical: '/contact',

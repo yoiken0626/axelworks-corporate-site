@@ -5,9 +5,9 @@ import styles from './layout.module.css';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: '私たちについて｜シンプルなコーポレートサイト',
+  title: '私たちについて｜AXelWorks',
   openGraph: {
-    title: '私たちについて｜シンプルなコーポレートサイト',
+    title: '私たちについて｜AXelWorks',
   },
   alternates: {
     canonical: '/company',
