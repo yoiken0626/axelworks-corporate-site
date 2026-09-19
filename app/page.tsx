@@ -1,14 +1,11 @@
-import Image from 'next/image';
 import { cookies } from 'next/headers';
 import { getNewsList, localizedTitle } from '@/app/_libs/microcms';
 import { TOP_NEWS_LIMIT } from '@/app/_constants';
 import { LANG_COOKIE, resolveLang } from '@/app/_libs/lang';
 import { ui } from '@/app/_libs/ui-strings';
-import NewsList from '@/app/_components/NewsList';
+import NewsGrid from '@/app/_components/NewsGrid';
 import styles from './page.module.css';
-import ButtonLink from '@/app/_components/ButtonLink';
 import TopReadAloud from '@/app/_components/TopReadAloud';
-import ContactSection from '@/app/_components/ContactSection';
 
 export default async function Page() {
   const cookieStore = await cookies();
@@ -24,21 +21,12 @@ export default async function Page() {
     ? { slug: latest.id, title: localizedTitle(latest, lang) }
     : null;
 
-  // 読み上げ対象：トップページの主要テキスト（ui-strings の文言＋記事タイトル）を表示順に
+  // 読み上げ対象：ヒーロー＋Newsセクションの見出しと記事タイトル（初回表示分のみ）。
+  // 以前はこの下に Business/About us/Hire me の文言も読み上げていたが、各セクションを
+  // トップページの構成から外した（別ページ化）ため読み上げ対象からも外した。
+  // 「もっと見る」で追加された記事は読み上げ対象外（仕様どおり）。
   const newsTitles = data.contents.map((a) => localizedTitle(a, lang));
-  const readSegments = [
-    ui('newsHeading', lang),
-    ...newsTitles,
-    ui('businessSubtitle', lang),
-    ui('businessBody1', lang),
-    ui('businessBody2', lang),
-    ui('aboutSubtitle', lang),
-    ui('aboutLead', lang),
-    ui('aboutSummary', lang),
-    ui('hireMeSubtitle', lang),
-    ui('hireMeBody1', lang),
-    ui('hireMeBody2', lang),
-  ];
+  const readSegments = [ui('newsHeading', lang), ...newsTitles];
 
   return (
     <>
@@ -47,77 +35,8 @@ export default async function Page() {
       </section>
       <section className={styles.news} data-read-aloud-body>
         <h2 className={styles.newsTitle}>{ui('newsHeading', lang)}</h2>
-        <NewsList articles={data.contents} lang={lang} />
-        <div className={styles.newsLink}>
-          <ButtonLink href="/news">{ui('seeMore', lang)}</ButtonLink>
-        </div>
+        <NewsGrid initialArticles={data.contents} lang={lang} totalCount={data.totalCount} />
       </section>
-      <section className={styles.section} data-read-aloud-body>
-        <div className={styles.horizontal}>
-          <div>
-            <h2 className={styles.sectionTitleEn}>{ui('businessHeading', lang)}</h2>
-            <p className={styles.sectionTitleJa}>{ui('businessSubtitle', lang)}</p>
-            <p className={styles.sectionDescription}>
-              {ui('businessBody1', lang)}
-              <br />
-              {ui('businessBody2', lang)}
-            </p>
-            <ButtonLink href="/business">{ui('seeMore', lang)}</ButtonLink>
-          </div>
-          <Image
-            className={styles.businessImg}
-            src="/img-business.png"
-            alt=""
-            width={1024}
-            height={1024}
-          />
-        </div>
-      </section>
-      <div className={styles.aboutus}>
-        <section className={styles.section} data-read-aloud-body>
-          <div className={styles.horizontal}>
-            <Image
-              className={styles.aboutusImg}
-              src="/img-aboutus.jpg"
-              alt=""
-              width={6000}
-              height={4000}
-            />
-            <div>
-              <h2 className={styles.sectionTitleEn}>{ui('aboutHeading', lang)}</h2>
-              <p className={styles.sectionTitleJa}>{ui('aboutSubtitle', lang)}</p>
-              <p className={styles.sectionDescription}>
-                {ui('aboutLead', lang)}
-                <br />
-                {ui('aboutSummary', lang)}
-              </p>
-              <ButtonLink href="/company">{ui('seeMore', lang)}</ButtonLink>
-            </div>
-          </div>
-        </section>
-      </div>
-      <section className={styles.section} data-read-aloud-body>
-        <div className={styles.horizontal}>
-          <div>
-            <h2 className={styles.sectionTitleEn}>{ui('hireMeHeading', lang)}</h2>
-            <p className={styles.sectionTitleJa}>{ui('hireMeSubtitle', lang)}</p>
-            <p className={styles.sectionDescription}>
-              {ui('hireMeBody1', lang)}
-              <br />
-              {ui('hireMeBody2', lang)}
-            </p>
-            <ButtonLink href="/hire-me">{ui('hireMeLink', lang)}</ButtonLink>
-          </div>
-          <Image
-            className={styles.hireMeImg}
-            src="/img-hiring.jpg"
-            alt=""
-            width={960}
-            height={960}
-          />
-        </div>
-      </section>
-      <ContactSection lang={lang} />
     </>
   );
 }
