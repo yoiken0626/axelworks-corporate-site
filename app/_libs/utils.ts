@@ -9,6 +9,39 @@ export const formatDate = (date: string) => {
   return formatInTimeZone(new Date(date), 'Asia/Tokyo', 'yyyy/MM/dd');
 };
 
+// 自サイトのホスト名（記事本文の外部リンク判定で「外部」に含めない）
+const SITE_HOSTNAMES = new Set(['axel-works.com', 'www.axel-works.com', 'localhost']);
+
+// 記事本文中の外部リンクに target="_blank" / rel="noopener noreferrer" を付与する。
+// http(s) 以外（#アンカー・mailto:・tel: など）や自サイトのリンクは対象外。
+// 既存の rel は残しつつ足りないトークンだけ追加し、target は重複させない。
+const addExternalLinkAttrs = ($: ReturnType<typeof load>) => {
+  $('a[href]').each((_, elm) => {
+    const $elm = $(elm);
+    const href = $elm.attr('href') || '';
+    if (!/^https?:\/\//i.test(href)) {
+      return;
+    }
+    let hostname: string;
+    try {
+      hostname = new URL(href).hostname;
+    } catch {
+      return;
+    }
+    if (SITE_HOSTNAMES.has(hostname)) {
+      return;
+    }
+    $elm.attr('target', '_blank');
+    const existingRel = ($elm.attr('rel') || '').split(/\s+/).filter(Boolean);
+    for (const token of ['noopener', 'noreferrer']) {
+      if (!existingRel.includes(token)) {
+        existingRel.push(token);
+      }
+    }
+    $elm.attr('rel', existingRel.join(' '));
+  });
+};
+
 export const formatRichText = (richText: string) => {
   const $ = load(richText, null, false);
   $('pre code').each((_, elm) => {
@@ -18,6 +51,7 @@ export const formatRichText = (richText: string) => {
       : hljs.highlightAuto($(elm).text());
     $(elm).html(res.value);
   });
+  addExternalLinkAttrs($);
   return $.html();
 };
 
