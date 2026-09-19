@@ -1,44 +1,13 @@
 import { createClient } from 'microcms-js-sdk';
-import type {
-  MicroCMSQueries,
-  MicroCMSImage,
-  MicroCMSDate,
-  MicroCMSContentId,
-} from 'microcms-js-sdk';
+import type { MicroCMSQueries, MicroCMSImage } from 'microcms-js-sdk';
 import { notFound } from 'next/navigation';
 
-// カテゴリーの型定義
-export type Category = {
-  name: string;
-} & MicroCMSContentId &
-  MicroCMSDate;
-
-// 翻訳ステータスの型定義
-export type TranslationStatus = '未処理' | '生成中' | '完了';
-
-// ニュースの型定義
-export type News = {
-  title: string;
-  description: string;
-  content: string;
-  title_en?: string;
-  content_en?: string;
-  title_ko?: string;
-  content_ko?: string;
-  title_zh?: string;
-  content_zh?: string;
-  title_de?: string;
-  content_de?: string;
-  title_fr?: string;
-  content_fr?: string;
-  title_es?: string;
-  content_es?: string;
-  title_ru?: string;
-  content_ru?: string;
-  translation_status?: TranslationStatus[];
-  thumbnail?: MicroCMSImage;
-  category: Category;
-};
+// 型・表示言語解決ロジック（サーバー専用の初期化を含まない）は app/_libs/news.ts に
+// 分離してある。ここではサーバー専用のクライアント初期化・取得関数だけを持ち、
+// 既存の呼び出し元（`from '@/app/_libs/microcms'`）が変更なしで使えるよう再エクスポートする。
+export type { Category, TranslationStatus, News, Article, NewsCardData, NewsListEntry } from './news';
+export { localizedTitle, localizedContent } from './news';
+import type { News, Category } from './news';
 
 // 事業内容の型定義
 export type Business = {
@@ -57,34 +26,6 @@ export type Meta = {
   ogImage?: MicroCMSImage;
   canonical?: string;
 };
-
-export type Article = News & MicroCMSContentId & MicroCMSDate;
-
-// 記事のタイトル / 本文を表示言語に合わせて返す。未翻訳（空）の場合は日本語にフォールバックする。
-const TITLE_FIELD: Record<string, keyof News> = {
-  en: 'title_en',
-  ko: 'title_ko',
-  zh: 'title_zh',
-  de: 'title_de',
-  fr: 'title_fr',
-  es: 'title_es',
-  ru: 'title_ru',
-};
-const CONTENT_FIELD: Record<string, keyof News> = {
-  en: 'content_en',
-  ko: 'content_ko',
-  zh: 'content_zh',
-  de: 'content_de',
-  fr: 'content_fr',
-  es: 'content_es',
-  ru: 'content_ru',
-};
-
-export const localizedTitle = (article: News, lang: string): string =>
-  (TITLE_FIELD[lang] && (article[TITLE_FIELD[lang]] as string | undefined)) || article.title;
-
-export const localizedContent = (article: News, lang: string): string =>
-  (CONTENT_FIELD[lang] && (article[CONTENT_FIELD[lang]] as string | undefined)) || article.content;
 
 if (!process.env.MICROCMS_SERVICE_DOMAIN) {
   throw new Error('MICROCMS_SERVICE_DOMAIN is required');

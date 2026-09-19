@@ -203,6 +203,39 @@ const UI_STRINGS = {
     es: 'Ver todas las noticias',
     ru: 'Все новости',
   },
+  // トップページの記事グリッド「もっと見る」ボタン（読み込み中）
+  loadMoreLoading: {
+    ja: '読み込み中…',
+    en: 'Loading…',
+    ko: '불러오는 중…',
+    zh: '正在加载…',
+    de: 'Wird geladen …',
+    fr: 'Chargement…',
+    es: 'Cargando…',
+    ru: 'Загрузка…',
+  },
+  // 取得失敗時のエラーメッセージ（下にボタンは残るので再度押せる旨は含めない）
+  loadMoreError: {
+    ja: '記事の読み込みに失敗しました。もう一度お試しください。',
+    en: 'Failed to load more articles. Please try again.',
+    ko: '기사를 불러오지 못했습니다. 다시 시도해 주세요.',
+    zh: '加载文章失败，请重试。',
+    de: 'Weitere Artikel konnten nicht geladen werden. Bitte versuchen Sie es erneut.',
+    fr: 'Échec du chargement des articles. Veuillez réessayer.',
+    es: 'No se pudieron cargar más artículos. Inténtelo de nuevo.',
+    ru: 'Не удалось загрузить статьи. Повторите попытку.',
+  },
+  // 追加読み込み完了時の読み上げ用アナウンス（{n} は追加件数）
+  loadMoreAnnouncement: {
+    ja: '{n}件の記事を追加しました',
+    en: 'Added {n} more articles',
+    ko: '기사 {n}건을 추가했습니다',
+    zh: '已添加 {n} 篇文章',
+    de: '{n} weitere Artikel hinzugefügt',
+    fr: '{n} articles supplémentaires ajoutés',
+    es: 'Se añadieron {n} artículos más',
+    ru: 'Добавлено ещё {n} статей',
+  },
 
   // 記事詳細ページの目次
   tocHeading: {
