@@ -30,14 +30,14 @@ const UI_STRINGS = {
 
   // ヘッダー / フッター共通のナビゲーション
   navNews: {
-    ja: 'ニュース',
-    en: 'News',
-    ko: '뉴스',
-    zh: '新闻',
-    de: 'Aktuelles',
-    fr: 'Actualités',
-    es: 'Noticias',
-    ru: 'Новости',
+    ja: '記事',
+    en: 'Articles',
+    ko: '게시글',
+    zh: '文章',
+    de: 'Artikel',
+    fr: 'Articles',
+    es: 'Artículos',
+    ru: 'Статьи',
   },
   navBusiness: {
     ja: '事業内容',
@@ -170,18 +170,27 @@ const UI_STRINGS = {
     ru: '© {year} AXelWorks',
   },
 
-  // News セクション
-  newsHeading: { ja: 'News' },
+  // News セクション（トップページの記事グリッド見出し・読み上げ文言）
+  newsHeading: {
+    ja: '記事',
+    en: 'Articles',
+    ko: '게시글',
+    zh: '文章',
+    de: 'Artikel',
+    fr: 'Articles',
+    es: 'Artículos',
+    ru: 'Статьи',
+  },
   // ニュース一覧ページ（/news, /news/p/N）の h1
   newsListHeading: {
-    ja: 'ニュース一覧',
-    en: 'News',
-    ko: '뉴스 목록',
-    zh: '新闻列表',
-    de: 'Aktuelles',
-    fr: 'Actualités',
-    es: 'Noticias',
-    ru: 'Новости',
+    ja: '記事一覧',
+    en: 'Articles',
+    ko: '게시글 목록',
+    zh: '文章列表',
+    de: 'Artikel',
+    fr: 'Articles',
+    es: 'Artículos',
+    ru: 'Статьи',
   },
   seeMore: {
     ja: 'もっとみる',
@@ -194,14 +203,14 @@ const UI_STRINGS = {
     ru: 'Подробнее',
   },
   newsListLink: {
-    ja: 'ニュース一覧へ',
-    en: 'View all news',
-    ko: '뉴스 목록 보기',
-    zh: '查看全部新闻',
-    de: 'Alle News ansehen',
-    fr: 'Toutes les actualités',
-    es: 'Ver todas las noticias',
-    ru: 'Все новости',
+    ja: '記事一覧へ',
+    en: 'View all articles',
+    ko: '게시글 목록 보기',
+    zh: '查看全部文章',
+    de: 'Alle Artikel ansehen',
+    fr: 'Tous les articles',
+    es: 'Ver todos los artículos',
+    ru: 'Все статьи',
   },
   // トップページの記事グリッド「もっと見る」ボタン（読み込み中）
   loadMoreLoading: {
