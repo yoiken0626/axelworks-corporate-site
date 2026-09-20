@@ -38,6 +38,7 @@ type Props = {
   repeatLap: number;
   toggleRepeat: () => void;
   cacheCapped: boolean;
+  hasError: boolean;
 };
 
 const PlayIcon = () => (
@@ -76,6 +77,7 @@ export default function HeroSection({
   repeatLap,
   toggleRepeat,
   cacheCapped,
+  hasError,
 }: Props) {
   const sectionRef = useRef<HTMLDivElement>(null);
   // position:fixed なコントロールの座標（ビューポート基準）。null の間は
@@ -168,7 +170,17 @@ export default function HeroSection({
         />
         <span className={styles.speedValue}>{rate.toFixed(1)}x</span>
 
-        {cacheCapped && <p className={styles.repeatNote}>{ui('readAloudRepeatUnavailable', lang)}</p>}
+        {(cacheCapped || hasError) && (
+          <div className={styles.notes}>
+            {cacheCapped && <p className={styles.repeatNote}>{ui('readAloudRepeatUnavailable', lang)}</p>}
+            {/* 読み上げ対象のテキストには含めず、見た目にも控えめに表示しつつ aria-live で通知する */}
+            {hasError && (
+              <p className={styles.errorNote} role="status" aria-live="polite">
+                {ui('readAloudError', lang)}
+              </p>
+            )}
+          </div>
+        )}
 
         {/* 繰り返しの進行状況は音声には含めず、aria-live でのみ通知する */}
         <p className="srOnly" role="status" aria-live="polite">

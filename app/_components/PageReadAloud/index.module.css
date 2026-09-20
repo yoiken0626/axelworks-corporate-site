@@ -100,23 +100,40 @@
   white-space: nowrap;
 }
 
-/* キャッシュ上限超過で繰り返しを無効化した旨の控えめな注記。コントロールの
-   ピルの下に、同じ半透明の帯で小さく表示する。 */
-.repeatNote {
+/* キャッシュ上限超過の注記／取得失敗エラーの注記をまとめて置く場所。
+   コントロールのピルの下に、縦積みで小さく表示する。両方同時に出ても重ならない。 */
+.notes {
   position: absolute;
   top: 100%;
   right: 0;
   margin: 4px 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.repeatNote,
+.errorNote {
   max-width: 220px;
   padding: 3px 8px;
   font-size: 10px;
   line-height: 1.4;
-  color: var(--color-text-sub);
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(6px);
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   text-align: right;
+}
+
+.repeatNote {
+  color: var(--color-text-sub);
+}
+
+/* 取得失敗時の控えめなエラー表示。目立たせすぎないよう、サイト共通の
+   赤（--color-text-error）ではなく落ち着いた琥珀色にする。 */
+.errorNote {
+  color: #9a3412;
 }
 
 .divider {
@@ -214,7 +231,8 @@
     display: none;
   }
 
-  .repeatNote {
+  .repeatNote,
+  .errorNote {
     max-width: 160px;
     font-size: 9px;
   }

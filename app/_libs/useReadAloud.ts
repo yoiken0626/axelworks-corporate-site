@@ -137,6 +137,9 @@ export function useReadAloud(segments: string[], lang: Lang) {
   const [repeatLap, setRepeatLap] = useState(0);
   // 音声キャッシュが上限に達し、繰り返し再生を提供できなくなったか
   const [cacheCapped, setCacheCapped] = useState(false);
+  // /api/tts の取得に失敗した（403/429/502等）ため再生が止まったか。
+  // 次に play() を呼ぶ（＝ユーザーが再試行する）まで表示し続ける。
+  const [hasError, setHasError] = useState(false);
 
   const wantLang = resolveLang(lang);
 
@@ -260,6 +263,7 @@ export function useReadAloud(segments: string[], lang: Lang) {
           repeatOnRef.current = false;
           repeatLapRef.current = 0;
           setRepeatLap(0);
+          setHasError(true);
           setStatus('idle');
           setMouthOpen(false);
           setActiveChunk(-1);
@@ -351,6 +355,7 @@ export function useReadAloud(segments: string[], lang: Lang) {
       repeatOnRef.current = false;
       repeatLapRef.current = 0;
       setRepeatLap(0);
+      setHasError(true);
       setStatus('idle');
       chunkIdxRef.current = 0;
       setMouthOpen(false);
@@ -463,7 +468,9 @@ export function useReadAloud(segments: string[], lang: Lang) {
       return;
     }
 
-    // 新規再生
+    // 新規再生。前回のエラー表示があれば、再試行にあたりいったん消す
+    // （失敗すれば playFrom / handleError が再度立てる）。
+    setHasError(false);
     const gen = (genRef.current += 1);
     chunksRef.current = chunkTexts;
     headingsRef.current = chunkHeadings;
@@ -597,6 +604,8 @@ export function useReadAloud(segments: string[], lang: Lang) {
     repeatLap,
     toggleRepeat,
     cacheCapped,
+    // /api/tts 取得失敗時のエラー表示
+    hasError,
     // テキストハイライト用
     chunks: chunkTexts,
     chunkSegments,

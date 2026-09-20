@@ -344,6 +344,18 @@ const UI_STRINGS = {
     es: 'Este artículo es demasiado largo para la repetición.',
     ru: 'Эта статья слишком длинная для повтора воспроизведения.',
   },
+  // /api/tts が失敗した（403/429/502等）ときの控えめなエラー表示。読み上げ対象の
+  // テキストには含めず、aria-live での通知にのみ使う。
+  readAloudError: {
+    ja: '今は読み上げを使えません。しばらくしてからお試しください。',
+    en: "Read-aloud isn't available right now. Please try again later.",
+    ko: '지금은 읽어주기를 사용할 수 없습니다. 잠시 후 다시 시도해 주세요.',
+    zh: '目前无法使用朗读功能，请稍后再试。',
+    de: 'Das Vorlesen ist momentan nicht verfügbar. Bitte versuchen Sie es später erneut.',
+    fr: "La lecture à voix haute n'est pas disponible pour le moment. Veuillez réessayer plus tard.",
+    es: 'La lectura en voz alta no está disponible en este momento. Inténtelo de nuevo más tarde.',
+    ru: 'Озвучивание сейчас недоступно. Повторите попытку позже.',
+  },
 
   // Business セクション
   businessHeading: { ja: 'Business' },
