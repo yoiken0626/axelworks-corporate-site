@@ -10,7 +10,7 @@ export const READ_ALOUD_MIN_RATE = 0.75;
 export const READ_ALOUD_MAX_RATE = 1.5;
 
 // 「繰り返し」ボタンで読み上げる回数。
-export const REPEAT_COUNT = 10;
+export const REPEAT_COUNT = 5;
 
 // 音声キャッシュ（urlCacheRef）の合計サイズの上限（バイト）。/api/tts は従量課金のため、
 // 繰り返し再生は「1周目で生成した音声をキャッシュし、2周目以降はキャッシュを再生する」
