@@ -11,6 +11,8 @@ type Props = {
 
 // grid バリアントのうち、最初から画面に見える段（PC 4列の1行目）だけ優先読み込みする件数
 const PRIORITY_COUNT = 4;
+// list バリアント（/news 一覧）は縦1列なので、最初の数件だけ優先読み込みする
+const LIST_PRIORITY_COUNT = 2;
 
 export default function NewsList({ articles, lang, variant = 'list' }: Props) {
   if (!articles) {
@@ -27,7 +29,9 @@ export default function NewsList({ articles, lang, variant = 'list' }: Props) {
           news={article}
           lang={lang}
           variant={variant}
-          priority={variant === 'grid' && index < PRIORITY_COUNT}
+          priority={
+            variant === 'grid' ? index < PRIORITY_COUNT : index < LIST_PRIORITY_COUNT
+          }
         />
       ))}
     </ul>

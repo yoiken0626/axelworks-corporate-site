@@ -10,13 +10,17 @@ type Props = {
   lang?: string;
   /** 'list'（既定・/news 一覧の横並び行）/ 'grid'（トップページのカードグリッド） */
   variant?: 'list' | 'grid';
-  /** grid バリアントで、画面に最初から見える段のサムネイルを優先読み込みするか */
+  /** 画面に最初から見える段のサムネイルを優先読み込みするか（grid・list 共通） */
   priority?: boolean;
 };
 
 // grid バリアントのサムネイルは PC 4列 / タブレット・スマホ 2列で表示するので、
 // 実際の表示幅に近いサイズを next/image に伝えて配信画像を軽くする。
 const GRID_IMAGE_SIZES = '(max-width: 1000px) 50vw, 25vw';
+
+// list バリアントは、幅640px以下では記事コンテナ幅いっぱい（100vw - 左右余白64px）、
+// それ以外（タブレット・PC）は固定200px幅で表示されるため、実際の表示幅を伝える。
+const LIST_IMAGE_SIZES = '(max-width: 640px) calc(100vw - 64px), 200px';
 
 export default function NewsListItem({ news, lang, variant = 'list', priority = false }: Props) {
   const title = localizedTitle(news, lang ?? 'ja');
@@ -66,6 +70,9 @@ export default function NewsListItem({ news, lang, variant = 'list', priority = 
             className={styles.image}
             width={news.thumbnail?.width}
             height={news.thumbnail?.height}
+            sizes={LIST_IMAGE_SIZES}
+            priority={priority}
+            loading={priority ? undefined : 'lazy'}
           />
         ) : (
           <Image
@@ -74,6 +81,9 @@ export default function NewsListItem({ news, lang, variant = 'list', priority = 
             alt="No Image"
             width={1200}
             height={630}
+            sizes={LIST_IMAGE_SIZES}
+            priority={priority}
+            loading={priority ? undefined : 'lazy'}
           />
         )}
         <dl className={styles.content}>
