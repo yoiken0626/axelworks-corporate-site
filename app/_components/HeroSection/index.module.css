@@ -50,8 +50,10 @@
 }
 
 /* 繰り返しボタンのオン状態。他のボタンは状態でアイコンが変わるだけなので、
-   繰り返しだけ色でオン/オフを示す（本文ハイライトと同系色の青）。 */
-.repeatButton[aria-pressed='true'] {
+   繰り返しだけ色でオン/オフを示す（本文ハイライトと同系色の青）。
+   data-active は RepeatMenu が付与する（aria-haspopup と aria-pressed の併用を
+   避けるため、オン/オフの見た目はこの data 属性で切り替える）。 */
+.repeatButton[data-active='true'] {
   background: #3884ff;
 }
 

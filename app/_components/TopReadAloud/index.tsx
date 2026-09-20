@@ -31,7 +31,9 @@ export default function TopReadAloud({ lang, segments, latestNews }: Props) {
     toggle,
     stop,
     repeatLap,
-    toggleRepeat,
+    repeatTotal,
+    startRepeat,
+    stopRepeat,
     cacheCapped,
     hasError,
     chunks,
@@ -53,7 +55,9 @@ export default function TopReadAloud({ lang, segments, latestNews }: Props) {
       toggle={toggle}
       stop={stop}
       repeatLap={repeatLap}
-      toggleRepeat={toggleRepeat}
+      repeatTotal={repeatTotal}
+      startRepeat={startRepeat}
+      stopRepeat={stopRepeat}
       cacheCapped={cacheCapped}
       hasError={hasError}
     />

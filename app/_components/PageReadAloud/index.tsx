@@ -1,14 +1,10 @@
 'use client';
 
 import GlobeLanguageSwitcher from '@/app/_components/GlobeLanguageSwitcher';
+import RepeatMenu from '@/app/_components/RepeatMenu';
 import { ui } from '@/app/_libs/ui-strings';
 import { type Lang } from '@/app/_libs/lang';
-import {
-  useReadAloud,
-  READ_ALOUD_MIN_RATE,
-  READ_ALOUD_MAX_RATE,
-  REPEAT_COUNT,
-} from '@/app/_libs/useReadAloud';
+import { useReadAloud, READ_ALOUD_MIN_RATE, READ_ALOUD_MAX_RATE } from '@/app/_libs/useReadAloud';
 import { useReadAloudHighlight } from '@/app/_libs/useReadAloudHighlight';
 import { useScrollDock } from '@/app/_libs/useScrollDock';
 import styles from './index.module.css';
@@ -37,12 +33,6 @@ const StopIcon = () => (
   </svg>
 );
 
-const RepeatIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v5z" />
-  </svg>
-);
-
 /**
  * ページ上部に固定表示する「地球儀の言語スイッチャー + 読み上げコントロール」。
  * ContactGlobe と同じ position:fixed パターン。口パク同期は無し（コントロールのみ）。
@@ -60,7 +50,9 @@ export default function PageReadAloud({ lang, segments }: Props) {
     toggle,
     stop,
     repeatLap,
-    toggleRepeat,
+    repeatTotal,
+    startRepeat,
+    stopRepeat,
     cacheCapped,
     hasError,
     chunks,
@@ -111,20 +103,17 @@ export default function PageReadAloud({ lang, segments }: Props) {
             <StopIcon />
           </button>
 
-          <button
-            type="button"
-            className={`${styles.iconButton} ${styles.repeatButton}`}
-            onClick={toggleRepeat}
-            disabled={cacheCapped}
-            title={cacheCapped ? ui('readAloudRepeatUnavailable', lang) : undefined}
-            aria-pressed={repeatLap > 0}
-            aria-label={ui('readAloudRepeat', lang).replace('{count}', String(REPEAT_COUNT))}
-          >
-            <RepeatIcon />
-          </button>
+          <RepeatMenu
+            lang={lang}
+            buttonClassName={`${styles.iconButton} ${styles.repeatButton}`}
+            repeatLap={repeatLap}
+            cacheCapped={cacheCapped}
+            onStart={startRepeat}
+            onStop={stopRepeat}
+          />
           {repeatLap > 0 && (
             <span className={styles.repeatLap} aria-hidden="true">
-              {repeatLap}/{REPEAT_COUNT}
+              {repeatLap}/{repeatTotal}
             </span>
           )}
 
@@ -160,7 +149,7 @@ export default function PageReadAloud({ lang, segments }: Props) {
           {repeatLap > 0
             ? ui('readAloudRepeatProgress', lang)
                 .replace('{lap}', String(repeatLap))
-                .replace('{count}', String(REPEAT_COUNT))
+                .replace('{count}', String(repeatTotal))
             : ''}
         </p>
       </div>

@@ -9,8 +9,9 @@ export type ReadAloudStatus = 'idle' | 'playing' | 'paused';
 export const READ_ALOUD_MIN_RATE = 0.75;
 export const READ_ALOUD_MAX_RATE = 1.5;
 
-// 「繰り返し」ボタンで読み上げる回数。
-export const REPEAT_COUNT = 5;
+// 「繰り返し」ボタンで選べる回数と、メニューを開く前（保存が無い場合）の既定値。
+export const REPEAT_OPTIONS = [3, 6, 9] as const;
+export const DEFAULT_REPEAT_COUNT = 6;
 
 // 音声キャッシュ（urlCacheRef）の合計サイズの上限（バイト）。/api/tts は従量課金のため、
 // 繰り返し再生は「1周目で生成した音声をキャッシュし、2周目以降はキャッシュを再生する」
@@ -133,8 +134,10 @@ export function useReadAloud(segments: string[], lang: Lang) {
   // アクティブチャンク内の再生進捗（currentTime / duration, 0〜1）。
   // ハイライト側が「チャンク内のどの文か」を文字数割合から推定するのに使う。
   const [chunkProgress, setChunkProgress] = useState(0);
-  // 繰り返し再生中の周回数（1〜REPEAT_COUNT）。0 = 繰り返し無効。
+  // 繰り返し再生中の周回数（1〜repeatTotal）。0 = 繰り返し無効。
   const [repeatLap, setRepeatLap] = useState(0);
+  // 今の繰り返しセッションで選ばれた合計回数（メニューで選択、repeatLap > 0 の間だけ意味を持つ）
+  const [repeatTotal, setRepeatTotal] = useState(DEFAULT_REPEAT_COUNT);
   // 音声キャッシュが上限に達し、繰り返し再生を提供できなくなったか
   const [cacheCapped, setCacheCapped] = useState(false);
   // /api/tts の取得に失敗した（403/429/502等）ため再生が止まったか。
@@ -162,8 +165,10 @@ export function useReadAloud(segments: string[], lang: Lang) {
 
   // 繰り返し再生: true の間、全チャンク再生後に先頭へ戻って次の周へ進む
   const repeatOnRef = useRef(false);
-  // 現在の周（1〜REPEAT_COUNT）。repeatLap state と同じ値を同期して持つ
+  // 現在の周（1〜repeatTotalRef.current）。repeatLap state と同じ値を同期して持つ
   const repeatLapRef = useRef(0);
+  // 今の繰り返しセッションの合計回数。repeatTotal state と同じ値を同期して持つ
+  const repeatTotalRef = useRef(DEFAULT_REPEAT_COUNT);
 
   // 読み上げ単位（チャンク）の一覧。segment（タイトル / 本文…）はまたがず、
   // segment ごとに buildChunks する。各チャンクに元 segment の index を持たせて
@@ -330,7 +335,7 @@ export function useReadAloud(segments: string[], lang: Lang) {
         } else {
           advance();
         }
-      } else if (repeatOnRef.current && repeatLapRef.current < REPEAT_COUNT) {
+      } else if (repeatOnRef.current && repeatLapRef.current < repeatTotalRef.current) {
         // 繰り返し再生: 次の周へ（キャッシュ済みなのでほぼ即時に再生を開始する）
         const gen = genRef.current;
         repeatLapRef.current += 1;
@@ -537,25 +542,34 @@ export function useReadAloud(segments: string[], lang: Lang) {
     }
   }, [status, play, pause, unlockAudio]);
 
-  // 「繰り返し」ボタン。オンにすると、いまの周を1周目として数えて合計 REPEAT_COUNT 回
-  // 読み上げる（停止中に押した場合は最初から再生を始める）。オン中にもう一度押すと、
-  // 今の周を最後まで読んだところで止まる（ループはしない）。
-  const toggleRepeat = useCallback(() => {
-    if (cacheCappedRef.current) return; // 上限超過のため無効化中
-    if (repeatOnRef.current) {
-      repeatOnRef.current = false;
-      setRepeatLap(0);
-      return;
-    }
-    repeatOnRef.current = true;
-    repeatLapRef.current = 1;
-    setRepeatLap(1);
-    if (status === 'idle') {
-      unlockAudio();
-      play();
-    }
-    // playing / paused の場合は現在の再生をそのまま続け、今の周を1周目として数える
-  }, [status, play, unlockAudio]);
+  // 繰り返し中に「繰り返し」ボタンが押されたとき。メニューは開かず、今の周を
+  // 最後まで読んだところで止まる（ループはしない）。
+  const stopRepeat = useCallback(() => {
+    repeatOnRef.current = false;
+    setRepeatLap(0);
+  }, []);
+
+  // メニューで回数を選んだとき。いまの周を1周目として数えて合計 count 回読み上げる
+  // （停止中に選んだ場合は最初から再生を始める）。
+  // iOS Safari 対策: unlockAudio〜play の呼び出しは、呼び出し元（メニュー項目の
+  // onClick）から同期的に届く前提。setTimeout 等を挟むとユーザー操作起点と
+  // 認められず再生が拒否されるため、ここでは一切遅延を挟まない。
+  const startRepeat = useCallback(
+    (count: number) => {
+      if (cacheCappedRef.current) return; // 上限超過のため無効化中
+      repeatOnRef.current = true;
+      repeatLapRef.current = 1;
+      repeatTotalRef.current = count;
+      setRepeatTotal(count);
+      setRepeatLap(1);
+      if (status === 'idle') {
+        unlockAudio();
+        play();
+      }
+      // playing / paused の場合は現在の再生をそのまま続け、今の周を1周目として数える
+    },
+    [status, play, unlockAudio],
+  );
 
   const changeRate = useCallback((next: number) => {
     const clamped = Math.min(READ_ALOUD_MAX_RATE, Math.max(READ_ALOUD_MIN_RATE, next));
@@ -602,7 +616,9 @@ export function useReadAloud(segments: string[], lang: Lang) {
     stop,
     // 繰り返し再生
     repeatLap,
-    toggleRepeat,
+    repeatTotal,
+    startRepeat,
+    stopRepeat,
     cacheCapped,
     // /api/tts 取得失敗時のエラー表示
     hasError,

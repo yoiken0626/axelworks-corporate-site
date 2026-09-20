@@ -1,0 +1,64 @@
+/* position: fixed で、呼び出し側の .control（play/stop/repeat/speed の並び）の
+   レイアウトには一切影響しない。位置（top/left）は index.tsx が計算して
+   インラインスタイルで指定する。
+   見出しテキストは画面には出さず（role="menu" の aria-label でのみ伝える）、
+   コンパクトなプルダウンとして「3回」「6回」「9回」だけを縦に並べる。
+
+   色はこのメニュー専用の CSS変数にまとめる（再生/繰り返しボタンの色や他の
+   画面の色（--color-button-primary 等）には影響しない、このコンポーネント
+   だけのスコープ）。
+   - --repeat-menu-bg: 通常時の背景。白文字とのコントラスト比 5.00:1（WCAG AA クリア）。
+   - --repeat-menu-bg-active: ホバー / キーボードフォーカス時の背景。
+     明るくするのではなく一段濃くする（--repeat-menu-bg の明度85%）。コントラスト比 6.42:1。
+   - --repeat-menu-fg: 文字とフォーカス輪郭線の色。 */
+.menu {
+  --repeat-menu-bg: #2b6cd4;
+  --repeat-menu-bg-active: #255cb4;
+  --repeat-menu-fg: #fff;
+
+  position: fixed;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  width: max-content;
+  max-width: min(140px, calc(100vw - 16px));
+  padding: 4px;
+  background: var(--repeat-menu-bg);
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 10px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--repeat-menu-fg);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* マウス操作の端末では上の 36px 相当のコンパクトな高さのまま、
+   タッチ操作の端末ではタップ領域を 44px 以上に広げる。 */
+@media (pointer: coarse) {
+  .menuItem {
+    min-height: 44px;
+  }
+}
+
+.menuItem:hover,
+.menuItem:focus-visible {
+  background: var(--repeat-menu-bg-active);
+}
+
+/* フォーカスの輪郭線は消さない（背景の青に対してはっきり見えるよう白で描く） */
+.menuItem:focus-visible {
+  outline: 2px solid var(--repeat-menu-fg);
+  outline-offset: -2px;
+}

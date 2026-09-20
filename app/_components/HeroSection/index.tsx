@@ -2,14 +2,10 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import HeroQueen from '@/app/_components/HeroQueen';
+import RepeatMenu from '@/app/_components/RepeatMenu';
 import { ui } from '@/app/_libs/ui-strings';
 import { type Lang } from '@/app/_libs/lang';
-import {
-  READ_ALOUD_MIN_RATE,
-  READ_ALOUD_MAX_RATE,
-  REPEAT_COUNT,
-  type ReadAloudStatus,
-} from '@/app/_libs/useReadAloud';
+import { READ_ALOUD_MIN_RATE, READ_ALOUD_MAX_RATE, type ReadAloudStatus } from '@/app/_libs/useReadAloud';
 import styles from './index.module.css';
 
 // SSR では何もしない useLayoutEffect（クライアントでは通常の useLayoutEffect）。
@@ -36,7 +32,9 @@ type Props = {
   toggle: () => void;
   stop: () => void;
   repeatLap: number;
-  toggleRepeat: () => void;
+  repeatTotal: number;
+  startRepeat: (count: number) => void;
+  stopRepeat: () => void;
   cacheCapped: boolean;
   hasError: boolean;
 };
@@ -59,12 +57,6 @@ const StopIcon = () => (
   </svg>
 );
 
-const RepeatIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v5z" />
-  </svg>
-);
-
 export default function HeroSection({
   lang,
   mouthOpen,
@@ -75,7 +67,9 @@ export default function HeroSection({
   toggle,
   stop,
   repeatLap,
-  toggleRepeat,
+  repeatTotal,
+  startRepeat,
+  stopRepeat,
   cacheCapped,
   hasError,
 }: Props) {
@@ -139,20 +133,17 @@ export default function HeroSection({
           <StopIcon />
         </button>
 
-        <button
-          type="button"
-          className={`${styles.iconButton} ${styles.repeatButton}`}
-          onClick={toggleRepeat}
-          disabled={cacheCapped}
-          title={cacheCapped ? ui('readAloudRepeatUnavailable', lang) : undefined}
-          aria-pressed={repeatLap > 0}
-          aria-label={ui('readAloudRepeat', lang).replace('{count}', String(REPEAT_COUNT))}
-        >
-          <RepeatIcon />
-        </button>
+        <RepeatMenu
+          lang={lang}
+          buttonClassName={`${styles.iconButton} ${styles.repeatButton}`}
+          repeatLap={repeatLap}
+          cacheCapped={cacheCapped}
+          onStart={startRepeat}
+          onStop={stopRepeat}
+        />
         {repeatLap > 0 && (
           <span className={styles.repeatLap} aria-hidden="true">
-            {repeatLap}/{REPEAT_COUNT}
+            {repeatLap}/{repeatTotal}
           </span>
         )}
 
@@ -187,7 +178,7 @@ export default function HeroSection({
           {repeatLap > 0
             ? ui('readAloudRepeatProgress', lang)
                 .replace('{lap}', String(repeatLap))
-                .replace('{count}', String(REPEAT_COUNT))
+                .replace('{count}', String(repeatTotal))
             : ''}
         </p>
       </div>

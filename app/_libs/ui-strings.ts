@@ -311,16 +311,50 @@ const UI_STRINGS = {
     es: 'Velocidad',
     ru: 'Скорость',
   },
-  // 「繰り返し」ボタン（オン/オフ共通。aria-pressed で状態を伝える）
+  // 「繰り返し」ボタン（停止中/未選択時のラベル。押すと回数を選ぶメニューが開く）
   readAloudRepeat: {
-    ja: '{count}回繰り返す',
-    en: 'Repeat {count} times',
-    ko: '{count}회 반복',
-    zh: '重复 {count} 次',
-    de: '{count}-mal wiederholen',
-    fr: 'Répéter {count} fois',
-    es: 'Repetir {count} veces',
-    ru: 'Повторить {count} раз',
+    ja: '繰り返す',
+    en: 'Repeat',
+    ko: '반복',
+    zh: '重复',
+    de: 'Wiederholen',
+    fr: 'Répéter',
+    es: 'Repetir',
+    ru: 'Повторить',
+  },
+  // 「繰り返し」ボタン（繰り返し中のラベル。押すとメニューは開かず、今の周を
+  // 最後まで読んだところで止まる）
+  readAloudRepeatStop: {
+    ja: '繰り返しを止める',
+    en: 'Stop repeating',
+    ko: '반복 중지',
+    zh: '停止重复',
+    de: 'Wiederholung stoppen',
+    fr: 'Arrêter la répétition',
+    es: 'Detener la repetición',
+    ru: 'Остановить повтор',
+  },
+  // 繰り返し回数メニューの見出し（メニューの aria-label にも使う）
+  readAloudRepeatMenuHeading: {
+    ja: '繰り返す回数',
+    en: 'Repeat count',
+    ko: '반복 횟수',
+    zh: '重复次数',
+    de: 'Wiederholungsanzahl',
+    fr: 'Nombre de répétitions',
+    es: 'Número de repeticiones',
+    ru: 'Количество повторов',
+  },
+  // 繰り返し回数メニューの各項目（{count} は REPEAT_OPTIONS の値に置換）
+  readAloudRepeatOption: {
+    ja: '{count}回',
+    en: '{count} times',
+    ko: '{count}회',
+    zh: '{count} 次',
+    de: '{count}-mal',
+    fr: '{count} fois',
+    es: '{count} veces',
+    ru: '{count} раз',
   },
   // 繰り返し再生中の進行状況（aria-live で通知。読み上げ音声には含めない）
   readAloudRepeatProgress: {
