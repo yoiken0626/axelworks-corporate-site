@@ -1,0 +1,196 @@
+/* 通常の記事的レイアウト。事業内容ページ・私を採用情報ページと同じ白カード上の
+   プローズスタイルに合わせる。 */
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+
+.lead {
+  font-size: 1.1rem;
+  line-height: 1.9;
+  color: var(--color-text-main);
+  margin-bottom: 32px;
+}
+
+.body {
+  font-size: 0.95rem;
+}
+
+.body > :first-child {
+  margin-top: 0;
+}
+
+/* タイトル直後の最初の H2 は区切り線・上余白なし */
+.body > h2:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.body h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  line-height: 1.5;
+  margin: 3.2rem 0 1rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.body h3 {
+  font-size: 1.15rem;
+  font-weight: bold;
+  line-height: 1.5;
+  margin: 2rem 0 0.6rem;
+}
+
+.body p {
+  margin: 1rem 0;
+  line-height: 2;
+}
+
+.body a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.body a:hover {
+  color: var(--color-text-sub);
+}
+
+/* note記事が日本語のみであることの注記。リンクと同じ行の流れに置き、
+   下線・リンク色は付けない（リンクそのものと区別する） */
+.articleLangNote {
+  font-size: 0.8rem;
+  color: var(--color-text-sub);
+}
+
+/* --- 主な画面：2カラムのカード状レイアウト --- */
+.screens {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px 24px;
+  margin: 1.5rem 0;
+}
+
+.screenItem h3 {
+  margin-top: 0;
+}
+
+.screenItem p {
+  margin-top: 0.4rem;
+}
+
+.screenMedia {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: var(--color-bg-sub);
+  margin-top: 12px;
+}
+
+.screenImage {
+  object-fit: cover;
+}
+
+.screensNote {
+  color: var(--color-text-sub);
+  font-size: 0.85rem;
+}
+
+/* --- デモサイト --- */
+.demoActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 24px;
+  margin: 1.5rem 0;
+}
+
+.demoButton {
+  width: auto;
+  min-width: 220px;
+}
+
+.credentials {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background-color: var(--color-bg-code);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 16px 20px;
+  font-size: 0.85rem;
+}
+
+.credentialRow {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.credentialLabel {
+  color: var(--color-text-sub);
+  min-width: 5.5em;
+}
+
+.credentialValue {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: bold;
+  user-select: all;
+}
+
+/* --- 末尾のご相談誘導（事業内容ページ・私を採用情報ページと同じ作り） --- */
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-top: 1px solid var(--color-border);
+  margin-top: 64px;
+  padding-top: 40px;
+  text-align: center;
+  gap: 24px;
+}
+
+.message {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+@media (max-width: 640px) {
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .lead {
+    font-size: 1rem;
+  }
+
+  .body h2 {
+    font-size: 1.3rem;
+  }
+
+  .body h3 {
+    font-size: 1.05rem;
+  }
+
+  .screens {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .demoActions {
+    flex-direction: column;
+  }
+
+  .demoButton {
+    width: 100%;
+  }
+
+  .message {
+    font-size: 1.6rem;
+  }
+}

@@ -106,6 +106,22 @@
   margin-bottom: 24px;
 }
 
+.learnMore {
+  margin-bottom: 24px;
+  font-size: 0.9rem;
+}
+
+.learnMore a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  color: var(--color-text-main);
+  font-weight: 600;
+}
+
+.learnMore a:hover {
+  color: var(--color-text-sub);
+}
+
 .related {
   border-top: 1px solid var(--color-border);
   padding-top: 16px;

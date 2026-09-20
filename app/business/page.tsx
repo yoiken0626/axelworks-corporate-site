@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { LANG_COOKIE, resolveLang } from '@/app/_libs/lang';
 import { ui } from '@/app/_libs/ui-strings';
@@ -21,6 +22,8 @@ type Section = {
   image: string;
   imageAlt: string;
   links: RelatedLink[];
+  /** 詳しく紹介する専用ページがある場合のリンク先（例：/saas） */
+  learnMoreHref?: string;
 };
 
 const sections: Section[] = [
@@ -33,6 +36,7 @@ const sections: Section[] = [
       '顧客ごとに一から作り直すのではなく、まず自分自身が最初のユーザーになり、動くものを作った上で、複数の企業に展開できる構造に設計します。自分自身のnote.comのフォロワーデータを分析するアプリとして開発をスタートし、現在は複数アカウントを横断的に分析できる、マルチテナント型のSaaSへと発展させています。',
     image: '/business-saas.png',
     imageAlt: 'マルチテナント型SaaS開発のイメージ',
+    learnMoreHref: '/saas',
     links: [
       {
         label: '記事「マルチテナント型SaaSの開発はまず自分から：デモサイト有り」を読む',
@@ -181,6 +185,12 @@ export default async function Page() {
                 <h2 className={styles.title}>{section.title}</h2>
                 <p className={styles.subtitle}>{section.subtitle}</p>
                 <p className={styles.description}>{section.description}</p>
+
+                {section.learnMoreHref && (
+                  <p className={styles.learnMore}>
+                    <Link href={section.learnMoreHref}>{ui('saasLearnMoreLabel', lang)}</Link>
+                  </p>
+                )}
 
                 {section.links.length > 0 && (
                   <div className={styles.related}>
