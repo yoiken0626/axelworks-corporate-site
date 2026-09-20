@@ -6,6 +6,16 @@ import { READ_ALOUD_PAUSE_MARK, READ_ALOUD_LIST_MARK } from './read-aloud-marks'
 
 export type ReadAloudStatus = 'idle' | 'playing' | 'paused';
 
+// ============================================================================
+// 診断用（iPhone Safari での「繰り返し」不具合の切り分け用・一時的なコード）
+// SHOW_DEBUG_CODE を false にすると、この定数を参照している箇所はすべて元の動作
+// （診断コードの表示・console.warn 無し）に戻る。修正が済んだら、このブロックと
+// 関連コードごと削除する。
+// ============================================================================
+const SHOW_DEBUG_CODE = true;
+// fetchChunk 内で、失敗の種類を呼び出し元（playFrom）へ伝えるためだけの印。
+type DebugTaggedError = Error & { debugCode?: string };
+
 export const READ_ALOUD_MIN_RATE = 0.75;
 export const READ_ALOUD_MAX_RATE = 1.5;
 
@@ -143,6 +153,9 @@ export function useReadAloud(segments: string[], lang: Lang) {
   // /api/tts の取得に失敗した（403/429/502等）ため再生が止まったか。
   // 次に play() を呼ぶ（＝ユーザーが再試行する）まで表示し続ける。
   const [hasError, setHasError] = useState(false);
+  // 診断用: hasError の原因を示す短い記号（例 "M-E:http403"）。
+  // SHOW_DEBUG_CODE が false の間は常に null のまま。
+  const [errorDebugCode, setErrorDebugCode] = useState<string | null>(null);
 
   const wantLang = resolveLang(lang);
 
@@ -169,6 +182,19 @@ export function useReadAloud(segments: string[], lang: Lang) {
   const repeatLapRef = useRef(0);
   // 今の繰り返しセッションの合計回数。repeatTotal state と同じ値を同期して持つ
   const repeatTotalRef = useRef(DEFAULT_REPEAT_COUNT);
+
+  // 診断用: 今の再生が「普通のボタン」("B") と「繰り返しメニュー」("M") の
+  // どちらから始まったか。hasError の診断コードの接頭辞に使う。
+  const startSourceRef = useRef<'B' | 'M'>('B');
+  // 診断用: hasError の原因コードを記録し、画面表示用の state に反映しつつ
+  // console.warn する。SHOW_DEBUG_CODE が false の間は何もしない。
+  const setDebugError = useCallback((code: string) => {
+    if (!SHOW_DEBUG_CODE) return;
+    const tagged = `${startSourceRef.current}-${code}`;
+    // eslint-disable-next-line no-console
+    console.warn(`[useReadAloud][debug] ${tagged}`);
+    setErrorDebugCode(tagged);
+  }, []);
 
   // 読み上げ単位（チャンク）の一覧。segment（タイトル / 本文…）はまたがず、
   // segment ごとに buildChunks する。各チャンクに元 segment の index を持たせて
@@ -214,19 +240,40 @@ export function useReadAloud(segments: string[], lang: Lang) {
       const text = chunksRef.current[idx];
       if (!text) return null;
 
-      const res = await fetch('/api/tts', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ text, lang: wantLang }),
-      });
+      let res: Response;
+      try {
+        res = await fetch('/api/tts', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ text, lang: wantLang }),
+        });
+      } catch {
+        // 診断用: /api/tts へのリクエスト自体が届かなかった（オフライン等）
+        const err: DebugTaggedError = new Error('failed to reach /api/tts');
+        err.debugCode = 'E:http-network';
+        throw err;
+      }
       if (gen !== genRef.current) return null;
       if (!res.ok) {
-        throw new Error(`/api/tts responded ${res.status}`);
+        // 診断用: /api/tts がエラーステータスを返した
+        const err: DebugTaggedError = new Error(`/api/tts responded ${res.status}`);
+        err.debugCode = `E:http${res.status}`;
+        throw err;
       }
-      const blob = await res.blob();
-      if (gen !== genRef.current) return null;
 
-      const url = URL.createObjectURL(blob);
+      let blob: Blob;
+      let url: string;
+      try {
+        blob = await res.blob();
+        if (gen !== genRef.current) return null;
+        url = URL.createObjectURL(blob);
+      } catch {
+        // 診断用: 受け取った音声データの読み取り / Object URL 化に失敗
+        const err: DebugTaggedError = new Error('failed to read tts response body');
+        err.debugCode = 'E:decode';
+        throw err;
+      }
+
       if (cacheBytesRef.current + blob.size <= CACHE_BYTE_CAP) {
         cacheBytesRef.current += blob.size;
         urlCacheRef.current.set(idx, url);
@@ -269,6 +316,7 @@ export function useReadAloud(segments: string[], lang: Lang) {
           repeatLapRef.current = 0;
           setRepeatLap(0);
           setHasError(true);
+          setDebugError((error as DebugTaggedError)?.debugCode ?? 'E:http-unknown');
           setStatus('idle');
           setMouthOpen(false);
           setActiveChunk(-1);
@@ -283,8 +331,19 @@ export function useReadAloud(segments: string[], lang: Lang) {
       audio.playbackRate = rateRef.current;
       try {
         await audio.play();
-      } catch {
+      } catch (playError) {
         // 別の play() や pause() に割り込まれた（AbortError）。gen チェック側で処理済み。
+        // 診断用: gen が今も有効（＝割り込みではなく本当の失敗）なら、原因を画面に出す。
+        // SHOW_DEBUG_CODE が false ならここは常に素通りし、元の挙動（無視して return）のまま。
+        if (SHOW_DEBUG_CODE && gen === genRef.current) {
+          const name = playError instanceof Error ? playError.name : 'unknown';
+          setHasError(true);
+          setDebugError(`E:play-${name}`);
+          setStatus('idle');
+          setMouthOpen(false);
+          setActiveChunk(-1);
+          setChunkProgress(0);
+        }
         return;
       }
       if (gen !== genRef.current) return;
@@ -295,7 +354,7 @@ export function useReadAloud(segments: string[], lang: Lang) {
       // 次チャンクを先読み（失敗しても本再生には影響させない）
       void fetchChunk(idx + 1, gen).catch(() => {});
     },
-    [fetchChunk],
+    [fetchChunk, setDebugError],
   );
 
   const playFromRef = useRef(playFrom);
@@ -361,6 +420,7 @@ export function useReadAloud(segments: string[], lang: Lang) {
       repeatLapRef.current = 0;
       setRepeatLap(0);
       setHasError(true);
+      setDebugError(`E:media-${audio.error?.code ?? 'unknown'}`);
       setStatus('idle');
       chunkIdxRef.current = 0;
       setMouthOpen(false);
@@ -377,6 +437,8 @@ export function useReadAloud(segments: string[], lang: Lang) {
       audio.load();
       audioRef.current = null;
     };
+    // setDebugError は参照が変わらない（useCallback([])）ため依存に入れなくても安全。
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // 言語 / 本文が変わったら再生を止めてキャッシュを破棄する
@@ -476,6 +538,7 @@ export function useReadAloud(segments: string[], lang: Lang) {
     // 新規再生。前回のエラー表示があれば、再試行にあたりいったん消す
     // （失敗すれば playFrom / handleError が再度立てる）。
     setHasError(false);
+    setErrorDebugCode(null);
     const gen = (genRef.current += 1);
     chunksRef.current = chunkTexts;
     headingsRef.current = chunkHeadings;
@@ -530,13 +593,22 @@ export function useReadAloud(segments: string[], lang: Lang) {
         audio.currentTime = 0;
         audio.removeAttribute('src');
       })
-      .catch(() => {});
-  }, []);
+      .catch((error) => {
+        // 診断用: 無音再生によるアンロック自体が失敗した場合も原因を出す。
+        // SHOW_DEBUG_CODE が false ならここは何もせず、元の挙動（無視）のまま。
+        if (SHOW_DEBUG_CODE) {
+          const name = error instanceof Error ? error.name : 'unknown';
+          setHasError(true);
+          setDebugError(`E:unlock-${name}`);
+        }
+      });
+  }, [setDebugError]);
 
   const toggle = useCallback(() => {
     if (status === 'playing') {
       pause();
     } else {
+      startSourceRef.current = 'B'; // 診断用: 普通のボタンから始めたことを記録
       unlockAudio();
       play();
     }
@@ -557,6 +629,7 @@ export function useReadAloud(segments: string[], lang: Lang) {
   const startRepeat = useCallback(
     (count: number) => {
       if (cacheCappedRef.current) return; // 上限超過のため無効化中
+      startSourceRef.current = 'M'; // 診断用: 繰り返しメニューから始めたことを記録
       repeatOnRef.current = true;
       repeatLapRef.current = 1;
       repeatTotalRef.current = count;
@@ -622,6 +695,8 @@ export function useReadAloud(segments: string[], lang: Lang) {
     cacheCapped,
     // /api/tts 取得失敗時のエラー表示
     hasError,
+    // 診断用（一時的）: エラーの原因を示す短い記号。SHOW_DEBUG_CODE=false なら常に null。
+    errorDebugCode,
     // テキストハイライト用
     chunks: chunkTexts,
     chunkSegments,

@@ -55,6 +55,7 @@ export default function PageReadAloud({ lang, segments }: Props) {
     stopRepeat,
     cacheCapped,
     hasError,
+    errorDebugCode, // 診断用（一時的）
     chunks,
     chunkSegments,
     activeChunk,
@@ -135,22 +136,31 @@ export default function PageReadAloud({ lang, segments }: Props) {
         {(cacheCapped || hasError) && (
           <div className={styles.notes}>
             {cacheCapped && <p className={styles.repeatNote}>{ui('readAloudRepeatUnavailable', lang)}</p>}
-            {/* 読み上げ対象のテキストには含めず、見た目にも控えめに表示しつつ aria-live で通知する */}
+            {/* 読み上げ対象のテキストには含めず、見た目にも控えめに表示する（aria-live は下の srOnly 側） */}
             {hasError && (
-              <p className={styles.errorNote} role="status" aria-live="polite">
+              <p className={styles.errorNote}>
                 {ui('readAloudError', lang)}
+                {/* 診断用（一時的）: iPhone Safari の繰り返し不具合切り分け用の記号。
+                    aria-live には含めない（下の srOnly 側は文言のみ）。SHOW_DEBUG_CODE=false なら常に非表示。 */}
+                {errorDebugCode && (
+                  <span aria-hidden="true" style={{ fontSize: '9px', opacity: 0.7, marginLeft: '4px' }}>
+                    ({errorDebugCode})
+                  </span>
+                )}
               </p>
             )}
           </div>
         )}
 
-        {/* 繰り返しの進行状況は音声には含めず、aria-live でのみ通知する */}
+        {/* 繰り返しの進行状況・エラーは音声には含めず、aria-live でのみ通知する（診断記号は含めない） */}
         <p className="srOnly" role="status" aria-live="polite">
-          {repeatLap > 0
-            ? ui('readAloudRepeatProgress', lang)
-                .replace('{lap}', String(repeatLap))
-                .replace('{count}', String(repeatTotal))
-            : ''}
+          {hasError
+            ? ui('readAloudError', lang)
+            : repeatLap > 0
+              ? ui('readAloudRepeatProgress', lang)
+                  .replace('{lap}', String(repeatLap))
+                  .replace('{count}', String(repeatTotal))
+              : ''}
         </p>
       </div>
     </div>

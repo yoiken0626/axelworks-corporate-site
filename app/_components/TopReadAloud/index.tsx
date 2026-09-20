@@ -36,6 +36,7 @@ export default function TopReadAloud({ lang, segments, latestNews }: Props) {
     stopRepeat,
     cacheCapped,
     hasError,
+    errorDebugCode, // 診断用（一時的）
     chunks,
     chunkSegments,
     activeChunk,
@@ -60,6 +61,7 @@ export default function TopReadAloud({ lang, segments, latestNews }: Props) {
       stopRepeat={stopRepeat}
       cacheCapped={cacheCapped}
       hasError={hasError}
+      errorDebugCode={errorDebugCode}
     />
   );
 }
