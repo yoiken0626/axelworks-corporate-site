@@ -9,10 +9,11 @@ export type ReadAloudStatus = 'idle' | 'playing' | 'paused';
 // ============================================================================
 // 診断用（iPhone Safari での「繰り返し」不具合の切り分け用・一時的なコード）
 // SHOW_DEBUG_CODE を false にすると、この定数を参照している箇所はすべて元の動作
-// （診断コードの表示・console.warn 無し）に戻る。修正が済んだら、このブロックと
-// 関連コードごと削除する。
+// （診断コードの表示・console.warn 無し）に戻る。
+// iPhone実機で問題解消を確認したため false に戻した。コード自体は、再び必要に
+// なったときに true にするだけで使えるよう、削除せず残してある。
 // ============================================================================
-const SHOW_DEBUG_CODE = true;
+const SHOW_DEBUG_CODE = false;
 // fetchChunk 内で、失敗の種類を呼び出し元（playFrom）へ伝えるためだけの印。
 type DebugTaggedError = Error & { debugCode?: string };
 
