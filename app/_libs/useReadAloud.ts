@@ -168,6 +168,14 @@ export function useReadAloud(segments: string[], lang: Lang) {
   const chunksRef = useRef<string[]>([]);
   const chunkIdxRef = useRef(0);
   const unlockedRef = useRef(false);
+  // iOS Safari 対策: 今の audio.src が、どの世代（gen）の再生に属するか。
+  // null（＝まだ本編の src を一度もセットしていない = unlockAudio の無音再生の段階）
+  // または genRef.current と異なる値なら「今アクティブな本編の再生に対する src ではない」
+  // と判定できる。handleEnded / handleError が、unlockAudio の無音再生（や既に破棄
+  // された古い世代）から届いた「迷子のイベント」を、本編に対する本物のイベントと
+  // 取り違えないためのガード。src 文字列の比較では判定しない（詳細は unlockAudio /
+  // playFrom 内のコメントを参照）。
+  const currentSrcGenRef = useRef<number | null>(null);
   // チャンク index -> Object URL（MP3 Blob）。言語 / 本文が変わると破棄する
   const urlCacheRef = useRef<Map<number, string>>(new Map());
   // urlCacheRef に入れた Blob の合計バイト数（CACHE_BYTE_CAP との比較用）
@@ -327,6 +335,9 @@ export function useReadAloud(segments: string[], lang: Lang) {
       if (gen !== genRef.current || !url) return;
 
       chunkIdxRef.current = idx;
+      // 本編の src をセットする直前に記録する。以降、handleEnded / handleError は
+      // この gen に一致するイベントだけを本物として扱う。
+      currentSrcGenRef.current = gen;
       audio.src = url;
       audio.playbackRate = rateRef.current;
       try {
@@ -368,6 +379,11 @@ export function useReadAloud(segments: string[], lang: Lang) {
     audioRef.current = audio;
 
     const handleEnded = () => {
+      // unlockAudio の無音再生（本編の src をまだ一度もセットしていない = null）や、
+      // 既に破棄された古い世代からの「迷子の ended」は無視する。本編の src を
+      // セットする前は、この <audio> 要素で何が鳴っていても読み上げの状態とは無関係。
+      if (currentSrcGenRef.current === null || currentSrcGenRef.current !== genRef.current) return;
+
       const done = chunkIdxRef.current;
       // 今読み終えたチャンクがキャッシュ上限超過で未キャッシュだった場合、
       // その一時 URL はもう不要なので破棄する
@@ -415,6 +431,11 @@ export function useReadAloud(segments: string[], lang: Lang) {
     const handleError = () => {
       // src を外して load() したときの空ソースエラーは無視する
       if (!audio.getAttribute('src')) return;
+      // 今アクティブな世代（本編の再生）に属する src に対するエラーでなければ無視する
+      // （unlockAudio の無音再生や、既に破棄されたチャンクなど、迷子になったエラー）。
+      // src 文字列の比較ではなく、playFrom が本編の src をセットするたびに記録する
+      // 世代番号で判定する。
+      if (currentSrcGenRef.current === null || currentSrcGenRef.current !== genRef.current) return;
       genRef.current += 1;
       repeatOnRef.current = false;
       repeatLapRef.current = 0;
@@ -452,6 +473,7 @@ export function useReadAloud(segments: string[], lang: Lang) {
         audio.load();
       }
       chunkIdxRef.current = 0;
+      currentSrcGenRef.current = null;
       revokeUrls();
       repeatOnRef.current = false;
       repeatLapRef.current = 0;
@@ -525,6 +547,9 @@ export function useReadAloud(segments: string[], lang: Lang) {
     // 一時停止からの再開: 同じチャンクを続きから
     if (status === 'paused' && audio.src) {
       const gen = (genRef.current += 1);
+      // src は差し替えないが、この再生は新しい世代として扱う
+      // （handleError の世代チェックを、一時停止からの再開後もずれさせないため）。
+      currentSrcGenRef.current = gen;
       audio.playbackRate = rateRef.current;
       audio
         .play()
@@ -568,6 +593,7 @@ export function useReadAloud(segments: string[], lang: Lang) {
       audio.load();
     }
     chunkIdxRef.current = 0;
+    currentSrcGenRef.current = null;
     repeatOnRef.current = false;
     repeatLapRef.current = 0;
     setRepeatLap(0);
@@ -577,31 +603,57 @@ export function useReadAloud(segments: string[], lang: Lang) {
     setChunkProgress(0);
   }, []);
 
-  // 最初のユーザー操作（クリック）中に同期的に呼び、<audio> を再生可能状態にする
+  // 最初のユーザー操作（クリック）中に同期的に呼び、<audio> を再生可能状態にする。
+  //
+  // 【iOS Safari の挙動について】 unlockAudio 専用に別の <audio> 要素を使う案も
+  // 検討したが、採用していない。iOS Safari のスクリプトからの再生許可は
+  // ページ単位ではなく「その HTMLMediaElement 要素自身が、ユーザー操作の直後に
+  // 一度でも play() できたか」で管理されている（WebKit の autoplay ポリシー。
+  // 参考: webkit.org "New <video> Policies for iOS" ほか、複数の実装で確認されて
+  // いる挙動）。そのため、別要素で無音を鳴らしても、本編を再生する別の <audio>
+  // 要素には許可が引き継がれない。本編と同じ要素で無音を鳴らす、今の方式のまま
+  // にする必要がある。
+  //
+  // 【後始末をやめた理由】 以前は、無音再生の完了後に pause() / currentTime = 0 /
+  // removeAttribute('src') で「後始末」していたが、iPhone実機で、これが本編の
+  // audio 要素を巻き込んで error イベント（MEDIA_ERR_SRC_NOT_SUPPORTED, code 4）を
+  // 誘発していた。無音再生（SILENT_WAV, データURIで数百ms程度）は、本編の
+  // fetch('/api/tts') が返ってくる頃には大抵まだ完了しておらず、後始末の
+  // removeAttribute('src') は「本編がこの要素を使う前」に実行される＝一見無害だが、
+  // .currentTime = 0 の代入や removeAttribute('src')（.load() を伴わない）は、
+  // HTML の仕様上「src 属性の変更」として resource selection algorithm を再度
+  // 起動させる保証がなく、実装（WebKit）依存で非同期に error イベントが遅れて
+  // 発火することがある。この遅延イベントが、後から playFrom が本編の src を
+  // セットした後に届くと、本編に対する本当のエラーと区別がつかなくなる。
+  // 対して、audio.src を直接別の値に差し替えるのは、既存のチャンク間の遷移
+  // （このファイル内で何度も行っている）と全く同じ操作で、これは実機で既に
+  // 動作実績がある。そこで、後始末は一切せず、無音再生はそのまま自然に終わる
+  // （または本編の src 差し替えで自然に中断される）に任せ、無音再生由来の
+  // ended / error は currentSrcGenRef のガード（handleEnded / handleError）で
+  // 無視する方式に変更した。
   const unlockAudio = useCallback(() => {
     if (unlockedRef.current) return;
     const audio = audioRef.current;
     if (!audio) return;
     unlockedRef.current = true;
     audio.src = SILENT_WAV;
-    audio
-      .play()
-      .then(() => {
-        // すでに本編の音声に差し替わっていたら何もしない（レース対策）
-        if (audio.getAttribute('src') !== SILENT_WAV) return;
-        audio.pause();
-        audio.currentTime = 0;
-        audio.removeAttribute('src');
-      })
-      .catch((error) => {
-        // 診断用: 無音再生によるアンロック自体が失敗した場合も原因を出す。
-        // SHOW_DEBUG_CODE が false ならここは何もせず、元の挙動（無視）のまま。
-        if (SHOW_DEBUG_CODE) {
-          const name = error instanceof Error ? error.name : 'unknown';
-          setHasError(true);
-          setDebugError(`E:unlock-${name}`);
-        }
-      });
+    audio.play().catch((error) => {
+      // 診断用: 無音再生によるアンロック自体が失敗した場合も原因を出す。
+      // SHOW_DEBUG_CODE が false ならここは何もせず、元の挙動（無視）のまま。
+      if (!SHOW_DEBUG_CODE) return;
+      const name = error instanceof Error ? error.name : 'unknown';
+      if (name === 'AbortError') {
+        // 本編の src 差し替え（playFrom）が、この無音再生の途中に割り込んだだけの、
+        // 正常な現象（同じ <audio> 要素で play() 中に src を差し替えると、直前の
+        // play() の Promise は仕様上 AbortError で reject される）。ログにだけ残し、
+        // 画面表示（hasError）はしない。
+        // eslint-disable-next-line no-console
+        console.warn(`[useReadAloud][debug] ${startSourceRef.current}-E:unlock-${name} (無視: 本編への正常な割り込み)`);
+        return;
+      }
+      setHasError(true);
+      setDebugError(`E:unlock-${name}`);
+    });
   }, [setDebugError]);
 
   const toggle = useCallback(() => {
