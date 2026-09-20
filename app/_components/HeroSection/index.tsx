@@ -4,7 +4,12 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import HeroQueen from '@/app/_components/HeroQueen';
 import { ui } from '@/app/_libs/ui-strings';
 import { type Lang } from '@/app/_libs/lang';
-import { READ_ALOUD_MIN_RATE, READ_ALOUD_MAX_RATE, type ReadAloudStatus } from '@/app/_libs/useReadAloud';
+import {
+  READ_ALOUD_MIN_RATE,
+  READ_ALOUD_MAX_RATE,
+  REPEAT_COUNT,
+  type ReadAloudStatus,
+} from '@/app/_libs/useReadAloud';
 import styles from './index.module.css';
 
 // SSR では何もしない useLayoutEffect（クライアントでは通常の useLayoutEffect）。
@@ -30,6 +35,9 @@ type Props = {
   setRate: (rate: number) => void;
   toggle: () => void;
   stop: () => void;
+  repeatLap: number;
+  toggleRepeat: () => void;
+  cacheCapped: boolean;
 };
 
 const PlayIcon = () => (
@@ -50,7 +58,25 @@ const StopIcon = () => (
   </svg>
 );
 
-export default function HeroSection({ lang, mouthOpen, latestNews, status, rate, setRate, toggle, stop }: Props) {
+const RepeatIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v5z" />
+  </svg>
+);
+
+export default function HeroSection({
+  lang,
+  mouthOpen,
+  latestNews,
+  status,
+  rate,
+  setRate,
+  toggle,
+  stop,
+  repeatLap,
+  toggleRepeat,
+  cacheCapped,
+}: Props) {
   const sectionRef = useRef<HTMLDivElement>(null);
   // position:fixed なコントロールの座標（ビューポート基準）。null の間は
   // index.module.css の初期値（デスクトップ相当）で描画される。
@@ -111,6 +137,23 @@ export default function HeroSection({ lang, mouthOpen, latestNews, status, rate,
           <StopIcon />
         </button>
 
+        <button
+          type="button"
+          className={`${styles.iconButton} ${styles.repeatButton}`}
+          onClick={toggleRepeat}
+          disabled={cacheCapped}
+          title={cacheCapped ? ui('readAloudRepeatUnavailable', lang) : undefined}
+          aria-pressed={repeatLap > 0}
+          aria-label={ui('readAloudRepeat', lang).replace('{count}', String(REPEAT_COUNT))}
+        >
+          <RepeatIcon />
+        </button>
+        {repeatLap > 0 && (
+          <span className={styles.repeatLap} aria-hidden="true">
+            {repeatLap}/{REPEAT_COUNT}
+          </span>
+        )}
+
         <span className={styles.divider} aria-hidden="true" />
 
         <input
@@ -124,6 +167,17 @@ export default function HeroSection({ lang, mouthOpen, latestNews, status, rate,
           aria-label={`${ui('readAloudSpeed', lang)} ${rate.toFixed(2)}x`}
         />
         <span className={styles.speedValue}>{rate.toFixed(1)}x</span>
+
+        {cacheCapped && <p className={styles.repeatNote}>{ui('readAloudRepeatUnavailable', lang)}</p>}
+
+        {/* 繰り返しの進行状況は音声には含めず、aria-live でのみ通知する */}
+        <p className="srOnly" role="status" aria-live="polite">
+          {repeatLap > 0
+            ? ui('readAloudRepeatProgress', lang)
+                .replace('{lap}', String(repeatLap))
+                .replace('{count}', String(REPEAT_COUNT))
+            : ''}
+        </p>
       </div>
     </div>
   );

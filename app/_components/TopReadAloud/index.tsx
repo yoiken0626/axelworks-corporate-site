@@ -23,8 +23,21 @@ type Props = {
  * 重ねたまま、常にページと一緒にスクロールで流れる。
  */
 export default function TopReadAloud({ lang, segments, latestNews }: Props) {
-  const { status, mouthOpen, rate, setRate, toggle, stop, chunks, chunkSegments, activeChunk, chunkProgress } =
-    useReadAloud(segments, lang);
+  const {
+    status,
+    mouthOpen,
+    rate,
+    setRate,
+    toggle,
+    stop,
+    repeatLap,
+    toggleRepeat,
+    cacheCapped,
+    chunks,
+    chunkSegments,
+    activeChunk,
+    chunkProgress,
+  } = useReadAloud(segments, lang);
 
   useReadAloudHighlight({ chunks, chunkSegments, activeChunk, chunkProgress, follow: true });
 
@@ -38,6 +51,9 @@ export default function TopReadAloud({ lang, segments, latestNews }: Props) {
       setRate={setRate}
       toggle={toggle}
       stop={stop}
+      repeatLap={repeatLap}
+      toggleRepeat={toggleRepeat}
+      cacheCapped={cacheCapped}
     />
   );
 }

@@ -87,6 +87,38 @@
   cursor: not-allowed;
 }
 
+/* 繰り返しボタンのオン状態。他のボタンは状態でアイコンが変わるだけなので、
+   繰り返しだけ色でオン/オフを示す（本文ハイライトと同系色の青）。 */
+.repeatButton[aria-pressed='true'] {
+  background: #3884ff;
+}
+
+.repeatLap {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-sub);
+  white-space: nowrap;
+}
+
+/* キャッシュ上限超過で繰り返しを無効化した旨の控えめな注記。コントロールの
+   ピルの下に、同じ半透明の帯で小さく表示する。 */
+.repeatNote {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin: 4px 0 0;
+  max-width: 220px;
+  padding: 3px 8px;
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--color-text-sub);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  text-align: right;
+}
+
 .divider {
   width: 1px;
   height: 18px;
@@ -175,5 +207,15 @@
 
   .speedValue {
     display: none;
+  }
+
+  /* 「3/10」表示は幅を取るのでスマホでは省略する（オン状態の色とaria-liveで代替） */
+  .repeatLap {
+    display: none;
+  }
+
+  .repeatNote {
+    max-width: 160px;
+    font-size: 9px;
   }
 }

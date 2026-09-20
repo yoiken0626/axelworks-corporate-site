@@ -9,6 +9,16 @@ export type ReadAloudStatus = 'idle' | 'playing' | 'paused';
 export const READ_ALOUD_MIN_RATE = 0.75;
 export const READ_ALOUD_MAX_RATE = 1.5;
 
+// 「繰り返し」ボタンで読み上げる回数。
+export const REPEAT_COUNT = 10;
+
+// 音声キャッシュ（urlCacheRef）の合計サイズの上限（バイト）。/api/tts は従量課金のため、
+// 繰り返し再生は「1周目で生成した音声をキャッシュし、2周目以降はキャッシュを再生する」
+// ことで API 呼び出しを増やさない設計にしている。この上限を超える場合は、超えた分の
+// チャンクをキャッシュせず（再生後に破棄）、繰り返し再生自体を無効化する
+// （そのチャンクを再度読む2周目以降で API を呼び直すことになってしまうため）。
+const CACHE_BYTE_CAP = 30 * 1024 * 1024; // 30MB
+
 // 1チャンクの最大バイト数。Google TTS の実上限（5000バイト）に対して十分小さくし、
 // 最初の音が鳴るまでの待ち時間も短くする。日本語で概ね 400〜500 文字。
 const CHUNK_BYTES = 1400;
@@ -123,6 +133,10 @@ export function useReadAloud(segments: string[], lang: Lang) {
   // アクティブチャンク内の再生進捗（currentTime / duration, 0〜1）。
   // ハイライト側が「チャンク内のどの文か」を文字数割合から推定するのに使う。
   const [chunkProgress, setChunkProgress] = useState(0);
+  // 繰り返し再生中の周回数（1〜REPEAT_COUNT）。0 = 繰り返し無効。
+  const [repeatLap, setRepeatLap] = useState(0);
+  // 音声キャッシュが上限に達し、繰り返し再生を提供できなくなったか
+  const [cacheCapped, setCacheCapped] = useState(false);
 
   const wantLang = resolveLang(lang);
 
@@ -137,6 +151,16 @@ export function useReadAloud(segments: string[], lang: Lang) {
   const unlockedRef = useRef(false);
   // チャンク index -> Object URL（MP3 Blob）。言語 / 本文が変わると破棄する
   const urlCacheRef = useRef<Map<number, string>>(new Map());
+  // urlCacheRef に入れた Blob の合計バイト数（CACHE_BYTE_CAP との比較用）
+  const cacheBytesRef = useRef(0);
+  // 上限超過のためキャッシュしなかったチャンクの Object URL。再生完了直後に revoke する
+  const uncachedUrlsRef = useRef<Map<number, string>>(new Map());
+  const cacheCappedRef = useRef(false);
+
+  // 繰り返し再生: true の間、全チャンク再生後に先頭へ戻って次の周へ進む
+  const repeatOnRef = useRef(false);
+  // 現在の周（1〜REPEAT_COUNT）。repeatLap state と同じ値を同期して持つ
+  const repeatLapRef = useRef(0);
 
   // 読み上げ単位（チャンク）の一覧。segment（タイトル / 本文…）はまたがず、
   // segment ごとに buildChunks する。各チャンクに元 segment の index を持たせて
@@ -162,9 +186,18 @@ export function useReadAloud(segments: string[], lang: Lang) {
   const revokeUrls = useCallback(() => {
     urlCacheRef.current.forEach((url) => URL.revokeObjectURL(url));
     urlCacheRef.current.clear();
+    uncachedUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+    uncachedUrlsRef.current.clear();
+    cacheBytesRef.current = 0;
+    cacheCappedRef.current = false;
+    setCacheCapped(false);
   }, []);
 
-  // 指定チャンクの音声を取得して Object URL を返す（取得済みなら再利用）
+  // 指定チャンクの音声を取得して Object URL を返す（取得済みなら再利用）。
+  // 取得した Blob はキャッシュの合計サイズが CACHE_BYTE_CAP を超えない限り
+  // urlCacheRef に保持し、2周目以降（繰り返し再生）はここで再利用される
+  // （= /api/tts を呼び直さない）。上限を超える場合はキャッシュせず、繰り返し
+  // 再生は無効化する（キャッシュしないと2周目にまた API を呼ぶことになるため）。
   const fetchChunk = useCallback(
     async (idx: number, gen: number): Promise<string | null> => {
       const cached = urlCacheRef.current.get(idx);
@@ -186,7 +219,24 @@ export function useReadAloud(segments: string[], lang: Lang) {
       if (gen !== genRef.current) return null;
 
       const url = URL.createObjectURL(blob);
-      urlCacheRef.current.set(idx, url);
+      if (cacheBytesRef.current + blob.size <= CACHE_BYTE_CAP) {
+        cacheBytesRef.current += blob.size;
+        urlCacheRef.current.set(idx, url);
+      } else {
+        if (!cacheCappedRef.current) {
+          cacheCappedRef.current = true;
+          setCacheCapped(true);
+        }
+        // 繰り返し中なら今の周を最後まで読んだら止まる（このチャンクを
+        // キャッシュできない以上、2周目以降で再度 API を呼ぶことになるため）。
+        // ボタンの見た目は直ちに「オフ」にする（実際の停止は今の周の終わりで
+        // handleEnded 側が行う）。
+        if (repeatOnRef.current) {
+          repeatOnRef.current = false;
+          setRepeatLap(0);
+        }
+        uncachedUrlsRef.current.set(idx, url);
+      }
       return url;
     },
     [wantLang],
@@ -204,6 +254,12 @@ export function useReadAloud(segments: string[], lang: Lang) {
       } catch (error) {
         console.error('[useReadAloud] failed to fetch audio', error);
         if (gen === genRef.current) {
+          // 取得失敗で再生が止まる以上、繰り返し中でも継続できない
+          // （このまま repeatOn を残すと、ended が二度と来ないのに
+          // ボタンだけ「オン」で固まってしまう）。
+          repeatOnRef.current = false;
+          repeatLapRef.current = 0;
+          setRepeatLap(0);
           setStatus('idle');
           setMouthOpen(false);
           setActiveChunk(-1);
@@ -245,6 +301,14 @@ export function useReadAloud(segments: string[], lang: Lang) {
 
     const handleEnded = () => {
       const done = chunkIdxRef.current;
+      // 今読み終えたチャンクがキャッシュ上限超過で未キャッシュだった場合、
+      // その一時 URL はもう不要なので破棄する
+      const stray = uncachedUrlsRef.current.get(done);
+      if (stray) {
+        URL.revokeObjectURL(stray);
+        uncachedUrlsRef.current.delete(done);
+      }
+
       const next = done + 1;
       if (next < chunksRef.current.length) {
         const gen = genRef.current;
@@ -262,7 +326,17 @@ export function useReadAloud(segments: string[], lang: Lang) {
         } else {
           advance();
         }
+      } else if (repeatOnRef.current && repeatLapRef.current < REPEAT_COUNT) {
+        // 繰り返し再生: 次の周へ（キャッシュ済みなのでほぼ即時に再生を開始する）
+        const gen = genRef.current;
+        repeatLapRef.current += 1;
+        setRepeatLap(repeatLapRef.current);
+        chunkIdxRef.current = 0;
+        void playFromRef.current(0, gen);
       } else {
+        repeatOnRef.current = false;
+        repeatLapRef.current = 0;
+        setRepeatLap(0);
         setStatus('idle');
         chunkIdxRef.current = 0;
         setMouthOpen(false);
@@ -274,6 +348,9 @@ export function useReadAloud(segments: string[], lang: Lang) {
       // src を外して load() したときの空ソースエラーは無視する
       if (!audio.getAttribute('src')) return;
       genRef.current += 1;
+      repeatOnRef.current = false;
+      repeatLapRef.current = 0;
+      setRepeatLap(0);
       setStatus('idle');
       chunkIdxRef.current = 0;
       setMouthOpen(false);
@@ -304,6 +381,9 @@ export function useReadAloud(segments: string[], lang: Lang) {
       }
       chunkIdxRef.current = 0;
       revokeUrls();
+      repeatOnRef.current = false;
+      repeatLapRef.current = 0;
+      setRepeatLap(0);
       setStatus('idle');
       setMouthOpen(false);
       setActiveChunk(-1);
@@ -413,6 +493,9 @@ export function useReadAloud(segments: string[], lang: Lang) {
       audio.load();
     }
     chunkIdxRef.current = 0;
+    repeatOnRef.current = false;
+    repeatLapRef.current = 0;
+    setRepeatLap(0);
     setStatus('idle');
     setMouthOpen(false);
     setActiveChunk(-1);
@@ -447,6 +530,26 @@ export function useReadAloud(segments: string[], lang: Lang) {
     }
   }, [status, play, pause, unlockAudio]);
 
+  // 「繰り返し」ボタン。オンにすると、いまの周を1周目として数えて合計 REPEAT_COUNT 回
+  // 読み上げる（停止中に押した場合は最初から再生を始める）。オン中にもう一度押すと、
+  // 今の周を最後まで読んだところで止まる（ループはしない）。
+  const toggleRepeat = useCallback(() => {
+    if (cacheCappedRef.current) return; // 上限超過のため無効化中
+    if (repeatOnRef.current) {
+      repeatOnRef.current = false;
+      setRepeatLap(0);
+      return;
+    }
+    repeatOnRef.current = true;
+    repeatLapRef.current = 1;
+    setRepeatLap(1);
+    if (status === 'idle') {
+      unlockAudio();
+      play();
+    }
+    // playing / paused の場合は現在の再生をそのまま続け、今の周を1周目として数える
+  }, [status, play, unlockAudio]);
+
   const changeRate = useCallback((next: number) => {
     const clamped = Math.min(READ_ALOUD_MAX_RATE, Math.max(READ_ALOUD_MIN_RATE, next));
     setRate(clamped);
@@ -463,6 +566,9 @@ export function useReadAloud(segments: string[], lang: Lang) {
       const audio = audioRef.current;
       if (audio) audio.pause();
       chunkIdxRef.current = 0;
+      repeatOnRef.current = false;
+      repeatLapRef.current = 0;
+      setRepeatLap(0);
       setStatus('idle');
       setMouthOpen(false);
       setActiveChunk(-1);
@@ -487,6 +593,10 @@ export function useReadAloud(segments: string[], lang: Lang) {
     setRate: changeRate,
     toggle,
     stop,
+    // 繰り返し再生
+    repeatLap,
+    toggleRepeat,
+    cacheCapped,
     // テキストハイライト用
     chunks: chunkTexts,
     chunkSegments,

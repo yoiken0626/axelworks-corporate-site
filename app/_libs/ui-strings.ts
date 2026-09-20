@@ -311,6 +311,39 @@ const UI_STRINGS = {
     es: 'Velocidad',
     ru: 'Скорость',
   },
+  // 「繰り返し」ボタン（オン/オフ共通。aria-pressed で状態を伝える）
+  readAloudRepeat: {
+    ja: '{count}回繰り返す',
+    en: 'Repeat {count} times',
+    ko: '{count}회 반복',
+    zh: '重复 {count} 次',
+    de: '{count}-mal wiederholen',
+    fr: 'Répéter {count} fois',
+    es: 'Repetir {count} veces',
+    ru: 'Повторить {count} раз',
+  },
+  // 繰り返し再生中の進行状況（aria-live で通知。読み上げ音声には含めない）
+  readAloudRepeatProgress: {
+    ja: '{lap}/{count}回目',
+    en: 'Repeat {lap} of {count}',
+    ko: '{lap}/{count}회째',
+    zh: '第 {lap}/{count} 次',
+    de: 'Wiederholung {lap} von {count}',
+    fr: 'Répétition {lap} sur {count}',
+    es: 'Repetición {lap} de {count}',
+    ru: 'Повтор {lap} из {count}',
+  },
+  // 記事が長く音声キャッシュの上限を超えたため、繰り返し再生を無効化した旨の控えめな注記
+  readAloudRepeatUnavailable: {
+    ja: 'この記事は長いため「繰り返し」は利用できません',
+    en: 'This article is too long for repeat playback.',
+    ko: '이 글은 길어서 “반복”을 사용할 수 없습니다',
+    zh: '这篇文章较长，无法使用“重复”功能',
+    de: 'Dieser Artikel ist zu lang für die Wiederholungsfunktion.',
+    fr: 'Cet article est trop long pour la lecture en boucle.',
+    es: 'Este artículo es demasiado largo para la repetición.',
+    ru: 'Эта статья слишком длинная для повтора воспроизведения.',
+  },
 
   // Business セクション
   businessHeading: { ja: 'Business' },
