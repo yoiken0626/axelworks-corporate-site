@@ -152,6 +152,61 @@
   color: var(--color-text-sub);
 }
 
+/* --- 制作の紹介（/saas・/navi-lp へのカードリンク） --- */
+.showcase {
+  border-top: 1px solid var(--color-border);
+  padding-top: 64px;
+  margin-bottom: 64px;
+}
+
+.showcaseHeading {
+  font-size: 1.6rem;
+  font-weight: bold;
+  line-height: 1.45;
+  margin-bottom: 24px;
+}
+
+.showcaseGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.showcaseCard {
+  display: block;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 24px;
+  color: var(--color-text-main);
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.showcaseCard:hover,
+.showcaseCard:focus-visible {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.showcaseCardTitle {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.showcaseCardDesc {
+  font-size: 0.88rem;
+  line-height: 1.8;
+  margin-bottom: 12px;
+}
+
+.showcaseCardMore {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 /* --- フッター（既存の採用募集セクション） --- */
 .footer {
   display: flex;
@@ -189,5 +244,18 @@
 
   .title {
     font-size: 1.35rem;
+  }
+
+  .showcase {
+    padding-top: 48px;
+    margin-bottom: 48px;
+  }
+
+  .showcaseHeading {
+    font-size: 1.35rem;
+  }
+
+  .showcaseGrid {
+    grid-template-columns: 1fr;
   }
 }

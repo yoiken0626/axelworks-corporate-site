@@ -17,3 +17,11 @@ export const SAAS_DEMO = {
   loginId: 'noter',
   password: 'Follower',
 } as const;
+
+// /navi-lp ページで案内する外部リンク。
+// LPNotes本体のURLは非公開のため、ここにも他のどこにも書かない。
+export const NAVI_LP_LINKS = {
+  guidedLpUrl: 'https://axelworks-guided-lp.yoiken0626.chatgpt.site/',
+  guidedLpArticleUrl: 'https://note.com/gentle_hawk873/n/na0b1b7f1fd06',
+  lpNotesArticleUrl: 'https://note.com/gentle_hawk873/n/na8bf8f184d74',
+} as const;

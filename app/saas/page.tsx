@@ -1,39 +1,30 @@
-import fs from 'node:fs';
-import path from 'node:path';
 import Image from 'next/image';
 import { cookies } from 'next/headers';
 import { LANG_COOKIE, resolveLang } from '@/app/_libs/lang';
 import { ui } from '@/app/_libs/ui-strings';
 import { SAAS_DEMO } from '@/app/_constants';
 import { SCROLL_DOCK_SENTINEL_ID } from '@/app/_libs/scroll-dock';
+import { resolvePublicImage } from '@/app/_libs/public-image';
 import PageReadAloud from '@/app/_components/PageReadAloud';
 import ButtonLink from '@/app/_components/ButtonLink';
 import styles from './page.module.css';
 
-// スクリーンショットは、あとで public/saas/ に配置される想定。
+// スクリーンショットは public/saas/ に配置される（.webp を優先、.png にもフォールバック）。
 // ファイルがまだ無い間は、その画像の枠ごと表示しない（ページを崩さない）。
 const SCREENSHOTS = {
-  yojitsu: 'saas-yojitsu.png',
-  follower: 'saas-follower.png',
-  notification: 'saas-notification.png',
+  dashboard: 'saas-dashboard',
+  follower: 'saas-follower',
+  notification: 'saas-notification',
 } as const;
 
 const SCREENSHOT_SIZES = '(max-width: 640px) calc(100vw - 64px), (max-width: 950px) calc((100vw - 192px) / 2), 340px';
 
-function hasPublicImage(filename: string): boolean {
-  try {
-    return fs.existsSync(path.join(process.cwd(), 'public', 'saas', filename));
-  } catch {
-    return false;
-  }
-}
-
 export default async function Page() {
   const lang = resolveLang((await cookies()).get(LANG_COOKIE)?.value);
 
-  const hasYojitsuImage = hasPublicImage(SCREENSHOTS.yojitsu);
-  const hasFollowerImage = hasPublicImage(SCREENSHOTS.follower);
-  const hasNotificationImage = hasPublicImage(SCREENSHOTS.notification);
+  const dashboardImageSrc = resolvePublicImage('saas', SCREENSHOTS.dashboard);
+  const followerImageSrc = resolvePublicImage('saas', SCREENSHOTS.follower);
+  const notificationImageSrc = resolvePublicImage('saas', SCREENSHOTS.notification);
 
   // 読み上げ対象：見出しと本文（表示言語に合わせる）。ログインID・パスワードは含めない。
   const segments = [
@@ -88,29 +79,34 @@ export default async function Page() {
 
         <h2>{ui('saasScreensHeading', lang)}</h2>
         <div className={styles.screens}>
-          <div className={styles.screenItem}>
-            <h3>{ui('saasScreenYojitsuTitle', lang)}</h3>
-            <p>{ui('saasScreenYojitsuDesc', lang)}</p>
-            {hasYojitsuImage && (
+          {/* ダッシュボード：個別の見出し・説明は持たず、画面全体の様子を伝える画像のみ。画像付きで
+              表示するカードは、ダッシュボード・フォロワー数・通知分析の3つ（この順） */}
+          {dashboardImageSrc && (
+            <div className={styles.screenItem}>
               <div className={styles.screenMedia}>
                 <Image
-                  src={`/saas/${SCREENSHOTS.yojitsu}`}
-                  alt={ui('saasScreenshotYojitsuAlt', lang)}
+                  src={dashboardImageSrc}
+                  alt={ui('saasScreenshotDashboardAlt', lang)}
                   fill
                   sizes={SCREENSHOT_SIZES}
-                  loading="lazy"
+                  priority
                   className={styles.screenImage}
                 />
               </div>
-            )}
+            </div>
+          )}
+          {/* 予実管理：見出し・説明のみ。画像は表示しない（アクセス分析と同じ扱い） */}
+          <div className={styles.screenItem}>
+            <h3>{ui('saasScreenYojitsuTitle', lang)}</h3>
+            <p>{ui('saasScreenYojitsuDesc', lang)}</p>
           </div>
           <div className={styles.screenItem}>
             <h3>{ui('saasScreenFollowerTitle', lang)}</h3>
             <p>{ui('saasScreenFollowerDesc', lang)}</p>
-            {hasFollowerImage && (
+            {followerImageSrc && (
               <div className={styles.screenMedia}>
                 <Image
-                  src={`/saas/${SCREENSHOTS.follower}`}
+                  src={followerImageSrc}
                   alt={ui('saasScreenshotFollowerAlt', lang)}
                   fill
                   sizes={SCREENSHOT_SIZES}
@@ -123,10 +119,10 @@ export default async function Page() {
           <div className={styles.screenItem}>
             <h3>{ui('saasScreenNotificationTitle', lang)}</h3>
             <p>{ui('saasScreenNotificationDesc', lang)}</p>
-            {hasNotificationImage && (
+            {notificationImageSrc && (
               <div className={styles.screenMedia}>
                 <Image
-                  src={`/saas/${SCREENSHOTS.notification}`}
+                  src={notificationImageSrc}
                   alt={ui('saasScreenshotNotificationAlt', lang)}
                   fill
                   sizes={SCREENSHOT_SIZES}

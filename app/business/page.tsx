@@ -212,6 +212,26 @@ export default async function Page() {
         })}
       </div>
 
+      <div className={styles.showcase}>
+        <h2 className={styles.showcaseHeading}>{ui('businessShowcaseHeading', lang)}</h2>
+        <div className={styles.showcaseGrid}>
+          <Link href="/saas" className={styles.showcaseCard}>
+            <h3 className={styles.showcaseCardTitle}>{ui('saasHeading', lang)}</h3>
+            <p className={styles.showcaseCardDesc}>{ui('saasLead', lang)}</p>
+            <span className={styles.showcaseCardMore}>
+              {ui('saasLearnMoreLabel', lang)} <span aria-hidden="true">→</span>
+            </span>
+          </Link>
+          <Link href="/navi-lp" className={styles.showcaseCard}>
+            <h3 className={styles.showcaseCardTitle}>{ui('naviLpHeading', lang)}</h3>
+            <p className={styles.showcaseCardDesc}>{ui('naviLpLead', lang)}</p>
+            <span className={styles.showcaseCardMore}>
+              {ui('saasLearnMoreLabel', lang)} <span aria-hidden="true">→</span>
+            </span>
+          </Link>
+        </div>
+      </div>
+
       <div className={styles.footer}>
         <h2 className={styles.message}>{ui('businessContactHeading', lang)}</h2>
         <p>{ui('businessContactBody', lang)}</p>
