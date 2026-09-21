@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
@@ -76,6 +76,17 @@ export default function GlobeLanguageSwitcher({ className, lang }: Props) {
     router.refresh();
   };
 
+  // 閉じている間、リング上に残っている「現在の言語」の国旗をタップしたときは、
+  // 地球儀本体をタップしたときと同じくリングを開く（選択はしない。閉じている間は
+  // これ以外の国旗はタップできない＝実質この分岐しか呼ばれない）。
+  const handleFlagClick = (flag: Flag) => {
+    if (!isOpen) {
+      setIsOpen(true);
+      return;
+    }
+    handleLangSelect(flag);
+  };
+
   // 開いたら、現在の言語（無ければ先頭）の国旗にフォーカスする
   useEffect(() => {
     if (!isOpen) return;
@@ -140,21 +151,6 @@ export default function GlobeLanguageSwitcher({ className, lang }: Props) {
         <Earth3D className={styles.earthGlobe} />
       </button>
 
-      {/* 閉じている間だけ見せる、現在の言語の丸国旗バッジ。地球儀に重ねる装飾のため
-         非インタラクティブにする（タップは背後の globeButton がまとめて受け取る）。 */}
-      <div className={styles.currentBadge} data-open={isOpen} aria-hidden="true">
-        <span className={styles.currentBadgeFlagWrap}>
-          <Image
-            src={`/flags/${currentFlag.icon}.svg`}
-            alt=""
-            width={28}
-            height={28}
-            className={styles.currentBadgeFlag}
-          />
-        </span>
-        <span className={styles.currentBadgeCode}>{currentFlag.code.toUpperCase()}</span>
-      </div>
-
       <ul
         className={styles.flagList}
         role="menu"
@@ -168,12 +164,17 @@ export default function GlobeLanguageSwitcher({ className, lang }: Props) {
             <li
               key={flag.code}
               className={styles.flagItem}
-              style={{
-                left: `calc(50% + (${cos} * var(--gls-ring-radius, 125%)))`,
-                top: `calc(50% + (${sin} * var(--gls-ring-radius, 125%)))`,
-                transitionDelay: isOpen ? `${index * 40}ms` : '0ms',
-              }}
+              style={
+                {
+                  left: `calc(50% + (${cos} * var(--gls-ring-radius, 125%)))`,
+                  top: `calc(50% + (${sin} * var(--gls-ring-radius, 125%)))`,
+                  transitionDelay: isOpen ? `${index * 40}ms` : '0ms',
+                  '--flag-cos': cos,
+                  '--flag-sin': sin,
+                } as CSSProperties
+              }
               data-open={isOpen}
+              data-current={isCurrent}
             >
               <button
                 type="button"
@@ -185,23 +186,29 @@ export default function GlobeLanguageSwitcher({ className, lang }: Props) {
                 aria-checked={isCurrent}
                 aria-label={flag.label}
                 title={flag.label}
+                // 閉じている間はリング上の現在の言語だけが表示・タップ可能なので、
+                // それだけが実質的なタブ順に入っていればよい。
                 tabIndex={-1}
-                data-current={isCurrent}
-                onClick={() => handleLangSelect(flag)}
+                onClick={() => handleFlagClick(flag)}
               >
                 <Image
                   src={`/flags/${flag.icon}.svg`}
                   alt=""
-                  width={48}
-                  height={48}
+                  // 実際の最大表示サイズ（HeroQueen 側、コンテナ幅900px上限で約66px）に合わせる。
+                  width={68}
+                  height={68}
                   className={styles.flagIcon}
                 />
-                {isCurrent && (
-                  <span className={styles.checkMark} aria-hidden="true">
-                    ✓
-                  </span>
-                )}
               </button>
+              {/* 閉じている間、現在の言語の国旗にだけ言語コードを添える（国旗は「国」を
+                 表すため、例: 英語=米国旗のように言語自体が分かりにくい場合がある）。
+                 国旗の中心からリングと同じ角度・外向きに配置するので、地球儀にも
+                 ほかの国旗にも重ならない（開くとフェードアウトする）。 */}
+              {isCurrent && (
+                <span className={styles.flagCode} aria-hidden="true">
+                  {flag.code.toUpperCase()}
+                </span>
+              )}
             </li>
           );
         })}

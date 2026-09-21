@@ -114,6 +114,9 @@
   /* 横長のヒーロー画像に収まるよう、国旗リングをコンパクトに */
   --gls-ring-radius: 88%;
   --gls-flag-size: 46%;
+  /* 言語コードは、吹き出し（左上）・読み上げコントロール（右上）と重ならない
+     距離に抑える。国旗の位置（8方向）によらず、この値だけ外側にずらす。 */
+  --gls-code-offset: 16px;
 }
 
 @media (max-width: 640px) {
@@ -154,5 +157,6 @@
   .globe {
     --gls-ring-radius: 74%;
     --gls-flag-size: 40%;
+    --gls-code-offset: 10px;
   }
 }
