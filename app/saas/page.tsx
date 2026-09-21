@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { LANG_COOKIE, resolveLang } from '@/app/_libs/lang';
 import { ui } from '@/app/_libs/ui-strings';
@@ -64,6 +65,11 @@ export default async function Page() {
   return (
     <>
       <PageReadAloud lang={lang} segments={segments} />
+
+      {/* ヘッダーが何らかの理由で使えない場合の保険。ヘッダーとは別の、常に見える戻る導線 */}
+      <p className={styles.backLink}>
+        <Link href="/business">{ui('backToBusinessLabel', lang)}</Link>
+      </p>
 
       <h1 className={styles.title} data-read-aloud-title>
         {ui('saasHeading', lang)}

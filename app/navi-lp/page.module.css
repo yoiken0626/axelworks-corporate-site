@@ -1,4 +1,22 @@
 /* 通常の記事的レイアウト。/saas と同じ白カード上のプローズスタイルに合わせる。 */
+
+/* ヘッダーが使えない場合の保険リンク（/business/page.module.css の .learnMore a と同じ見た目） */
+.backLink {
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+}
+
+.backLink a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  color: var(--color-text-main);
+  font-weight: 600;
+}
+
+.backLink a:hover {
+  color: var(--color-text-sub);
+}
+
 .title {
   font-size: 2rem;
   font-weight: bold;

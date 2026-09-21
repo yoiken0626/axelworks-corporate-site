@@ -1101,6 +1101,17 @@ const UI_STRINGS = {
     es: 'Desarrollo SaaS',
     ru: 'Разработка SaaS',
   },
+  // /saas・/navi-lp の見出し付近に置く「事業内容に戻る」リンク（ヘッダーが使えない場合の保険）
+  backToBusinessLabel: {
+    ja: '← 事業内容に戻る',
+    en: '← Back to Business',
+    ko: '← 사업 내용으로 돌아가기',
+    zh: '← 返回业务内容',
+    de: '← Zurück zu den Geschäftsfeldern',
+    fr: '← Retour aux activités',
+    es: '← Volver a Servicios',
+    ru: '← Назад к Услугам',
+  },
   saasHeading: {
     ja: 'SaaS開発',
     en: 'SaaS Development',

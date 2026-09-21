@@ -23,6 +23,7 @@ export default function Header({ lang }: Props) {
     pathname === '/company' ||
     pathname === '/hire-me' ||
     pathname === '/saas' ||
+    pathname === '/navi-lp' ||
     pathname === '/terms' ||
     pathname === '/privacy';
   const variant = isLightBg ? 'light' : 'dark';
