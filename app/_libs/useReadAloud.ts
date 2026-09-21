@@ -40,10 +40,24 @@ const MOUTH_PULSE_MS = 150;
 // currentTime がこの回数連続で進まなければ「音が止まった」とみなして口を閉じる
 const STALL_TICKS = 3;
 
-// 見出しチャンクを読み終えてから次のチャンクを再生するまでの間（ms）。
+// 見出し/リスト項目チャンクを読み終えてから次のチャンクを再生するまでの間（ms）。
+// ここに書く値は「等速（1.0倍）のとき」の基準値。実際に使うときは再生速度で割り、
+// 高速再生では比例して短くする（例: 2.0倍なら 350ms / 200ms）。速すぎる短縮を防ぐため
+// 下限（MIN）を設ける。
 const HEADING_PAUSE_MS = 700;
-// リスト項目チャンクを読み終えてから次へ進むまでの間（ms）。見出しより短め。
+const HEADING_PAUSE_MIN_MS = 150;
 const LIST_ITEM_PAUSE_MS = 400;
+const LIST_ITEM_PAUSE_MIN_MS = 100;
+
+// 基準の間（baseMs、等速のときの値）を再生速度で割り、下限（minMs）を下回らない値にする。
+const computePauseMs = (baseMs: number, minMs: number, rate: number): number =>
+  Math.max(minMs, Math.round(baseMs / Math.max(rate, 0.01)));
+
+// 先読みの深さとしきい値。再生速度が PREFETCH_FAST_RATE 以上のときは、チャンクの
+// 実再生時間（＝先読みに使える猶予）が短くなるぶん、次の PREFETCH_AHEAD_FAST 個先
+// まで先読みする（未満のときは、これまでどおり次の1チャンクのみ）。
+const PREFETCH_FAST_RATE = 1.5;
+const PREFETCH_AHEAD_FAST = 2;
 // ハイライトの推定位置を実際の発音より少し先に出すための先読み秒数。
 // timeupdate ではなく毎フレーム更新する分と合わせて「遅れて見える」のを解消する。
 const HIGHLIGHT_LEAD_SEC = 0.25;
@@ -204,6 +218,26 @@ export function useReadAloud(segments: string[], lang: Lang) {
   // 上限超過のためキャッシュしなかったチャンクの Object URL。再生完了直後に revoke する
   const uncachedUrlsRef = useRef<Map<number, string>>(new Map());
   const cacheCappedRef = useRef(false);
+  // 取得中（進行中）の /api/tts 呼び出しを、"gen:idx" 単位で共有するための Map。
+  // 先読み（プリフェッチ）と、playFrom 自身の取得が同じチャンクを狙ったときに、
+  // 二重に /api/tts を呼ばないようにする。gen を含めるのは、世代（セッション）を
+  // またいで古い Promise を誤って再利用しないため（pause/stop/言語切替等は gen を
+  // 進めるので、古いキーは自然に参照されなくなる）。
+  const pendingFetchesRef = useRef<Map<string, Promise<string | null>>>(new Map());
+
+  // audio.playbackRate への書き込みを間引くための state（rAF で1回にまとめる）。
+  // rateRef 自体（先読みの深さ・間の長さの計算に使う値）は changeRate で即時更新する。
+  const pendingAudioRateRef = useRef<number | null>(null);
+  const audioRateRafRef = useRef<number | null>(null);
+
+  // 診断用（SHOW_DEBUG_CODE=true のときのみ使用）: 'ended' が発火した時刻と、
+  // その後の「間」待ちを終えて次のチャンクの取得・再生を試み始めた時刻。
+  // 次のチャンクの audio.play() 成功時に、この2つとの差分をログして、
+  // 「間（ポーズ）の待ち」と「取得（fetch）の待ち」を切り分ける。
+  const debugChunkEndedAtRef = useRef<number | null>(null);
+  const debugAdvanceAtRef = useRef<number | null>(null);
+  // 診断用: 速度スライダーの変更回数
+  const debugRateChangeCountRef = useRef(0);
 
   // 繰り返し再生: true の間、全チャンク再生後に先頭へ戻って次の周へ進む
   const repeatOnRef = useRef(false);
@@ -261,69 +295,148 @@ export function useReadAloud(segments: string[], lang: Lang) {
   // urlCacheRef に保持し、2周目以降（繰り返し再生）はここで再利用される
   // （= /api/tts を呼び直さない）。上限を超える場合はキャッシュせず、繰り返し
   // 再生は無効化する（キャッシュしないと2周目にまた API を呼ぶことになるため）。
+  //
+  // 同じチャンク（gen:idx）に対して、先読みと playFrom 自身の取得が重なった場合は、
+  // 進行中の Promise を pendingFetchesRef で共有し、/api/tts を二重に呼ばないように
+  // する。取得が失敗したときは保持を破棄し、次の呼び出しで新しく取得し直せるようにする。
   const fetchChunk = useCallback(
-    async (idx: number, gen: number): Promise<string | null> => {
+    (idx: number, gen: number): Promise<string | null> => {
       const cached = urlCacheRef.current.get(idx);
-      if (cached) return cached;
+      if (cached) return Promise.resolve(cached);
 
-      const text = chunksRef.current[idx];
-      if (!text) return null;
+      const key = `${gen}:${idx}`;
+      const pending = pendingFetchesRef.current.get(key);
+      if (pending) return pending;
 
-      let res: Response;
-      try {
-        res = await fetch('/api/tts', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ text, lang: wantLang }),
-        });
-      } catch {
-        // 診断用: /api/tts へのリクエスト自体が届かなかった（オフライン等）
-        const err: DebugTaggedError = new Error('failed to reach /api/tts');
-        err.debugCode = 'E:http-network';
-        throw err;
-      }
-      if (gen !== genRef.current) return null;
-      if (!res.ok) {
-        // 診断用: /api/tts がエラーステータスを返した
-        const err: DebugTaggedError = new Error(`/api/tts responded ${res.status}`);
-        err.debugCode = `E:http${res.status}`;
-        throw err;
-      }
+      const request = (async (): Promise<string | null> => {
+        const text = chunksRef.current[idx];
+        if (!text) return null;
 
-      let blob: Blob;
-      let url: string;
-      try {
-        blob = await res.blob();
+        let res: Response;
+        try {
+          res = await fetch('/api/tts', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ text, lang: wantLang }),
+          });
+        } catch {
+          // 診断用: /api/tts へのリクエスト自体が届かなかった（オフライン等）
+          const err: DebugTaggedError = new Error('failed to reach /api/tts');
+          err.debugCode = 'E:http-network';
+          throw err;
+        }
         if (gen !== genRef.current) return null;
-        url = URL.createObjectURL(blob);
-      } catch {
-        // 診断用: 受け取った音声データの読み取り / Object URL 化に失敗
-        const err: DebugTaggedError = new Error('failed to read tts response body');
-        err.debugCode = 'E:decode';
-        throw err;
-      }
+        if (!res.ok) {
+          // 診断用: /api/tts がエラーステータスを返した
+          const err: DebugTaggedError = new Error(`/api/tts responded ${res.status}`);
+          err.debugCode = `E:http${res.status}`;
+          throw err;
+        }
 
-      if (cacheBytesRef.current + blob.size <= CACHE_BYTE_CAP) {
-        cacheBytesRef.current += blob.size;
-        urlCacheRef.current.set(idx, url);
-      } else {
-        if (!cacheCappedRef.current) {
-          cacheCappedRef.current = true;
-          setCacheCapped(true);
+        let blob: Blob;
+        let url: string;
+        try {
+          blob = await res.blob();
+          if (gen !== genRef.current) return null;
+          url = URL.createObjectURL(blob);
+        } catch {
+          // 診断用: 受け取った音声データの読み取り / Object URL 化に失敗
+          const err: DebugTaggedError = new Error('failed to read tts response body');
+          err.debugCode = 'E:decode';
+          throw err;
         }
-        // 繰り返し中なら今の周を最後まで読んだら止まる（このチャンクを
-        // キャッシュできない以上、2周目以降で再度 API を呼ぶことになるため）。
-        // ボタンの見た目は直ちに「オフ」にする（実際の停止は今の周の終わりで
-        // handleEnded 側が行う）。
-        if (repeatOnRef.current) {
-          repeatOnRef.current = false;
-          setRepeatLap(0);
+
+        if (cacheBytesRef.current + blob.size <= CACHE_BYTE_CAP) {
+          cacheBytesRef.current += blob.size;
+          urlCacheRef.current.set(idx, url);
+        } else {
+          if (!cacheCappedRef.current) {
+            cacheCappedRef.current = true;
+            setCacheCapped(true);
+          }
+          // 繰り返し中なら今の周を最後まで読んだら止まる（このチャンクを
+          // キャッシュできない以上、2周目以降で再度 API を呼ぶことになるため）。
+          // ボタンの見た目は直ちに「オフ」にする（実際の停止は今の周の終わりで
+          // handleEnded 側が行う）。
+          if (repeatOnRef.current) {
+            repeatOnRef.current = false;
+            setRepeatLap(0);
+          }
+          uncachedUrlsRef.current.set(idx, url);
         }
-        uncachedUrlsRef.current.set(idx, url);
-      }
-      return url;
+        return url;
+      })();
+
+      pendingFetchesRef.current.set(key, request);
+      // 成功・失敗にかかわらず、決着したら保持から外す（失敗時は次回また取得し直せるように。
+      // 成功時は urlCacheRef 側のキャッシュヒットが先に効くようになるため、ここに残す必要が無い）。
+      request
+        .catch(() => {})
+        .then(() => {
+          if (pendingFetchesRef.current.get(key) === request) {
+            pendingFetchesRef.current.delete(key);
+          }
+        });
+
+      return request;
     },
     [wantLang],
+  );
+
+  // 診断用（原因1の切り分け・SHOW_DEBUG_CODE=true のときのみ動作）: audio.play() が
+  // 成功した時点で仕掛け、(duration / 再生速度) + 500ms の猶予を過ぎても 'ended' が
+  // 来ていなければ、そのときの状態を記録する。SHOW_DEBUG_CODE が false の間は
+  // 何もしない（タイマーすら仕掛けない）ため、通常の動作に一切影響しない。
+  const armStallWatchdog = useCallback(
+    (idx: number, gen: number) => {
+      if (!SHOW_DEBUG_CODE) return;
+      const startedAt = performance.now();
+      const POLL_MS = 50;
+      const POLL_CAP_MS = 2000;
+
+      const scheduleFire = (durationSec: number) => {
+        const budgetMs = (durationSec * 1000) / Math.max(rateRef.current, 0.01) + 500;
+        const delay = Math.max(0, startedAt + budgetMs - performance.now());
+        window.setTimeout(() => {
+          // すでに次のチャンクへ進んでいる（＝正常に 'ended' が来た）か、
+          // 別の世代になっていれば、何もしない（誤検知を出さない）。
+          if (gen !== genRef.current || chunkIdxRef.current !== idx) return;
+          const a = audioRef.current;
+          const nextIdx = idx + 1;
+          const prefetchDone = nextIdx >= chunksRef.current.length || urlCacheRef.current.has(nextIdx);
+          // eslint-disable-next-line no-console
+          console.warn('[useReadAloud][debug] S:stall detail', {
+            idx,
+            isHeading: headingsRef.current[idx],
+            isListItem: listItemsRef.current[idx],
+            rate: rateRef.current,
+            readyState: a?.readyState,
+            paused: a?.paused,
+            ended: a?.ended,
+            errorCode: a?.error?.code ?? null,
+            currentTime: a?.currentTime,
+            duration: a?.duration,
+            networkState: a?.networkState,
+            nextChunkPrefetchDone: prefetchDone,
+          });
+          setHasError(true);
+          setDebugError(`S:stall-c${idx}`);
+        }, delay);
+      };
+
+      const poll = () => {
+        const a = audioRef.current;
+        if (!a || gen !== genRef.current || chunkIdxRef.current !== idx) return;
+        if (Number.isFinite(a.duration) && a.duration > 0) {
+          scheduleFire(a.duration);
+          return;
+        }
+        if (performance.now() - startedAt > POLL_CAP_MS) return; // duration不明のまま諦める
+        window.setTimeout(poll, POLL_MS);
+      };
+      poll();
+    },
+    [setDebugError],
   );
 
   // idx 番目のチャンクを取得して再生する。成功したら次のチャンクを先読みする。
@@ -383,10 +496,56 @@ export function useReadAloud(segments: string[], lang: Lang) {
       setActiveChunk(idx);
       setChunkProgress(0);
 
-      // 次チャンクを先読み（失敗しても本再生には影響させない）
-      void fetchChunk(idx + 1, gen).catch(() => {});
+      // 診断用（Item 3）: 'ended' から今回の play() 成功までの実経過時間を、
+      // 「間（ポーズ）の待ち」と「取得（fetch）の待ち」に分けてログする。
+      if (SHOW_DEBUG_CODE && debugChunkEndedAtRef.current !== null) {
+        const now = performance.now();
+        const totalGapMs = Math.round(now - debugChunkEndedAtRef.current);
+        const fetchWaitMs =
+          debugAdvanceAtRef.current !== null ? Math.round(now - debugAdvanceAtRef.current) : null;
+        // eslint-disable-next-line no-console
+        console.warn('[useReadAloud][debug] S:gap', {
+          idx,
+          rate: rateRef.current,
+          totalGapMs,
+          fetchWaitMs,
+        });
+        debugChunkEndedAtRef.current = null;
+        debugAdvanceAtRef.current = null;
+      }
+
+      armStallWatchdog(idx, gen);
+
+      // 次のチャンクを先読み（失敗しても本再生には影響させない）。再生速度が
+      // PREFETCH_FAST_RATE 以上のときは、実再生時間が短くなるぶん先読みの猶予も
+      // 短くなるため、次の PREFETCH_AHEAD_FAST 個先まで先読みする。
+      const prefetchAhead = rateRef.current >= PREFETCH_FAST_RATE ? PREFETCH_AHEAD_FAST : 1;
+      for (let offset = 1; offset <= prefetchAhead; offset += 1) {
+        const aheadIdx = idx + offset;
+        if (aheadIdx >= chunksRef.current.length) break;
+        const prefetchStartedAt = SHOW_DEBUG_CODE ? performance.now() : 0;
+        void fetchChunk(aheadIdx, gen)
+          .then((aheadUrl) => {
+            // 診断用（Item 2）: 先読みの完了時刻と、そのとき再生中のチャンクの
+            // 残り再生時間の見込みとの差をログする。
+            if (!SHOW_DEBUG_CODE || gen !== genRef.current) return;
+            const a = audioRef.current;
+            const remainMs =
+              a && Number.isFinite(a.duration)
+                ? Math.max(0, ((a.duration - a.currentTime) * 1000) / Math.max(rateRef.current, 0.01))
+                : null;
+            // eslint-disable-next-line no-console
+            console.warn('[useReadAloud][debug] S:prefetch', {
+              aheadIdx,
+              ok: !!aheadUrl,
+              prefetchMs: Math.round(performance.now() - prefetchStartedAt),
+              remainMsForCurrentChunk: remainMs,
+            });
+          })
+          .catch(() => {});
+      }
     },
-    [fetchChunk, setDebugError],
+    [fetchChunk, setDebugError, armStallWatchdog],
   );
 
   const playFromRef = useRef(playFrom);
@@ -405,6 +564,10 @@ export function useReadAloud(segments: string[], lang: Lang) {
       // セットする前は、この <audio> 要素で何が鳴っていても読み上げの状態とは無関係。
       if (currentSrcGenRef.current === null || currentSrcGenRef.current !== genRef.current) return;
 
+      // 診断用（Item 3）: 'ended' が発火した時刻を記録する（次の play() 成功時に、
+      // ここからの経過時間を「間の待ち」と「取得の待ち」に分けてログする）。
+      if (SHOW_DEBUG_CODE) debugChunkEndedAtRef.current = performance.now();
+
       const done = chunkIdxRef.current;
       // 今読み終えたチャンクがキャッシュ上限超過で未キャッシュだった場合、
       // その一時 URL はもう不要なので破棄する
@@ -418,13 +581,16 @@ export function useReadAloud(segments: string[], lang: Lang) {
       if (next < chunksRef.current.length) {
         const gen = genRef.current;
         const advance = () => {
+          if (SHOW_DEBUG_CODE) debugAdvanceAtRef.current = performance.now();
           if (gen === genRef.current) void playFromRef.current(next, gen);
         };
-        // 見出し / リスト項目を読み終えたら少し間を置いてから次へ
+        // 見出し / リスト項目を読み終えたら少し間を置いてから次へ。間の長さは、
+        // 待ち時間を決めるこの時点の再生速度（rateRef.current）で決める
+        // （等速のときは、これまでどおり 700ms / 400ms のまま）。
         const gap = headingsRef.current[done]
-          ? HEADING_PAUSE_MS
+          ? computePauseMs(HEADING_PAUSE_MS, HEADING_PAUSE_MIN_MS, rateRef.current)
           : listItemsRef.current[done]
-            ? LIST_ITEM_PAUSE_MS
+            ? computePauseMs(LIST_ITEM_PAUSE_MS, LIST_ITEM_PAUSE_MIN_MS, rateRef.current)
             : 0;
         if (gap > 0) {
           window.setTimeout(advance, gap);
@@ -434,6 +600,7 @@ export function useReadAloud(segments: string[], lang: Lang) {
       } else if (repeatOnRef.current && repeatLapRef.current < repeatTotalRef.current) {
         // 繰り返し再生: 次の周へ（キャッシュ済みなのでほぼ即時に再生を開始する）
         const gen = genRef.current;
+        if (SHOW_DEBUG_CODE) debugAdvanceAtRef.current = performance.now();
         repeatLapRef.current += 1;
         setRepeatLap(repeatLapRef.current);
         chunkIdxRef.current = 0;
@@ -453,6 +620,8 @@ export function useReadAloud(segments: string[], lang: Lang) {
         setMouthOpen(false);
         setActiveChunk(-1);
         setChunkProgress(0);
+        debugChunkEndedAtRef.current = null;
+        debugAdvanceAtRef.current = null;
         if (finishedRepeatNaturally) {
           scrollToTop();
         }
@@ -487,6 +656,11 @@ export function useReadAloud(segments: string[], lang: Lang) {
       audio.removeAttribute('src');
       audio.load();
       audioRef.current = null;
+      if (audioRateRafRef.current !== null) {
+        window.cancelAnimationFrame(audioRateRafRef.current);
+        audioRateRafRef.current = null;
+      }
+      pendingAudioRateRef.current = null;
     };
     // setDebugError は参照が変わらない（useCallback([])）ため依存に入れなくても安全。
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -599,6 +773,8 @@ export function useReadAloud(segments: string[], lang: Lang) {
     headingsRef.current = chunkHeadings;
     listItemsRef.current = chunkListItems;
     chunkIdxRef.current = 0;
+    debugChunkEndedAtRef.current = null;
+    debugAdvanceAtRef.current = null;
     if (chunksRef.current.length === 0) return;
     setStatus('playing');
     void playFrom(0, gen);
@@ -631,6 +807,8 @@ export function useReadAloud(segments: string[], lang: Lang) {
     setMouthOpen(false);
     setActiveChunk(-1);
     setChunkProgress(0);
+    debugChunkEndedAtRef.current = null;
+    debugAdvanceAtRef.current = null;
   }, []);
 
   // 停止ボタン（ユーザー操作）専用。stop() 自体は内部（タブ非表示・言語切り替え等）
@@ -735,13 +913,43 @@ export function useReadAloud(segments: string[], lang: Lang) {
     [status, play, unlockAudio],
   );
 
-  const changeRate = useCallback((next: number) => {
-    const clamped = Math.min(READ_ALOUD_MAX_RATE, Math.max(READ_ALOUD_MIN_RATE, next));
-    setRate(clamped);
-    rateRef.current = clamped;
-    // <audio> の playbackRate は再生中でも即時反映される
-    if (audioRef.current) audioRef.current.playbackRate = clamped;
+  // audio.playbackRate への書き込みをまとめる（rAF で1回だけ実行）。スライダーを
+  // ドラッグ中は onChange が連続発火するため、そのたびに再生中の要素へ書き込むと
+  // ブラウザによっては瞬間的な途切れの原因になりうる。表示（つまみ・数値）と
+  // rateRef（先読みの深さ・間の長さの計算に使う値）は、changeRate 内で即時に
+  // 更新するため、ここでの間引きは音声側への反映タイミングにのみ影響する。
+  const flushAudioRate = useCallback(() => {
+    audioRateRafRef.current = null;
+    const target = pendingAudioRateRef.current;
+    if (target === null) return;
+    pendingAudioRateRef.current = null;
+    if (audioRef.current) audioRef.current.playbackRate = target;
   }, []);
+
+  const changeRate = useCallback(
+    (next: number) => {
+      const clamped = Math.min(READ_ALOUD_MAX_RATE, Math.max(READ_ALOUD_MIN_RATE, next));
+      setRate(clamped);
+      rateRef.current = clamped;
+      pendingAudioRateRef.current = clamped;
+      if (audioRateRafRef.current === null) {
+        audioRateRafRef.current = window.requestAnimationFrame(flushAudioRate);
+      }
+      // 診断用（Item 4）: 速度スライダーの変更回数と、そのときのチャンク番号 / currentTime
+      if (SHOW_DEBUG_CODE) {
+        debugRateChangeCountRef.current += 1;
+        const a = audioRef.current;
+        // eslint-disable-next-line no-console
+        console.warn('[useReadAloud][debug] S:rate', {
+          count: debugRateChangeCountRef.current,
+          rate: clamped,
+          chunkIdx: chunkIdxRef.current,
+          currentTime: a ? a.currentTime : null,
+        });
+      }
+    },
+    [flushAudioRate],
+  );
 
   // タブ非表示・ページ離脱で読み上げを止めて口を閉じる
   useEffect(() => {
