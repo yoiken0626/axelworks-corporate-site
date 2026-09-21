@@ -16,6 +16,8 @@
   --color-current: #eee;
   --color-button-primary: #333;
   --border-radius: 4px;
+  /* 読み上げ中のハイライト（通常の読み上げ・ディクテーション練習で共通） */
+  --color-read-aloud-highlight: rgba(56, 132, 255, 0.18);
 }
 
 * {
@@ -52,7 +54,14 @@ code {
 /* ページ読み上げ中に、いま読んでいるチャンクを本文上で薄い青にハイライトする
    （CSS Custom Highlight API / useReadAloudHighlight）。 */
 ::highlight(read-aloud) {
-  background-color: rgba(56, 132, 255, 0.18);
+  background-color: var(--color-read-aloud-highlight);
+  color: inherit;
+}
+
+/* ディクテーション練習モード中に、いまの区間を本文上で同じ青にハイライトする
+   （CSS Custom Highlight API / usePracticeHighlight）。 */
+::highlight(read-aloud-practice) {
+  background-color: var(--color-read-aloud-highlight);
   color: inherit;
 }
 

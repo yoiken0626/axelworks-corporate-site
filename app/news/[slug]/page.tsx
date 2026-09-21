@@ -66,7 +66,7 @@ export default async function Page(props: Props) {
 
   return (
     <>
-      <PageReadAloud lang={lang} segments={segments} />
+      <PageReadAloud lang={lang} segments={segments} practiceEnabled />
       <Article data={data} lang={lang} />
       <div className={styles.footer}>
         <ButtonLink href="/news">{ui('newsListLink', lang)}</ButtonLink>

@@ -1,0 +1,263 @@
+.entryButton {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 6px;
+  padding: 4px 10px 4px 8px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+  border: none;
+  border-radius: 999px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+  color: var(--color-text-main);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.entryButton:hover {
+  opacity: 0.9;
+}
+
+/* PC/タブレット: 再生コントロール（.controlBar、親要素）の直下に開くカード。
+   .controlBar が position:absolute の基準になるので、ここでは 100% を使うだけで
+   ドック状態のスクロール追従にも自動的に追従する。 */
+.panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 300px;
+  max-width: calc(100vw - 36px);
+  max-height: 70vh;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.28);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 950;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.heading {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.closeButton {
+  border: none;
+  background: transparent;
+  color: var(--color-text-sub);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.segmentButton {
+  flex: 1 1 auto;
+  padding: 6px 8px;
+  font-size: 11px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--color-text-main);
+  cursor: pointer;
+}
+
+.segmentButton[data-active='true'] {
+  background: var(--color-button-primary);
+  border-color: var(--color-button-primary);
+  color: #fff;
+}
+
+.rateLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--color-text-sub);
+  width: 100%;
+}
+
+.rateSlider {
+  flex: 1 1 auto;
+  accent-color: var(--color-button-primary);
+  cursor: pointer;
+}
+
+.rateValue {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-sub);
+  min-width: 2.4em;
+  text-align: right;
+}
+
+.progress {
+  margin: 0;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-sub);
+  text-align: center;
+}
+
+.textArea {
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  background: var(--color-bg-painted);
+  border-radius: 10px;
+}
+
+.segmentText {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  text-align: center;
+  /* .textArea の背景（--color-bg-painted、濃色）に対応する文字色。区間の文字を
+     常時表示にしたことで、以前は --color-text-sub（隠し中の説明文用）の淡い色で
+     偶然読めていたコントラスト不足が顕在化していたため、明示的に白にする。 */
+  color: var(--color-text-unpainted);
+}
+
+.errorNote {
+  margin: 0;
+  padding: 6px 8px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: #9a3412;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.buttonRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.primaryButton {
+  flex: 1 1 auto;
+  min-height: 40px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 999px;
+  background: var(--color-button-primary);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.primaryButton:hover {
+  opacity: 0.92;
+}
+
+.secondaryButton {
+  flex: 1 1 auto;
+  min-height: 36px;
+  padding: 6px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--color-text-main);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.secondaryButton:disabled,
+.primaryButton:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.finished {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+}
+
+.finishedHeading {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+/* スマホ・タブレット: 画面下部のシートに切り替える。手書き中は手がふさがるため
+   ボタンは大きめ（56px以上）にする。 */
+@media (max-width: 950px) {
+  .panel {
+    position: fixed;
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: auto;
+    max-width: none;
+    /* 75vh をフォールバックにし、対応ブラウザでは 75dvh で上書きする
+       （iOS Safari のアドレスバー伸縮による見かけ高さのずれを減らす）。
+       非対応ブラウザは dvh 宣言そのものが無効値として無視され、直前の vh が残る。 */
+    max-height: 75vh;
+    max-height: 75dvh;
+    border-radius: 16px 16px 0 0;
+    padding: 16px 16px calc(16px + env(safe-area-inset-bottom, 0px));
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  .heading {
+    font-size: 16px;
+  }
+
+  .segmentText {
+    font-size: 17px;
+  }
+
+  .primaryButton {
+    min-height: 56px;
+    font-size: 15px;
+  }
+
+  .secondaryButton {
+    min-height: 48px;
+    font-size: 14px;
+  }
+
+  .entryButton {
+    min-height: 44px;
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel {
+    transition: none;
+  }
+}

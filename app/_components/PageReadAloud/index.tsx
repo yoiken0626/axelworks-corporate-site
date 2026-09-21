@@ -2,10 +2,13 @@
 
 import GlobeLanguageSwitcher from '@/app/_components/GlobeLanguageSwitcher';
 import RepeatMenu from '@/app/_components/RepeatMenu';
+import PracticePanel from '@/app/_components/PracticePanel';
 import { ui } from '@/app/_libs/ui-strings';
 import { type Lang } from '@/app/_libs/lang';
 import { useReadAloud, READ_ALOUD_MIN_RATE, READ_ALOUD_MAX_RATE } from '@/app/_libs/useReadAloud';
 import { useReadAloudHighlight } from '@/app/_libs/useReadAloudHighlight';
+import { usePracticeReadAloud } from '@/app/_libs/usePracticeReadAloud';
+import { usePracticeHighlight } from '@/app/_libs/usePracticeHighlight';
 import { useScrollDock } from '@/app/_libs/useScrollDock';
 import styles from './index.module.css';
 
@@ -13,6 +16,8 @@ type Props = {
   lang: Lang;
   /** 読み上げるテキスト（表示順）。空文字は useReadAloud 側で除外される */
   segments: string[];
+  /** ディクテーション練習モードの入り口を出すか（記事ページ /news/[slug] のみ true） */
+  practiceEnabled?: boolean;
 };
 
 const PlayIcon = () => (
@@ -42,12 +47,13 @@ const StopIcon = () => (
  * - ヘッダー画像の下端（センチネル）を過ぎたら、画面最上部へせり上げる（ドック）
  *   ヘッダーは position:absolute でこの時点では画面外なのでリングと干渉しない。
  */
-export default function PageReadAloud({ lang, segments }: Props) {
+export default function PageReadAloud({ lang, segments, practiceEnabled = false }: Props) {
   const {
     status,
     rate,
     setRate,
     toggle,
+    stop,
     stopAndScrollTop,
     repeatLap,
     repeatTotal,
@@ -62,9 +68,31 @@ export default function PageReadAloud({ lang, segments }: Props) {
     chunkProgress,
   } = useReadAloud(segments, lang);
 
-  // 読み上げ中のチャンクを本文（[data-read-aloud-body]）上でハイライトし、
-  // 再生位置を画面内に追従させる。本文が無いページでは何もしない。
+  // 練習モードを開始したら通常の読み上げを止める（排他）。
+  const practice = usePracticeReadAloud(segments, lang, { onRequestExclusive: stop });
+
+  // 通常の読み上げを始めたら練習モードを終了する（排他）。
+  const handleToggle = () => {
+    if (practice.isOpen) practice.close();
+    toggle();
+  };
+  const handleStartRepeat = (count: number) => {
+    if (practice.isOpen) practice.close();
+    startRepeat(count);
+  };
+
+  // 通常の読み上げのハイライト・追従スクロール（従来どおり、常時オン）。
+  // 練習モード中は通常の読み上げ自体が排他制御で止まっている（activeChunk が -1）ため、
+  // ここで特別な分岐をしなくても自然に何も点灯しない。
   useReadAloudHighlight({ chunks, chunkSegments, activeChunk, chunkProgress, follow: true });
+
+  // 練習モードのハイライト・追従スクロール（常時オン。オン/オフの切り替えは設けない）。
+  usePracticeHighlight({
+    segments: practice.segments,
+    currentIndex: practice.currentIndex,
+    moveSeq: practice.moveSeq,
+    enabled: practice.isOpen,
+  });
 
   // ヘッダー画像直後のセンチネルが画面上端より上へ出たら「ドック」状態にする。
   const docked = useScrollDock();
@@ -87,7 +115,7 @@ export default function PageReadAloud({ lang, segments }: Props) {
           <button
             type="button"
             className={styles.iconButton}
-            onClick={toggle}
+            onClick={handleToggle}
             aria-pressed={status === 'playing'}
             aria-label={status === 'playing' ? ui('readAloudPause', lang) : ui('readAloudPlay', lang)}
           >
@@ -109,7 +137,7 @@ export default function PageReadAloud({ lang, segments }: Props) {
             buttonClassName={`${styles.iconButton} ${styles.repeatButton}`}
             repeatLap={repeatLap}
             cacheCapped={cacheCapped}
-            onStart={startRepeat}
+            onStart={handleStartRepeat}
             onStop={stopRepeat}
           />
           {repeatLap > 0 && (
@@ -132,6 +160,8 @@ export default function PageReadAloud({ lang, segments }: Props) {
           />
           <span className={styles.speedValue}>{rate.toFixed(1)}x</span>
         </div>
+
+        {practiceEnabled && <PracticePanel lang={lang} practice={practice} />}
 
         {(cacheCapped || hasError) && (
           <div className={styles.notes}>

@@ -47,6 +47,11 @@
 
 .controlBar {
   right: 18px;
+  /* 練習モードの入り口ボタン（.control の外に置く）が幅に収まらないときは、
+     .control 自体の大きさ・配置は変えずに下へ折り返す。 */
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  row-gap: 6px;
 }
 
 /* デスクトップ（>950px）: globe 上端 ≈ y96。ドック時に動かす必要はない

@@ -2,8 +2,17 @@
 
 import { useEffect, useRef } from 'react';
 import { splitSentences } from './useReadAloud';
-import { createEmojiMatcher, stripEmoji } from './emoji';
+import { stripEmoji } from './emoji';
 import { stripReadAloudMarks } from './read-aloud-marks';
+import {
+  TITLE_SELECTOR,
+  BODY_SELECTOR,
+  stripWs,
+  isHighlightApiSupported,
+  clearHighlightByName,
+  buildCharIndex,
+  makeRange,
+} from './highlight-dom';
 
 /**
  * 読み上げ中の「文」をタイトル・本文上でハイライトするフック（CSS Custom Highlight API）。
@@ -29,9 +38,6 @@ import { stripReadAloudMarks } from './read-aloud-marks';
  */
 
 const HIGHLIGHT_NAME = 'read-aloud';
-const TITLE_SELECTOR = '[data-read-aloud-title]';
-const BODY_SELECTOR = '[data-read-aloud-body]';
-const SKIP_SELECTOR = 'pre, code, script, style, [data-read-aloud-skip]';
 
 // TODO(debug): 読み上げハイライトが出ない件の調査用ログ。原因確定後に削除する。
 // ブラウザのコンソールで "[read-aloud-highlight]" で絞り込める。
@@ -39,11 +45,6 @@ const DBG = '[read-aloud-highlight]';
 const dbg = (...args: unknown[]): void => {
   if (typeof console !== 'undefined') console.log(DBG, ...args);
 };
-
-const stripWs = (s: string): string => s.replace(/\s+/g, '');
-
-// DOM 上の 1 文字。offset は node.data 内の UTF-16 位置、len はその文字の長さ（1 or 2）。
-type CharRef = { node: Text; offset: number; len: number };
 
 type SentenceRange = {
   /** この文が属するチャンク index（hook の activeChunk と突き合わせる） */
@@ -67,75 +68,9 @@ type Params = {
   follow: boolean;
 };
 
-const isSupported = (): boolean =>
-  typeof window !== 'undefined' &&
-  typeof CSS !== 'undefined' &&
-  'highlights' in CSS &&
-  typeof Highlight !== 'undefined';
+const isSupported = isHighlightApiSupported;
 
-const clearHighlight = (): void => {
-  try {
-    CSS.highlights.delete(HIGHLIGHT_NAME);
-  } catch {
-    /* noop */
-  }
-};
-
-/**
- * 渡された要素（タイトル→本文の順）の中の「空白・絵文字でない文字」を順に集め、
- * フラット文字列 / DOM 位置 / フラット文字列上の開始 index → chars index の対応表を作る。
- */
-const buildCharIndex = (
-  roots: HTMLElement[],
-): { chars: CharRef[]; flat: string; flatToChar: Map<number, number> } => {
-  const chars: CharRef[] = [];
-  const flatToChar = new Map<number, number>();
-  let flat = '';
-  const emoji = createEmojiMatcher();
-
-  for (const root of roots) {
-    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
-      acceptNode(node) {
-        const parent = (node as Text).parentElement;
-        if (parent && parent.closest(SKIP_SELECTOR)) return NodeFilter.FILTER_REJECT;
-        return NodeFilter.FILTER_ACCEPT;
-      },
-    });
-    let node = walker.nextNode() as Text | null;
-    while (node) {
-      const text = node.data;
-      let i = 0;
-      while (i < text.length) {
-        emoji.lastIndex = i;
-        const em = emoji.exec(text);
-        if (em && em[0].length > 0) {
-          i += em[0].length; // 絵文字シーケンスは丸ごと飛ばす
-          continue;
-        }
-        const cp = text.codePointAt(i) as number;
-        const len = cp > 0xffff ? 2 : 1;
-        const ch = text.slice(i, i + len);
-        if (!/\s/.test(ch)) {
-          flatToChar.set(flat.length, chars.length);
-          chars.push({ node, offset: i, len });
-          flat += ch;
-        }
-        i += len;
-      }
-      node = walker.nextNode() as Text | null;
-    }
-  }
-  return { chars, flat, flatToChar };
-};
-
-const makeRange = (chars: CharRef[], startChar: number, endChar: number): Range => {
-  const s = Math.max(0, Math.min(startChar, chars.length - 1));
-  const e = Math.max(s + 1, Math.min(endChar, chars.length));
-  const range = document.createRange();
-  range.setStart(chars[s].node, chars[s].offset);
-  range.setEnd(chars[e - 1].node, chars[e - 1].offset + chars[e - 1].len);
-  return range;
-};
+const clearHighlight = (): void => clearHighlightByName(HIGHLIGHT_NAME);
 
 export function useReadAloudHighlight({
   chunks,
