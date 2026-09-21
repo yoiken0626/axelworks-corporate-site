@@ -29,7 +29,7 @@ export default function TopReadAloud({ lang, segments, latestNews }: Props) {
     rate,
     setRate,
     toggle,
-    stop,
+    stopAndScrollTop,
     repeatLap,
     repeatTotal,
     startRepeat,
@@ -54,7 +54,7 @@ export default function TopReadAloud({ lang, segments, latestNews }: Props) {
       rate={rate}
       setRate={setRate}
       toggle={toggle}
-      stop={stop}
+      stop={stopAndScrollTop}
       repeatLap={repeatLap}
       repeatTotal={repeatTotal}
       startRepeat={startRepeat}

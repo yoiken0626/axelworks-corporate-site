@@ -56,6 +56,26 @@ const SILENT_WAV =
 const encoder = typeof TextEncoder !== 'undefined' ? new TextEncoder() : null;
 const byteLen = (s: string): number => (encoder ? encoder.encode(s).length : s.length);
 
+// ページの先頭へスクロールする。呼び出し元は2つ:
+// (1) 繰り返しが最後の周まで自然に読み終わって自動で止まったとき（handleEnded 内）
+// (2) ユーザーが停止ボタンを押したとき（stopAndScrollTop 経由）
+// どちらも「ユーザーが読み上げを終えた（終わらせた）瞬間」のみが対象で、内部から
+// 停止処理が呼ばれる場合（タブ非表示・言語切り替え・キャッシュ上限・エラー等）や、
+// 一時停止・繰り返しオフ（今の周を読了して止まる）・通常の1回再生の終了では呼ばない
+// （各呼び出し元でその判定を行う。ここでは呼ばれたら必ずスクロールする）。
+// ハイライト側の自動追従スクロール（useReadAloudHighlight の「今の文を画面内に追従させる」
+// 処理）が、activeChunk の更新を受けて後から動くことがあるため、次フレームまで遅らせて
+// 実行し、最終的なスクロール位置が確実に先頭になるようにする。フォーカスは移動しない。
+function scrollToTop(): void {
+  if (typeof window === 'undefined') return;
+  window.requestAnimationFrame(() => {
+    const reduceMotion =
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+  });
+}
+
 export const splitSentences = (text: string): string[] =>
   text
     .split(/(?<=[。．.!?！？\n])/)
@@ -419,6 +439,12 @@ export function useReadAloud(segments: string[], lang: Lang) {
         chunkIdxRef.current = 0;
         void playFromRef.current(0, gen);
       } else {
+        // 繰り返しが最後の周まで自然に読み終わった場合だけ、先頭へスクロールする。
+        // repeatOnRef が false なのは「繰り返し無しの通常再生」と「繰り返しを手動で
+        // オフにして今の周を読み終えた」の両方があり得るが、どちらもスクロールしない
+        // 仕様なので区別しない（下の判定で自然と除外される）。
+        const finishedRepeatNaturally =
+          repeatOnRef.current && repeatLapRef.current >= repeatTotalRef.current;
         repeatOnRef.current = false;
         repeatLapRef.current = 0;
         setRepeatLap(0);
@@ -427,6 +453,9 @@ export function useReadAloud(segments: string[], lang: Lang) {
         setMouthOpen(false);
         setActiveChunk(-1);
         setChunkProgress(0);
+        if (finishedRepeatNaturally) {
+          scrollToTop();
+        }
       }
     };
     const handleError = () => {
@@ -604,6 +633,15 @@ export function useReadAloud(segments: string[], lang: Lang) {
     setChunkProgress(0);
   }, []);
 
+  // 停止ボタン（ユーザー操作）専用。stop() 自体は内部（タブ非表示・言語切り替え等）
+  // からも呼ばれうる汎用処理のままにしておき、「ボタンを押した」ときだけ先頭へ戻る
+  // 動作を、この薄いラッパー経由で追加する。再生中・一時停止中のどちらで押しても、
+  // また繰り返し中に押した場合も対象（stop() 自体が状態を問わず idle に戻すため）。
+  const stopAndScrollTop = useCallback(() => {
+    stop();
+    scrollToTop();
+  }, [stop]);
+
   // 最初のユーザー操作（クリック）中に同期的に呼び、<audio> を再生可能状態にする。
   //
   // 【iOS Safari の挙動について】 unlockAudio 専用に別の <audio> 要素を使う案も
@@ -740,6 +778,8 @@ export function useReadAloud(segments: string[], lang: Lang) {
     setRate: changeRate,
     toggle,
     stop,
+    // 停止ボタン（ユーザー操作）用。押したら常に先頭へスクロールする。
+    stopAndScrollTop,
     // 繰り返し再生
     repeatLap,
     repeatTotal,

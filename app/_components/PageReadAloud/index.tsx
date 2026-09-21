@@ -48,7 +48,7 @@ export default function PageReadAloud({ lang, segments }: Props) {
     rate,
     setRate,
     toggle,
-    stop,
+    stopAndScrollTop,
     repeatLap,
     repeatTotal,
     startRepeat,
@@ -97,7 +97,7 @@ export default function PageReadAloud({ lang, segments }: Props) {
           <button
             type="button"
             className={styles.iconButton}
-            onClick={stop}
+            onClick={stopAndScrollTop}
             disabled={status === 'idle'}
             aria-label={ui('readAloudStop', lang)}
           >
