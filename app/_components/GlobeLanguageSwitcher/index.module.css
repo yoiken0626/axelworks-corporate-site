@@ -62,6 +62,70 @@
   }
 }
 
+/* 閉じている間、地球儀の右下に重ねる「現在の言語」バッジ。国旗だけでは国と
+   言語が一対一でない（例: 英語=米国旗）ため、下に言語コードを添えて明確にする。
+   地球儀本体の見た目を邪魔しないよう、外周からわずかにはみ出す程度の小さな
+   丸国旗+コードのピルに留める。開いたら国旗リングに道を譲ってフェードアウトする。 */
+.currentBadge {
+  position: absolute;
+  right: -6%;
+  bottom: -6%;
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  pointer-events: none;
+  opacity: 1;
+  transform: scale(1);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+  z-index: 1;
+}
+
+.currentBadge[data-open='true'] {
+  opacity: 0;
+  transform: scale(0.6);
+}
+
+/* aspect-ratio はここ（img の親）に置く。img 自身は next/image が付与する
+   height 属性を持つため、img に aspect-ratio だけを指定すると「高さは auto
+   ではない」と判定されて無視され、height 属性の実ピクセル値がそのまま反映
+   されて楕円に潰れる（旧 flagIcon 同様に width/height を 100% で明示して
+   親のこの正方形ボックスに合わせることで回避する）。 */
+.currentBadgeFlagWrap {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  background-color: #fff;
+}
+
+.currentBadgeFlag {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 国旗は「国」を表すため（例: 英語=米国旗）、言語コードを添えて言語自体を明確にする。
+   どんな背景の上でも読めるよう、地の色を自前で持つ小さな黒基調のピルにする。 */
+.currentBadgeCode {
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 1px 4px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
 .flagList {
   list-style: none;
   margin: 0;
@@ -72,6 +136,10 @@
   position: absolute;
   width: var(--gls-flag-size, 60%);
   aspect-ratio: 1;
+  /* タップ領域を44px以上に保証する（見た目上の大きさは --gls-flag-size のままで
+     十分な場合はそちらが優先され、小さな地球儀でだけこの下限が効く） */
+  min-width: 44px;
+  min-height: 44px;
   transform: translate(-50%, -50%) scale(0.15);
   opacity: 0;
   transition:
@@ -87,12 +155,13 @@
 }
 
 .flagButton {
+  position: relative;
   display: block;
   width: 100%;
   height: 100%;
   padding: 0;
   border-radius: 50%;
-  overflow: hidden;
+  overflow: visible;
   background-color: #fff;
   border: 2px solid #fff;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -104,6 +173,14 @@
   transform: scale(1.1);
 }
 
+/* 現在の言語には、はっきりした枠（色付きリング）を付けて一目で分かるようにする */
+.flagButton[data-current='true'] {
+  border-color: var(--color-button-primary);
+  box-shadow:
+    0 0 0 2px var(--color-button-primary),
+    0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
 .flagIcon {
   display: block;
   width: 100%;
@@ -112,16 +189,39 @@
   border-radius: 50%;
 }
 
-.tooltip {
+/* 枠だけでは分かりにくい場合の補助として、チェックマークも付ける */
+.checkMark {
   position: absolute;
-  left: 50%;
-  bottom: calc(100% + 6px);
-  transform: translateX(-50%);
-  background-color: var(--color-bg-painted);
-  color: var(--color-text-unpainted);
-  font-size: 0.7rem;
-  white-space: nowrap;
-  padding: 4px 10px;
-  border-radius: var(--border-radius);
-  z-index: 1;
+  right: -2px;
+  bottom: -2px;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  line-height: 1;
+  color: #fff;
+  background-color: var(--color-button-primary);
+  border: 2px solid #fff;
+  border-radius: 50%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .globeButton::after {
+    animation: none;
+  }
+
+  .flagItem {
+    transition: none;
+  }
+
+  .currentBadge {
+    transition: none;
+  }
+
+  .flagButton:hover,
+  .flagButton:focus-visible {
+    transform: none;
+  }
 }

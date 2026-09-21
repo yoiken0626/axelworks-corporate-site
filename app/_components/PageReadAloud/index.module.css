@@ -162,11 +162,12 @@
 .globe {
   flex-shrink: 0;
   /* 地球儀は全ブレークポイント（PC・スマホ横・スマホ縦）で同じ大きさに
-     統一する。指で押しやすいよう大きめに取る:
-     国旗アイコン 1 つ ≒ --gls-size * --gls-flag-size ≒ 52 * 0.77 ≒ 40px
-     （タップ目安 44px に近づける）。リング半径も本体に合わせて拡大。 */
+     統一する。国旗アイコン 1 つ ≒ --gls-size * --gls-flag-size ≒ 52 * 0.77 ≒ 40px
+     だが、GlobeLanguageSwitcher 側で min-width: 44px を保証しているため
+     実際のタップ領域は 44px。8個を重ならずに並べるにはリング半径 ≒ 44px /
+     (2 * sin(22.5°)) ≒ 57.5px 以上必要なので、余裕を持って 120% に広げる。 */
   --gls-size: 52px;
-  --gls-ring-radius: 104%;
+  --gls-ring-radius: 120%;
   --gls-flag-size: 77%;
   filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.28));
 }

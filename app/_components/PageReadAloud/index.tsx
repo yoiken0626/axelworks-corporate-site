@@ -78,7 +78,7 @@ export default function PageReadAloud({ lang, segments }: Props) {
       {/* 地球儀はヘッダー画像の左上の余白、読み上げコントロールは右上の余白に置く。 */}
       <div className={styles.globeBar}>
         <div className={styles.globe}>
-          <GlobeLanguageSwitcher />
+          <GlobeLanguageSwitcher lang={lang} />
         </div>
       </div>
 

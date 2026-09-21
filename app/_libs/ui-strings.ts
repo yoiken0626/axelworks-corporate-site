@@ -391,6 +391,30 @@ const UI_STRINGS = {
     ru: 'Озвучивание сейчас недоступно. Повторите попытку позже.',
   },
 
+  // 地球儀（言語切り替え）ボタンの aria-label。{lang} は選択中の言語の現地語名
+  // （FLAGS の label、例: 日本語 / English）に置換する。
+  globeLanguageSwitcherLabel: {
+    ja: '現在の言語：{lang}。言語を変更',
+    en: 'Current language: {lang}. Change language',
+    ko: '현재 언어: {lang}. 언어 변경',
+    zh: '当前语言：{lang}。更改语言',
+    de: 'Aktuelle Sprache: {lang}. Sprache ändern',
+    fr: 'Langue actuelle : {lang}. Changer de langue',
+    es: 'Idioma actual: {lang}. Cambiar idioma',
+    ru: 'Текущий язык: {lang}. Изменить язык',
+  },
+  // 言語選択メニュー（8言語の国旗リング）の aria-label
+  globeLanguageMenuHeading: {
+    ja: '言語を選択',
+    en: 'Select language',
+    ko: '언어 선택',
+    zh: '选择语言',
+    de: 'Sprache auswählen',
+    fr: 'Choisir la langue',
+    es: 'Seleccionar idioma',
+    ru: 'Выбрать язык',
+  },
+
   // Business セクション
   businessHeading: { ja: 'Business' },
   businessSubtitle: {

@@ -53,7 +53,7 @@ export default function HeroQueen({ lang, mouthOpen = false, latestNews }: Props
         className={styles.globeSlot}
         style={{ left: `${GLOBE_POSITION.left}%`, top: `${GLOBE_POSITION.top}%` }}
       >
-        <GlobeLanguageSwitcher className={styles.globe} />
+        <GlobeLanguageSwitcher className={styles.globe} lang={lang} />
       </div>
 
       {/* 思考の泡（thought bubble）：モコモコした雲だけで表現。
