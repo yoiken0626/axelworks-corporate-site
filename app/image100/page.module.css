@@ -36,6 +36,71 @@
   font-size: 0.85rem;
 }
 
+.howToNote {
+  color: var(--color-text-sub);
+  font-size: 0.8rem;
+}
+
+/* --- ランダム／九九 の切り替えボタン・演算子ドロップダウン --- */
+.modeToggle {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 1.25rem;
+}
+
+.modeButton {
+  padding: 8px 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background-color: #fff;
+  color: var(--color-text-main);
+  font-size: 0.95rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.modeButton:hover {
+  background-color: var(--color-bg-sub);
+}
+
+.modeButton[aria-pressed='true'] {
+  background-color: var(--color-button-primary);
+  border-color: var(--color-button-primary);
+  color: var(--color-text-unpainted);
+}
+
+.modeButton:focus {
+  outline: none;
+}
+
+.modeButton:focus-visible {
+  outline: 3px solid var(--color-button-primary);
+  outline-offset: 2px;
+}
+
+.operatorSelect {
+  padding: 8px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background-color: #fff;
+  color: var(--color-text-main);
+  font-size: 0.95rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.operatorSelect:focus {
+  outline: none;
+}
+
+.operatorSelect:focus-visible {
+  outline: 3px solid var(--color-button-primary);
+  outline-offset: 2px;
+}
+
 /* --- 100マスの表 --- */
 /* ページ全体は横スクロールさせず、表の部分だけスクロールできるようにする */
 .tableWrap {
@@ -87,7 +152,44 @@
 .emptyCell {
   min-width: 44px;
   height: 44px;
+  padding: 0;
   background-color: #fff;
+}
+
+/* セルいっぱいに広げた、見えないクリック領域。クリックすると、横・縦の見出しと
+   今の演算子から計算式を読み上げる（Image100Interactive.tsx の handleCellClick）。 */
+.cellButton {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: none;
+  padding: 0;
+  background-color: transparent;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.cellButton:hover {
+  background-color: var(--color-bg-sub);
+}
+
+.cellButton:focus {
+  outline: none;
+}
+
+.cellButton:focus-visible {
+  outline: 2px solid var(--color-button-primary);
+  outline-offset: -2px;
+}
+
+/* クリックしたセルの読み上げ中だけ点灯する。既存の読み上げハイライトと同じ色
+   （--color-read-aloud-highlight）を再利用する。読み上げが終わると消える。
+   詳細度を .cellButton:hover（0,2,0）と同じ 0,2,0 にして、マウスが乗ったままでも
+   点灯中はきちんと青が勝つようにする（.cellButtonActive 単体＝0,1,0 だと :hover に
+   負けて、クリックした瞬間だけ光って見えなくなってしまうため）。 */
+.cellButton.cellButtonActive,
+.cellButton.cellButtonActive:hover {
+  background-color: var(--color-read-aloud-highlight);
 }
 
 /* --- 末尾のご相談誘導（/saas と同じ作り） --- */
@@ -117,6 +219,16 @@
   }
 
   .howTo {
+    font-size: 0.85rem;
+  }
+
+  .modeButton {
+    padding: 6px 16px;
+    font-size: 0.85rem;
+  }
+
+  .operatorSelect {
+    padding: 6px 12px;
     font-size: 0.85rem;
   }
 
