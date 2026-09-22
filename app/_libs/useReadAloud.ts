@@ -80,7 +80,7 @@ const byteLen = (s: string): number => (encoder ? encoder.encode(s).length : s.l
 // ハイライト側の自動追従スクロール（useReadAloudHighlight の「今の文を画面内に追従させる」
 // 処理）が、activeChunk の更新を受けて後から動くことがあるため、次フレームまで遅らせて
 // 実行し、最終的なスクロール位置が確実に先頭になるようにする。フォーカスは移動しない。
-function scrollToTop(): void {
+export function scrollToTop(): void {
   if (typeof window === 'undefined') return;
   window.requestAnimationFrame(() => {
     const reduceMotion =

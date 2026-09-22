@@ -587,6 +587,60 @@ const UI_STRINGS = {
     es: 'Empezar de nuevo',
     ru: 'Начать сначала',
   },
+  // 練習の種類（手書き／リピート再生）を選ぶ2択の見出し・aria-label
+  practiceTypeLabel: {
+    ja: '練習の種類',
+    en: 'Practice type',
+    ko: '연습 종류',
+    zh: '练习类型',
+    de: 'Übungsart',
+    fr: "Type d'exercice",
+    es: 'Tipo de práctica',
+    ru: 'Тип практики',
+  },
+  practiceTypeDictation: {
+    ja: '手書き',
+    en: 'Handwriting',
+    ko: '손으로 쓰기',
+    zh: '手写',
+    de: 'Handschrift',
+    fr: 'Écriture manuscrite',
+    es: 'Escritura a mano',
+    ru: 'Письмо от руки',
+  },
+  // 既存の繰り返し機能の英語表記「Repeat」とは区別する（区間ごとに自動で
+  // 進み続ける「リピート再生」練習モード）
+  practiceTypeRepeat: {
+    ja: 'リピート再生',
+    en: 'Repeating',
+    ko: '반복 재생',
+    zh: '循环播放',
+    de: 'Wiederholtes Abspielen',
+    fr: 'Lecture en boucle',
+    es: 'Reproducción en bucle',
+    ru: 'Повторное воспроизведение',
+  },
+  // リピート再生専用のボタン（自動で進むのを一時的に止める・続きから再開する）
+  practicePause: {
+    ja: '一時停止',
+    en: 'Pause',
+    ko: '일시정지',
+    zh: '暂停',
+    de: 'Pause',
+    fr: 'Pause',
+    es: 'Pausa',
+    ru: 'Пауза',
+  },
+  practiceResume: {
+    ja: '再開',
+    en: 'Resume',
+    ko: '재개',
+    zh: '继续',
+    de: 'Fortsetzen',
+    fr: 'Reprendre',
+    es: 'Reanudar',
+    ru: 'Продолжить',
+  },
 
   // Business セクション
   businessHeading: { ja: 'Business' },

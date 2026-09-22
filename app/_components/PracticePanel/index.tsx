@@ -8,6 +8,7 @@ import {
   PRACTICE_MIN_RATE,
   PRACTICE_MAX_RATE,
   PRACTICE_RATE_STEP,
+  type PracticeMode,
   type UsePracticeReadAloudReturn,
 } from '@/app/_libs/usePracticeReadAloud';
 import styles from './index.module.css';
@@ -49,12 +50,14 @@ type Props = {
 };
 
 /**
- * 記事ページ専用の「ディクテーション練習」入り口ボタン + パネル。
+ * 記事ページ専用の「練習」入り口ボタン + パネル。
  * 入り口ボタンは常に表示、パネルは practice.isOpen のときだけ表示する。
  *
- * ボタンは「開始／もう一度」「次へ」「終了」の3つ。区間の文字は、本文側の
- * 青いハイライト（usePracticeHighlight）と内容が重複するため、パネルには
- * 出さない（SHOW_SEGMENT_TEXT_IN_PANEL 定数で切り替え可能。非表示・答え合わせの
+ * 練習の種類（手書き／リピート再生）をパネル上部の2択で切り替える。
+ * - 手書き（dictation）: ボタンは「開始／もう一度」「次へ」「終了」の3つ（既存どおり）。
+ * - リピート再生（repeat）: ボタンは「開始／一時停止／再開」「終了」の2つ。
+ * 区間の文字は、本文側の青いハイライト（usePracticeHighlight）と内容が重複するため、
+ * パネルには出さない（SHOW_SEGMENT_TEXT_IN_PANEL 定数で切り替え可能。非表示・答え合わせの
  * 仕組みは usePracticeReadAloud 側に残しているが、ここでは使わない）。
  */
 export default function PracticePanel({ lang, practice }: Props) {
@@ -62,6 +65,8 @@ export default function PracticePanel({ lang, practice }: Props) {
     isOpen,
     open,
     close,
+    mode,
+    setMode,
     boundaryMode,
     setBoundaryMode,
     rate,
@@ -71,6 +76,7 @@ export default function PracticePanel({ lang, practice }: Props) {
     total,
     currentSegment,
     start,
+    pause,
     replay,
     next,
     restartFromBeginning,
@@ -86,7 +92,9 @@ export default function PracticePanel({ lang, practice }: Props) {
     if (isOpen) headingRef.current?.focus();
   }, [isOpen]);
 
-  // キーボードショートカット: R=もう一度, Enter/→=次へ（未開始なら開始）, Esc=終了
+  // キーボードショートカット。
+  // - 手書き（dictation、既存どおり変更なし）: R=もう一度, Enter/→=次へ（未開始なら開始）, Esc=終了
+  // - リピート再生（repeat）: Enter/スペース=開始・一時停止・再開の切り替え, Esc=終了
   useEffect(() => {
     if (!isOpen) return;
     const onKeyDown = (e: KeyboardEvent) => {
@@ -94,6 +102,28 @@ export default function PracticePanel({ lang, practice }: Props) {
       if (ctx === 'textInput') return;
       if (ctx === 'rangeSlider' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
         return; // スライダー自身の操作に譲る
+      }
+
+      if (mode === 'repeat') {
+        switch (e.key) {
+          case 'Escape':
+            e.preventDefault();
+            close();
+            entryButtonRef.current?.focus();
+            break;
+          case 'Enter':
+          case ' ':
+          case 'Spacebar':
+            if (ctx === 'buttonOrLink') break; // フォーカス中のボタンの標準動作に譲る（二重発火を避ける）
+            e.preventDefault();
+            if (status === 'idle') start();
+            else if (status === 'playing') pause();
+            else if (status === 'paused') replay(); // 再開＝今の区間を最初から再生し直す
+            break;
+          default:
+            break;
+        }
+        return;
       }
 
       switch (e.key) {
@@ -126,7 +156,7 @@ export default function PracticePanel({ lang, practice }: Props) {
     };
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
-  }, [isOpen, status, hasNext, close, replay, start, next]);
+  }, [isOpen, mode, status, hasNext, close, replay, start, next, pause]);
 
   // 外側タップで閉じる
   useEffect(() => {
@@ -143,6 +173,11 @@ export default function PracticePanel({ lang, practice }: Props) {
   const boundaryOptions: { value: DictationBoundaryMode; labelKey: 'practiceBoundaryCommaPeriod' | 'practiceBoundarySentence' }[] = [
     { value: 'commaPeriod', labelKey: 'practiceBoundaryCommaPeriod' },
     { value: 'sentence', labelKey: 'practiceBoundarySentence' },
+  ];
+
+  const typeOptions: { value: PracticeMode; labelKey: 'practiceTypeDictation' | 'practiceTypeRepeat' }[] = [
+    { value: 'dictation', labelKey: 'practiceTypeDictation' },
+    { value: 'repeat', labelKey: 'practiceTypeRepeat' },
   ];
 
   const progressLabel = ui('practiceProgress', lang)
@@ -175,21 +210,41 @@ export default function PracticePanel({ lang, practice }: Props) {
             </button>
           </div>
 
-          <div className={styles.row} role="radiogroup" aria-label={ui('practiceBoundaryLabel', lang)}>
-            {boundaryOptions.map((opt) => (
+          <div className={styles.row} role="radiogroup" aria-label={ui('practiceTypeLabel', lang)}>
+            {typeOptions.map((opt) => (
               <button
                 key={opt.value}
                 type="button"
                 role="radio"
-                aria-checked={boundaryMode === opt.value}
+                aria-checked={mode === opt.value}
                 className={styles.segmentButton}
-                data-active={boundaryMode === opt.value}
-                onClick={() => setBoundaryMode(opt.value)}
+                data-active={mode === opt.value}
+                onClick={() => setMode(opt.value)}
               >
                 {ui(opt.labelKey, lang)}
               </button>
             ))}
           </div>
+
+          {/* 区切りの種類は「手書き」のときだけ選べる。「リピート再生」は常に
+              カンマ・ピリオドに固定する（区切りの処理自体は変更しない）。 */}
+          {mode === 'dictation' && (
+            <div className={styles.row} role="radiogroup" aria-label={ui('practiceBoundaryLabel', lang)}>
+              {boundaryOptions.map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  role="radio"
+                  aria-checked={boundaryMode === opt.value}
+                  className={styles.segmentButton}
+                  data-active={boundaryMode === opt.value}
+                  onClick={() => setBoundaryMode(opt.value)}
+                >
+                  {ui(opt.labelKey, lang)}
+                </button>
+              ))}
+            </div>
+          )}
 
           <div className={styles.row}>
             <label className={styles.rateLabel}>
@@ -234,19 +289,38 @@ export default function PracticePanel({ lang, practice }: Props) {
 
               {status === 'error' && <p className={styles.errorNote}>{ui('readAloudError', lang)}</p>}
 
-              <div className={styles.buttonRow}>
-                <button type="button" className={styles.primaryButton} onClick={status === 'idle' ? start : replay}>
-                  {status === 'idle' ? ui('practiceStart', lang) : ui('practiceReplay', lang)}
-                </button>
-                <button
-                  type="button"
-                  className={styles.primaryButton}
-                  onClick={next}
-                  disabled={!hasNext || status === 'idle'}
-                >
-                  {ui('practiceNext', lang)}
-                </button>
-              </div>
+              {mode === 'repeat' ? (
+                <div className={styles.buttonRow}>
+                  <button
+                    type="button"
+                    className={styles.primaryButton}
+                    onClick={status === 'idle' ? start : status === 'playing' ? pause : replay}
+                  >
+                    {status === 'idle'
+                      ? ui('practiceStart', lang)
+                      : status === 'playing'
+                        ? ui('practicePause', lang)
+                        : ui('practiceResume', lang)}
+                  </button>
+                  <button type="button" className={styles.secondaryButton} onClick={close}>
+                    {ui('practiceFinish', lang)}
+                  </button>
+                </div>
+              ) : (
+                <div className={styles.buttonRow}>
+                  <button type="button" className={styles.primaryButton} onClick={status === 'idle' ? start : replay}>
+                    {status === 'idle' ? ui('practiceStart', lang) : ui('practiceReplay', lang)}
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.primaryButton}
+                    onClick={next}
+                    disabled={!hasNext || status === 'idle'}
+                  >
+                    {ui('practiceNext', lang)}
+                  </button>
+                </div>
+              )}
             </>
           )}
         </div>

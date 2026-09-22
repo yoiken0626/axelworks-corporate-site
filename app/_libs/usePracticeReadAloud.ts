@@ -2,24 +2,38 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { resolveLang, type Lang } from './lang';
-import { SILENT_WAV } from './useReadAloud';
+import { SILENT_WAV, scrollToTop } from './useReadAloud';
 import {
   buildDictationSegments,
   type DictationBoundaryMode,
   type DictationSegment,
 } from './dictation-segmenter';
 
-export type PracticeMode = 'dictation'; // フェーズ1は手書きディクテーションのみ。将来 'typing' 等を追加できる形にしておく。
-export type PracticeStatus = 'idle' | 'playing' | 'stopped' | 'finished' | 'error';
+// 'dictation' = 手書き（区切りで自動停止・ユーザー操作で進む、既存の挙動）
+// 'repeat' = リピート再生（区間ごとの待ち時間を挟んで自動で進み続ける、シャドーイング/
+// リピーティング向けの練習）。将来 'typing' 等を追加できる形にしておく。
+export type PracticeMode = 'dictation' | 'repeat';
+// 'paused' は 'repeat' 専用（ユーザーが自動進行を一時的に止めた状態）。
+// 'stopped' は 'dictation' 専用（区間を読み終えて次の操作を待つ、既存の状態）。
+export type PracticeStatus = 'idle' | 'playing' | 'paused' | 'stopped' | 'finished' | 'error';
 
 export const PRACTICE_MIN_RATE = 0.5;
 export const PRACTICE_MAX_RATE = 1.0;
 export const PRACTICE_DEFAULT_RATE = 0.8;
 export const PRACTICE_RATE_STEP = 0.1;
 
+// 「リピート再生」の、区間ごとの待ち時間（無音）。待ち時間(ms) =
+// min(max(その区間の音声の長さ(秒) × PRACTICE_PAUSE_MULTIPLIER, MIN), MAX) × 1000。
+// 倍率は選択式にせず 1.3 固定（定数）にする。
+const PRACTICE_PAUSE_MULTIPLIER = 1.3;
+const PRACTICE_PAUSE_WAIT_MIN_SEC = 1.5;
+const PRACTICE_PAUSE_WAIT_MAX_SEC = 7;
+
 const DEFAULT_BOUNDARY_MODE: DictationBoundaryMode = 'commaPeriod';
+const DEFAULT_PRACTICE_TYPE: PracticeMode = 'dictation';
 const BOUNDARY_STORAGE_KEY = 'axelworks:dictationBoundaryMode';
 const RATE_STORAGE_KEY = 'axelworks:dictationRate';
+const TYPE_STORAGE_KEY = 'axelworks:practiceType';
 
 // 既存の音声キャッシュ（useReadAloud.ts の CACHE_BYTE_CAP）と同じ考え方の上限。
 // 練習モード専用の別インスタンスとして持つ（既存キャッシュとは独立）。
@@ -66,6 +80,23 @@ const writeStoredRate = (rate: number): void => {
   }
 };
 
+const readStoredType = (): PracticeMode => {
+  try {
+    const raw = window.localStorage.getItem(TYPE_STORAGE_KEY);
+    return raw === 'dictation' || raw === 'repeat' ? raw : DEFAULT_PRACTICE_TYPE;
+  } catch {
+    return DEFAULT_PRACTICE_TYPE;
+  }
+};
+
+const writeStoredType = (type: PracticeMode): void => {
+  try {
+    window.localStorage.setItem(TYPE_STORAGE_KEY, type);
+  } catch {
+    // localStorage が使えなくても動作には影響させない
+  }
+};
+
 type WakeLockLike = { release: () => Promise<void> };
 
 type Options = {
@@ -74,19 +105,21 @@ type Options = {
 };
 
 /**
- * 記事ページの「ディクテーション練習モード」フック。
+ * 記事ページの「練習モード」フック（手書きディクテーション / リピート再生）。
  * 通常の読み上げ（useReadAloud）とは完全に別の <audio> 要素・別のキャッシュ・
  * 別の再生ロジックを持つ（設計理由は実装時の報告を参照）。
  *
- * 区間（セグメント）ごとに別々の音声を /api/tts で取得し、'ended' で自動的に止まる
- * （タイマーでは止めない）。次へ進むのは常にユーザーの操作（ボタン/キーボード）。
+ * 区間（セグメント）ごとに別々の音声を /api/tts で取得する。手書き（dictation）は
+ * 'ended' で自動的に止まり（タイマーでは止めない）、次へ進むのは常にユーザーの
+ * 操作（ボタン/キーボード）。リピート再生（repeat）は 'ended' の後、区間の長さに
+ * 応じた待ち時間（タイマー）を挟んで自動的に次の区間へ進み続ける。
  */
 export function usePracticeReadAloud(segments: string[], lang: Lang, options: Options = {}) {
   const wantLang = resolveLang(lang);
   const { onRequestExclusive } = options;
 
   const [isOpen, setIsOpen] = useState(false);
-  const [mode] = useState<PracticeMode>('dictation');
+  const [mode, setModeState] = useState<PracticeMode>(DEFAULT_PRACTICE_TYPE);
   const [boundaryMode, setBoundaryModeState] = useState<DictationBoundaryMode>(DEFAULT_BOUNDARY_MODE);
   const [rate, setRateState] = useState(PRACTICE_DEFAULT_RATE);
   const [status, setStatus] = useState<PracticeStatus>('idle');
@@ -99,12 +132,28 @@ export function usePracticeReadAloud(segments: string[], lang: Lang, options: Op
   const [moveSeq, setMoveSeq] = useState(0);
   const lastPlayedIndexRef = useRef<number | null>(null);
 
+  // リピート再生（区間ごとの自動進行）専用: 'ended' 後の待ち時間タイマー、および
+  // handleEnded / visibilitychange から常に最新の値を読むための ref（状態・モード）。
+  const autoAdvanceTimerRef = useRef<number | null>(null);
+  const statusRef = useRef<PracticeStatus>('idle');
+  statusRef.current = status;
+  const modeRef = useRef<PracticeMode>(DEFAULT_PRACTICE_TYPE);
+  modeRef.current = mode;
+
+  const clearAutoAdvanceTimer = useCallback(() => {
+    if (autoAdvanceTimerRef.current !== null) {
+      window.clearTimeout(autoAdvanceTimerRef.current);
+      autoAdvanceTimerRef.current = null;
+    }
+  }, []);
+
   // 初回マウント時に localStorage から復元する（SSR とのハイドレーション不一致を避けるため、
-  // 既定値でレンダーしてから effect で上書きする。boundaryMode/rate は見た目にしか影響しない
-  // ため、初回レンダーとの一瞬のズレは実害が無い）。
+  // 既定値でレンダーしてから effect で上書きする。boundaryMode/rate/mode は
+  // 見た目にしか影響しないため、初回レンダーとの一瞬のズレは実害が無い）。
   useEffect(() => {
     setBoundaryModeState(readStoredBoundaryMode());
     setRateState(readStoredRate());
+    setModeState(readStoredType());
   }, []);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -122,14 +171,19 @@ export function usePracticeReadAloud(segments: string[], lang: Lang, options: Op
   const cacheOrderRef = useRef<number[]>([]); // 挿入順（distance-based eviction の対象選定に使う）
   const pendingFetchesRef = useRef<Map<string, Promise<string | null>>>(new Map());
 
+  // リピート再生では、区切りは常に「カンマ・ピリオド」に固定する（区切りの処理
+  // 自体は変更せず、パネルの表示だけを制限する。将来「1文」も選べるように、
+  // 手書き側の boundaryMode はそのまま保持し、上書きしない）。
+  const effectiveBoundaryMode: DictationBoundaryMode = mode === 'repeat' ? 'commaPeriod' : boundaryMode;
+
   // isOpen で計算をゲートしない: open() 直後に先読みを仕掛けるとき、同期呼び出しの
   // 時点でまだ isOpen state が反映されていない（React の state 更新は非同期）ため、
   // ここをゲートすると先読みが空配列を掴んでしまう。テキスト処理は軽量なので常時計算する。
   const dictationSegments = useMemo<DictationSegment[]>(
-    () => buildDictationSegments(segments, boundaryMode, wantLang),
+    () => buildDictationSegments(segments, effectiveBoundaryMode, wantLang),
     // segments は配列なので中身で依存を判定
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [segments.join(''), boundaryMode, wantLang],
+    [segments.join(''), effectiveBoundaryMode, wantLang],
   );
   const texts = useMemo(() => dictationSegments.map((s) => s.text), [dictationSegments]);
 
@@ -262,13 +316,17 @@ export function usePracticeReadAloud(segments: string[], lang: Lang, options: Op
     });
   }, []);
 
-  // idx の区間を再生する（開始・もう一度・次へ・前へ、すべてこれを呼ぶ）。
-  // 呼び出し元のボタン onClick から同期的に呼ばれる前提（iOS Safari 対策）。
+  // idx の区間を再生する（開始・もう一度・次へ・前へ・リピート再生の自動進行/再開、
+  // すべてこれを呼ぶ）。ユーザー操作（ボタン onClick）からは同期的に呼ばれる前提
+  // （iOS Safari 対策）。リピート再生の自動進行（'ended' 後のタイマー経由）からも
+  // 同じ <audio> 要素に対して呼ばれる（チャンクからチャンクへの既存の自動連続再生と
+  // 同じ仕組み。タップなしで次の音声を再生できる、実績のある方式）。
   const playIndex = useCallback(
     (idx: number) => {
       const audio = audioRef.current;
       if (!audio || idx < 0 || idx >= texts.length) return;
 
+      clearAutoAdvanceTimer();
       onRequestExclusive?.();
       unlockAudio();
       requestWakeLock();
@@ -297,7 +355,7 @@ export function usePracticeReadAloud(segments: string[], lang: Lang, options: Op
           setStatus('error');
         });
     },
-    [texts.length, onRequestExclusive, unlockAudio, requestWakeLock, fetchSegmentAudio, prefetchAround],
+    [texts.length, onRequestExclusive, unlockAudio, requestWakeLock, fetchSegmentAudio, prefetchAround, clearAutoAdvanceTimer],
   );
 
   // gen は open()/resetState() 側で既に確定しているため、ここでは進めない
@@ -308,6 +366,17 @@ export function usePracticeReadAloud(segments: string[], lang: Lang, options: Op
     playIndex(0);
   }, [playIndex]);
 
+  // リピート再生の「一時停止」: 自動進行のタイマー・再生中の音声を止める（Wake Lock は
+  // 保持したまま。解放するのは終了・自然終了・タブ非表示のときだけ）。
+  const pause = useCallback(() => {
+    clearAutoAdvanceTimer();
+    const audio = audioRef.current;
+    if (audio && !audio.paused) audio.pause();
+    setStatus('paused');
+  }, [clearAutoAdvanceTimer]);
+
+  // 「もう一度」（手書き）と、リピート再生の「再開」を兼ねる: 今の区間の先頭から
+  // 再生し直す。ボタンの onClick から同期的に呼ぶ（iOS Safari 対策）。
   const replay = useCallback(() => {
     playIndex(currentIndexRef.current);
   }, [playIndex]);
@@ -326,6 +395,9 @@ export function usePracticeReadAloud(segments: string[], lang: Lang, options: Op
     }
   }, [playIndex]);
 
+  const playIndexRef = useRef(playIndex);
+  playIndexRef.current = playIndex;
+
   const toggleReveal = useCallback(() => {
     setRevealed((v) => !v);
   }, []);
@@ -342,6 +414,7 @@ export function usePracticeReadAloud(segments: string[], lang: Lang, options: Op
 
   const resetState = useCallback(() => {
     genRef.current += 1;
+    clearAutoAdvanceTimer();
     const audio = audioRef.current;
     if (audio) {
       audio.pause();
@@ -357,7 +430,24 @@ export function usePracticeReadAloud(segments: string[], lang: Lang, options: Op
     pendingFetchesRef.current.clear();
     revokeAllUrls();
     releaseWakeLock();
-  }, [revokeAllUrls, releaseWakeLock]);
+  }, [revokeAllUrls, releaseWakeLock, clearAutoAdvanceTimer]);
+
+  // リピート再生が、記事の最後の区間まで自然に読み終わったときだけ呼ばれる。
+  // パネルの状態を開始前（idle・先頭）に戻し、ページの先頭までスクロールする
+  // （既存の繰り返し機能の scrollToTop と同じ関数を再利用する）。
+  const finishRepeatNaturally = useCallback(() => {
+    clearAutoAdvanceTimer();
+    const audio = audioRef.current;
+    if (audio) audio.pause();
+    currentIndexRef.current = 0;
+    lastPlayedIndexRef.current = null;
+    setCurrentIndex(0);
+    setStatus('idle');
+    releaseWakeLock();
+    scrollToTop();
+  }, [clearAutoAdvanceTimer, releaseWakeLock]);
+  const finishRepeatNaturallyRef = useRef(finishRepeatNaturally);
+  finishRepeatNaturallyRef.current = finishRepeatNaturally;
 
   const open = useCallback(() => {
     setIsOpen(true);
@@ -393,7 +483,23 @@ export function usePracticeReadAloud(segments: string[], lang: Lang, options: Op
     if (audioRef.current) audioRef.current.playbackRate = clamped;
   }, []);
 
-  // <audio> 要素の生成・破棄。'ended' では次へ進まず、常に止まってユーザー操作を待つ。
+  // 練習の種類（手書き／リピート再生）を切り替える。再生中であれば止め、
+  // 区間の位置は先頭に戻す（resetState と同じ扱い。区切りが変わりうるため、
+  // setBoundaryMode と同様にキャッシュも作り直す）。
+  const setMode = useCallback(
+    (next: PracticeMode) => {
+      writeStoredType(next);
+      setModeState(next);
+      resetState();
+    },
+    [resetState],
+  );
+
+  // <audio> 要素の生成・破棄。
+  // - 手書き（dictation）: 'ended' では次へ進まず、常に止まってユーザー操作を待つ（既存どおり）。
+  // - リピート再生（repeat）: 'ended' の後、区間の長さ×倍率（下限1.5秒・上限7秒）の
+  //   待ち時間を挟んで自動的に次の区間へ進む。最後の区間まで自然に読み終えたら、
+  //   同じだけ待ってから自動で終了し、先頭へスクロールする。
   useEffect(() => {
     if (typeof Audio === 'undefined') return;
     const audio = new Audio();
@@ -402,6 +508,36 @@ export function usePracticeReadAloud(segments: string[], lang: Lang, options: Op
 
     const handleEnded = () => {
       const idx = currentIndexRef.current;
+
+      if (modeRef.current === 'repeat') {
+        const durationSec = Number.isFinite(audio.duration) && audio.duration > 0 ? audio.duration : 0;
+        const waitMs =
+          Math.min(
+            Math.max(durationSec * PRACTICE_PAUSE_MULTIPLIER, PRACTICE_PAUSE_WAIT_MIN_SEC),
+            PRACTICE_PAUSE_WAIT_MAX_SEC,
+          ) * 1000;
+        const gen = genRef.current;
+
+        if (idx + 1 >= texts.length) {
+          // 最後の区間: 待ち時間の分だけ空けてから、自動で終了する。
+          autoAdvanceTimerRef.current = window.setTimeout(() => {
+            autoAdvanceTimerRef.current = null;
+            if (gen !== genRef.current) return;
+            finishRepeatNaturallyRef.current();
+          }, waitMs);
+          return;
+        }
+
+        autoAdvanceTimerRef.current = window.setTimeout(() => {
+          autoAdvanceTimerRef.current = null;
+          if (gen !== genRef.current) return;
+          // 待ち時間の間に一時停止されていたら、自動では進めない。
+          if (statusRef.current !== 'playing') return;
+          playIndexRef.current(idx + 1);
+        }, waitMs);
+        return;
+      }
+
       if (idx + 1 >= texts.length) {
         setStatus('finished');
       } else {
@@ -424,16 +560,19 @@ export function usePracticeReadAloud(segments: string[], lang: Lang, options: Op
     };
   }, [texts.length]);
 
-  // タブ非表示: 再生中の音声を止める（既存の読み上げと同じ扱い）。位置は保持し、
-  // 復帰時に同じ区間から続けられるようにする（Wake Lock は解放し、復帰時に再取得する）。
+  // タブ非表示: 自動で進むのを止める（既存の読み上げと同じ扱い）。リピート再生の
+  // 待ち時間タイマーもここで確実に止める（止めないと、タブが裏にある間にタイマーが
+  // 発火して自動で進んでしまう）。位置は保持し、Wake Lock は解放して、再表示時に
+  // リピート再生中であれば再取得する（自動的には再開しない＝一時停止のままにする）。
   useEffect(() => {
     if (typeof document === 'undefined') return;
     const onVisibility = () => {
       if (document.hidden) {
+        clearAutoAdvanceTimer();
         if (audioRef.current && !audioRef.current.paused) {
           audioRef.current.pause();
-          setStatus((s) => (s === 'playing' ? 'stopped' : s));
         }
+        setStatus((s) => (s === 'playing' ? (modeRef.current === 'repeat' ? 'paused' : 'stopped') : s));
         releaseWakeLock();
       } else if (isOpen) {
         requestWakeLock();
@@ -441,13 +580,14 @@ export function usePracticeReadAloud(segments: string[], lang: Lang, options: Op
     };
     document.addEventListener('visibilitychange', onVisibility);
     return () => document.removeEventListener('visibilitychange', onVisibility);
-  }, [isOpen, releaseWakeLock, requestWakeLock]);
+  }, [isOpen, releaseWakeLock, requestWakeLock, clearAutoAdvanceTimer]);
 
   // アンマウント時の後始末
   useEffect(() => {
     const pendingFetches = pendingFetchesRef.current;
     return () => {
       genRef.current += 1;
+      clearAutoAdvanceTimer();
       pendingFetches.clear();
       revokeAllUrls();
       releaseWakeLock();
@@ -460,6 +600,7 @@ export function usePracticeReadAloud(segments: string[], lang: Lang, options: Op
     open,
     close,
     mode,
+    setMode,
     boundaryMode,
     setBoundaryMode,
     rate,
@@ -477,6 +618,9 @@ export function usePracticeReadAloud(segments: string[], lang: Lang, options: Op
     revealed,
     toggleReveal,
     start,
+    // リピート再生の「一時停止」。
+    pause,
+    // リピート再生の「再開」は、今の区間を最初から再生し直す replay と同じ処理。
     replay,
     next,
     // 将来「前へ」を復活できるように残す。今の画面からは参照しない。
