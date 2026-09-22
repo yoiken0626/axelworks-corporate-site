@@ -229,6 +229,13 @@ export default async function Page() {
               {ui('saasLearnMoreLabel', lang)} <span aria-hidden="true">→</span>
             </span>
           </Link>
+          <Link href="/image100" className={styles.showcaseCard}>
+            <h3 className={styles.showcaseCardTitle}>{ui('image100Heading', lang)}</h3>
+            <p className={styles.showcaseCardDesc}>{ui('image100Lead', lang)}</p>
+            <span className={styles.showcaseCardMore}>
+              {ui('saasLearnMoreLabel', lang)} <span aria-hidden="true">→</span>
+            </span>
+          </Link>
         </div>
       </div>
 

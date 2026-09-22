@@ -12,8 +12,8 @@ type Props = {
 
 export default function Header({ lang }: Props) {
   // トップページの最上部と、ヒーローバナーを持たない下層ページ（ニュース／事業内容／
-  // 私たちについて／私を採用情報／SaaS開発／利用規約／個人情報保護方針）は明るい背景。
-  // ナビ・ロゴの色を出し分ける。
+  // 私たちについて／私を採用情報／SaaS開発／ナビ付きLP／イメージ100計算／利用規約／
+  // 個人情報保護方針）は明るい背景。ナビ・ロゴの色を出し分ける。
   const pathname = usePathname();
   const isLightBg =
     pathname === '/' ||
@@ -24,6 +24,7 @@ export default function Header({ lang }: Props) {
     pathname === '/hire-me' ||
     pathname === '/saas' ||
     pathname === '/navi-lp' ||
+    pathname === '/image100' ||
     pathname === '/terms' ||
     pathname === '/privacy';
   const variant = isLightBg ? 'light' : 'dark';
