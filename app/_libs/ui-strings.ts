@@ -2055,6 +2055,18 @@ const UI_STRINGS = {
     es: 'Reproducir {h} {op} {v}',
     ru: 'Воспроизвести {h} {op} {v}',
   },
+  // 割り算で縦が0（0で割る）のセルの aria-label。「答えが存在しない」ことを
+  // 案内する再生ボタンであることを伝える。{h}/{op}/{v} を置換して使う。
+  image100CellPlayNoAnswerAriaLabel: {
+    ja: '{h}{op}{v}（答えなし）を再生',
+    en: 'Play {h} {op} {v} (no answer)',
+    ko: '{h} {op} {v}（답 없음）재생',
+    zh: '播放{h}{op}{v}（无解）',
+    de: '{h} {op} {v} (keine Lösung) abspielen',
+    fr: 'Lire {h} {op} {v} (pas de solution)',
+    es: 'Reproducir {h} {op} {v} (sin solución)',
+    ru: 'Воспроизвести {h} {op} {v} (нет решения)',
+  },
   // スクリーンリーダー向けの表キャプション（視覚的には隠す）
   image100TableCaption: {
     ja: '計算練習用の表。上端の行が横の見出しの数字、左端の列が縦の見出しの数字です。中の100マスは、すべて空欄です。',

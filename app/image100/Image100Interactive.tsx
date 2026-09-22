@@ -119,6 +119,7 @@ export default function Image100Interactive({ lang, initialHorizontalDigits, ini
           <option value="add">＋</option>
           <option value="sub">−</option>
           <option value="mul">×</option>
+          <option value="div">÷</option>
         </select>
       </div>
 
@@ -148,7 +149,11 @@ export default function Image100Interactive({ lang, initialHorizontalDigits, ini
                 </th>
                 {horizontalDigits.map((hd, colIdx) => {
                   const cellKey = `${rowIdx}-${colIdx}`;
-                  const ariaLabel = ui('image100CellPlayAriaLabel', lang)
+                  // 割り算で縦(vd)が0のときは「0で割る」ため、答えが存在しないことを
+                  // 案内する専用の aria-label にする（このセル自体はほかと同じく押せる）。
+                  const ariaLabelKey =
+                    operator === 'div' && vd === 0 ? 'image100CellPlayNoAnswerAriaLabel' : 'image100CellPlayAriaLabel';
+                  const ariaLabel = ui(ariaLabelKey, lang)
                     .replace('{h}', String(hd))
                     .replace('{op}', OPERATOR_WORD[operator][lang])
                     .replace('{v}', String(vd));
