@@ -1,4 +1,7 @@
+import { cookies } from 'next/headers';
 import LegalDoc from '@/app/_components/LegalDoc';
+import { LANG_COOKIE, resolveLang } from '@/app/_libs/lang';
+import { ui } from '@/app/_libs/ui-strings';
 
 // ヘッダー/フッターが lang Cookie で切り替わるため、CDN キャッシュを無効化する。
 export const dynamic = 'force-dynamic';
@@ -13,7 +16,8 @@ export const metadata = {
   },
 };
 
-export default function Page() {
+export default async function Page() {
+  const lang = resolveLang((await cookies()).get(LANG_COOKIE)?.value);
   return (
     <LegalDoc
       title="個人情報保護方針"
@@ -36,6 +40,13 @@ export default function Page() {
         <li>IPアドレス、Cookie、端末情報、ブラウザー情報、アクセスログ等</li>
         <li>その他、利用者が当社へ提供した情報</li>
       </ul>
+      <p>
+        {ui('privacyGa4Notice', lang)}{' '}
+        <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer">
+          {ui('privacyGa4LinkLabel', lang)}
+        </a>
+        <span className="srOnly"> {ui('opensInNewTab', lang)}</span>
+      </p>
 
       <h2>3．利用目的</h2>
       <p>取得した個人情報を、次の目的で利用します。</p>

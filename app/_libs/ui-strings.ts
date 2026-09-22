@@ -1890,6 +1890,28 @@ const UI_STRINGS = {
     es: 'Proyectos destacados',
     ru: 'Избранные проекты',
   },
+
+  // /privacy: GA4利用のお知らせ（本文・リンク文言）
+  privacyGa4Notice: {
+    ja: '当サイトは、Google アナリティクス4を使って、アクセス状況を分析しています。詳しくは、次のポリシーをご覧ください。',
+    en: 'This site uses Google Analytics 4 to analyze traffic. For details, please see the following policy.',
+    ko: '이 사이트는 Google 애널리틱스4를 사용하여 방문 현황을 분석하고 있습니다. 자세한 내용은 다음 정책을 확인해 주세요.',
+    zh: '本网站使用 Google Analytics 4（GA4）分析访问情况。详情请查看以下政策。',
+    de: 'Diese Website verwendet Google Analytics 4, um die Zugriffe zu analysieren. Weitere Informationen finden Sie in der folgenden Richtlinie.',
+    fr: 'Ce site utilise Google Analytics 4 pour analyser la fréquentation. Pour en savoir plus, veuillez consulter la politique suivante.',
+    es: 'Este sitio utiliza Google Analytics 4 para analizar el tráfico. Para más información, consulte la siguiente política.',
+    ru: 'Этот сайт использует Google Analytics 4 для анализа посещаемости. Подробнее см. в следующей политике.',
+  },
+  privacyGa4LinkLabel: {
+    ja: 'Googleのポリシー',
+    en: "Google's policy",
+    ko: 'Google 정책',
+    zh: 'Google 政策',
+    de: 'Google-Richtlinie',
+    fr: 'Politique de Google',
+    es: 'Política de Google',
+    ru: 'Политика Google',
+  },
 } satisfies Record<string, Localized>;
 
 export type UiStringKey = keyof typeof UI_STRINGS;
