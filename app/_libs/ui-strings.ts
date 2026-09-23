@@ -709,6 +709,96 @@ const UI_STRINGS = {
     ru: 'Человек и ИИ используют свои сильные стороны и создают приложения, которые избавляют бизнес от рутины, и приложения для тех, кто хочет учиться.',
   },
 
+  // /company ページ（私たちについて）。リード2行（companyLeadLine1/2）は、
+  // 上の aboutLead と同じ内容を行ごとに分けたもの。見出し・本文（companyHeading/
+  // companyBody）も、aboutSummary と重なる部分（「お互いの得意で」「面倒を減らす
+  // アプリ」等）は、同じ言い回しに揃えている。
+  companyLeadLine1: {
+    ja: '社員は一人。',
+    en: 'One employee.',
+    ko: '직원은 한 명.',
+    zh: '员工只有一人。',
+    de: 'Ein Mitarbeiter.',
+    fr: 'Un seul employé.',
+    es: 'Un solo empleado.',
+    ru: 'Один сотрудник.',
+  },
+  companyLeadLine2: {
+    ja: 'でも、仕事は一人でやらない。',
+    en: 'But no one here works alone.',
+    ko: '하지만 일은 혼자 하지 않습니다.',
+    zh: '但工作从不独自完成。',
+    de: 'Aber hier arbeitet niemand allein.',
+    fr: 'Mais personne ne travaille seul ici.',
+    es: 'Pero aquí nadie trabaja solo.',
+    ru: 'Но здесь никто не работает в одиночку.',
+  },
+  companyHeading: {
+    ja: 'AIと人が、お互いの得意で働く会社。',
+    en: 'A company where people and AI each play to their strengths.',
+    ko: 'AI와 사람이, 각자의 강점을 살려 일하는 회사.',
+    zh: 'AI与人，各展所长、协同工作的公司。',
+    de: 'Ein Unternehmen, in dem Mensch und KI jeweils ihre Stärken einbringen.',
+    fr: "Une entreprise où l'humain et l'IA jouent chacun de leurs forces.",
+    es: 'Una empresa donde las personas y la IA aportan cada una sus fortalezas.',
+    ru: 'Компания, где человек и ИИ используют свои сильные стороны.',
+  },
+  companyBody: {
+    ja: 'AIと長年のIT経験を組み合わせ、企業の「面倒」を減らすアプリと、人の「学びたい」を後押しするアプリをつくります。開発の過程もすべて公開しながら、AIと一緒に会社を育てていきます。',
+    en: "Combining AI with years of IT experience, I build apps that cut business busywork and apps that back people who want to learn. I share the whole development process openly, growing this company together with AI.",
+    ko: "AI와 오랜 IT 경험을 결합해, 기업의 '번거로움'을 줄이는 앱과 사람의 '배우고 싶다'를 돕는 앱을 만듭니다. 개발 과정도 모두 공개하면서, AI와 함께 회사를 키워갑니다.",
+    zh: '将AI与多年的IT经验相结合，打造为企业减少繁琐事务的应用，以及支持人们求知的应用。同时公开整个开发过程，与AI一起让公司不断成长。',
+    de: 'Ich verbinde KI mit langjähriger IT-Erfahrung und entwickle Apps, die Unternehmen lästige Arbeit ersparen, sowie Apps, die Lernwillige unterstützen. Dabei mache ich den gesamten Entwicklungsprozess öffentlich und baue das Unternehmen gemeinsam mit KI auf.',
+    fr: "En combinant l'IA à de longues années d'expérience en informatique, je crée des applications qui allègent les corvées des entreprises et d'autres qui soutiennent celles et ceux qui veulent apprendre. Je partage tout le processus de développement en toute transparence, et fais grandir cette entreprise aux côtés de l'IA.",
+    es: 'Combinando la IA con muchos años de experiencia en TI, creo aplicaciones que reducen las tareas tediosas de las empresas y otras que apoyan a quienes quieren aprender. Comparto todo el proceso de desarrollo de forma abierta, y hago crecer esta empresa junto con la IA.',
+    ru: 'Сочетая ИИ с многолетним опытом в сфере IT, я создаю приложения, которые избавляют бизнес от рутины, и приложения для тех, кто хочет учиться. Открыто делясь всем процессом разработки, я развиваю эту компанию вместе с ИИ.',
+  },
+  companyRepHeading: {
+    ja: '代表について',
+    en: 'About the founder',
+    ko: '창업자 소개',
+    zh: '关于创始人',
+    de: 'Über den Gründer',
+    fr: 'À propos du fondateur',
+    es: 'Sobre el fundador',
+    ru: 'Об основателе',
+  },
+  companyRepBody: {
+    ja: '約39年、IT業界でエンジニアとして生きてきました。今はAIエージェント達と共に、一人企業に挑戦中です。',
+    en: "I've spent about 39 years working as an engineer in the IT industry. Now, together with AI agents, I'm taking on the challenge of running a one-person company.",
+    ko: '약 39년간 IT업계에서 엔지니어로 살아왔습니다. 지금은 AI 에이전트들과 함께, 1인 기업에 도전하고 있습니다.',
+    zh: '在IT行业担任工程师，至今已近39年。如今，我正与AI智能体们一起，挑战一人公司的经营。',
+    de: 'Seit rund 39 Jahren arbeite ich als Ingenieur in der IT-Branche. Jetzt wage ich, gemeinsam mit KI-Agenten, den Schritt zum Einzelunternehmen.',
+    fr: "Depuis environ 39 ans, je travaille en tant qu'ingénieur dans le secteur informatique. Aujourd'hui, avec des agents IA à mes côtés, je me lance le défi d'une entreprise individuelle.",
+    es: 'Durante unos 39 años he trabajado como ingeniero en el sector de TI. Ahora, junto con agentes de IA, me embarco en el reto de dirigir una empresa unipersonal.',
+    ru: 'Около 39 лет я работаю инженером в сфере IT. Сейчас вместе с ИИ-агентами я берусь за вызов — компанию, где работает один человек.',
+  },
+  // 代表者名（8言語）。人名は翻訳せず、各言語の慣習に合わせる：
+  // ja=原表記、en/de/fr/es=ヘボン式ローマ字（西欧語共通・名→ニックネーム→姓の順）、
+  // ru=ポリワーノフ式キリル転写（Kennyはラテン文字のまま）、
+  // ko=姓→ニックネーム→名の語順でハングル転写（Kennyはラテン文字のまま）、
+  // zh=日本語と同じ漢字表記（中国語圏では人名の漢字をそのまま使うのが慣習）。
+  companyRepName: {
+    ja: '吉田（Kenny）健一',
+    en: 'Kenichi (Kenny) Yoshida',
+    ko: '요시다 (Kenny) 겐이치',
+    zh: '吉田（Kenny）健一',
+    de: 'Kenichi (Kenny) Yoshida',
+    fr: 'Kenichi (Kenny) Yoshida',
+    es: 'Kenichi (Kenny) Yoshida',
+    ru: 'Кэнъити (Kenny) Ёсида',
+  },
+  companyRepNote: {
+    ja: '法人設立準備中｜所在地・登記情報は設立後に掲載予定',
+    en: 'Incorporation in progress | Address and registration details will be published after incorporation',
+    ko: '법인 설립 준비 중 | 소재지·등기 정보는 설립 후 게재 예정',
+    zh: '公司注册筹备中｜所在地及登记信息将于注册完成后公布',
+    de: 'Firmengründung in Vorbereitung | Anschrift und Registerdaten werden nach der Gründung veröffentlicht',
+    fr: "Immatriculation de la société en cours | L'adresse et les informations d'enregistrement seront publiées après l'immatriculation",
+    es: 'Constitución de la sociedad en trámite | La dirección y los datos registrales se publicarán tras la constitución',
+    ru: 'Регистрация юридического лица готовится | Адрес и регистрационные данные будут опубликованы после регистрации',
+  },
+
   // トップページの「私を採用情報」誘導セクション（/hire-me へ）。
   // 「私を採用情報」は日本語の言葉遊びのため subtitle / body / link は日本語のみ。
   hireMeHeading: { ja: 'Hire me' },
