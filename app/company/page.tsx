@@ -21,7 +21,7 @@ export default function Page() {
         <p className={styles.body}>
           約39年、IT業界でエンジニアとして生きてきました。今はAIエージェント達と共に、一人企業に挑戦中です。
         </p>
-        <p className={styles.repName}>吉田 健一</p>
+        <p className={styles.repName}>吉田（Kenny）健一</p>
         <p className={styles.repOrg}>AXelWorks</p>
         <p className={styles.repNote}>法人設立準備中｜所在地・登記情報は設立後に掲載予定</p>
       </section>
