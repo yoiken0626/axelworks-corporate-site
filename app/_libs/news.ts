@@ -1,4 +1,5 @@
 import type { MicroCMSImage, MicroCMSDate, MicroCMSContentId } from 'microcms-js-sdk';
+import { LANGUAGES, type TranslationSuffix } from './lang-registry';
 
 // 記事関連の型と表示言語解決ロジック。microCMS クライアントの初期化（サーバー専用の
 // 環境変数チェックを含む）から切り離してある。NewsList/NewsListItem/NewsGrid は
@@ -14,38 +15,27 @@ export type Category = {
 // 翻訳ステータスの型定義
 export type TranslationStatus = '未処理' | '生成中' | '完了';
 
+// 翻訳対象言語（レジストリの TranslationSuffix）ごとの title_*/content_* フィールド。
+// 言語を追加すると、対応する title_*/content_* がここに自動で増える。
+export type TitleFields = { [K in TranslationSuffix as `title_${K}`]?: string };
+export type ContentFields = { [K in TranslationSuffix as `content_${K}`]?: string };
+
 // ニュースの型定義
 export type News = {
   title: string;
   description: string;
   content: string;
-  title_en?: string;
-  content_en?: string;
-  title_ko?: string;
-  content_ko?: string;
-  title_zh?: string;
-  content_zh?: string;
-  title_de?: string;
-  content_de?: string;
-  title_fr?: string;
-  content_fr?: string;
-  title_es?: string;
-  content_es?: string;
-  title_ru?: string;
-  content_ru?: string;
   translation_status?: TranslationStatus[];
   thumbnail?: MicroCMSImage;
   category: Category;
-};
+} & TitleFields &
+  ContentFields;
 
 export type Article = News & MicroCMSContentId & MicroCMSDate;
 
 // タイトルの多言語フィールドだけを持つ最小限の型。localizedTitle はこれだけで動く
 // （News はこれを満たすので、そのまま渡せる）。
-type TitleSource = Pick<News, 'title'> &
-  Partial<
-    Pick<News, 'title_en' | 'title_ko' | 'title_zh' | 'title_de' | 'title_fr' | 'title_es' | 'title_ru'>
-  >;
+type TitleSource = Pick<News, 'title'> & TitleFields;
 
 // トップページのカードグリッド（NewsList variant="grid"）の描画に必要な最小限の項目。
 // 「もっと見る」API（/api/news-more）のレスポンス項目そのもの。タイトルは呼び出し側
@@ -62,38 +52,20 @@ export type NewsCardData = {
 export type NewsListEntry = {
   id: string;
   title: string;
-  title_en?: string;
-  title_ko?: string;
-  title_zh?: string;
-  title_de?: string;
-  title_fr?: string;
-  title_es?: string;
-  title_ru?: string;
   thumbnail?: MicroCMSImage;
   category?: Category;
   publishedAt?: string;
   createdAt?: string;
-};
+} & TitleFields;
 
 // 記事のタイトル / 本文を表示言語に合わせて返す。未翻訳（空）の場合は日本語にフォールバックする。
-const TITLE_FIELD: Record<string, keyof TitleSource> = {
-  en: 'title_en',
-  ko: 'title_ko',
-  zh: 'title_zh',
-  de: 'title_de',
-  fr: 'title_fr',
-  es: 'title_es',
-  ru: 'title_ru',
-};
-const CONTENT_FIELD: Record<string, keyof News> = {
-  en: 'content_en',
-  ko: 'content_ko',
-  zh: 'content_zh',
-  de: 'content_de',
-  fr: 'content_fr',
-  es: 'content_es',
-  ru: 'content_ru',
-};
+// レジストリの翻訳フィールドから自動生成する（言語を追加してもここを編集する必要はない）。
+const TITLE_FIELD: Record<string, keyof TitleSource> = Object.fromEntries(
+  LANGUAGES.flatMap((l) => (l.translationField ? [[l.code, `title_${l.translationField}`]] : [])),
+);
+const CONTENT_FIELD: Record<string, keyof News> = Object.fromEntries(
+  LANGUAGES.flatMap((l) => (l.translationField ? [[l.code, `content_${l.translationField}`]] : [])),
+);
 
 export const localizedTitle = (article: TitleSource, lang: string): string =>
   (TITLE_FIELD[lang] && (article[TITLE_FIELD[lang]] as string | undefined)) || article.title;

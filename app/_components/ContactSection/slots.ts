@@ -1,5 +1,7 @@
 // 商談予約フォームの候補日時（横軸=営業日、縦軸=時間枠）を組み立てるヘルパー。
 
+import type { Lang } from '@/app/_libs/lang';
+
 export type AppointmentDay = {
   /** 一意キー。例: "2026-09-02" */
   key: string;
@@ -12,7 +14,7 @@ export type AppointmentDay = {
 export const APPOINTMENT_TIMES = ['9:00', '13:00', '16:00'] as const;
 export const MAX_SELECTIONS = 3;
 
-const WEEKDAY: Record<'ja' | 'en' | 'ko' | 'zh' | 'de' | 'fr' | 'es' | 'ru', string[]> = {
+const WEEKDAY: Record<Lang, string[]> = {
   ja: ['日', '月', '火', '水', '木', '金', '土'],
   en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
   ko: ['일', '월', '화', '수', '목', '금', '토'],

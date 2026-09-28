@@ -1,19 +1,10 @@
 import { resolveLang, type Lang } from './lang';
 
-// UI 文言の多言語辞書。ja / en / ko / zh / de / fr / es / ru を用意する。
+// UI 文言の多言語辞書。対応言語（app/_libs/lang-registry.ts の LANGUAGES）すべてを用意する。
 // ある言語のキーが無い場合はすべて ja にフォールバックする。
 // ニュース記事のタイトル・本文は microCMS の title_*/content_* 側で翻訳するため、ここには含めない。
 // メール本文・件名・payload のキーは担当者向けなので日本語のまま（辞書対象外）。
-type Localized = {
-  ja: string;
-  en?: string;
-  ko?: string;
-  zh?: string;
-  de?: string;
-  fr?: string;
-  es?: string;
-  ru?: string;
-};
+type Localized = { ja: string } & Partial<Record<Exclude<Lang, 'ja'>, string>>;
 
 const UI_STRINGS = {
   // トップページの h1（視覚的には隠し、スクリーンリーダー / SEO 向け）
@@ -745,7 +736,7 @@ const UI_STRINGS = {
   },
   companyBody: {
     ja: 'AIと長年のIT経験を組み合わせ、企業の「面倒」を減らすアプリと、人の「学びたい」を後押しするアプリをつくります。開発の過程もすべて公開しながら、AIと一緒に会社を育てていきます。',
-    en: "Combining AI with years of IT experience, I build apps that cut business busywork and apps that back people who want to learn. I share the whole development process openly, growing this company together with AI.",
+    en: 'Combining AI with years of IT experience, I build apps that cut business busywork and apps that back people who want to learn. I share the whole development process openly, growing this company together with AI.',
     ko: "AI와 오랜 IT 경험을 결합해, 기업의 '번거로움'을 줄이는 앱과 사람의 '배우고 싶다'를 돕는 앱을 만듭니다. 개발 과정도 모두 공개하면서, AI와 함께 회사를 키워갑니다.",
     zh: '将AI与多年的IT经验相结合，打造为企业减少繁琐事务的应用，以及支持人们求知的应用。同时公开整个开发过程，与AI一起让公司不断成长。',
     de: 'Ich verbinde KI mit langjähriger IT-Erfahrung und entwickle Apps, die Unternehmen lästige Arbeit ersparen, sowie Apps, die Lernwillige unterstützen. Dabei mache ich den gesamten Entwicklungsprozess öffentlich und baue das Unternehmen gemeinsam mit KI auf.',
@@ -1422,7 +1413,7 @@ const UI_STRINGS = {
     ko: '첫 사용자는 저 자신입니다. 요구사항이 빠르게 정해지고, 동작하지 않으면 바로 알아챌 수 있습니다.',
     zh: '第一个用户就是我自己。这样需求能很快确定，一旦出问题也能立刻发现。',
     de: 'Der erste Nutzer bin ich selbst. So stehen Anforderungen schnell fest, und Fehler fallen sofort auf.',
-    fr: "Je suis mon propre premier utilisateur. Les besoins se précisent vite, et je remarque immédiatement si quelque chose ne fonctionne pas.",
+    fr: 'Je suis mon propre premier utilisateur. Les besoins se précisent vite, et je remarque immédiatement si quelque chose ne fonctionne pas.',
     es: 'El primer usuario soy yo mismo. Los requisitos se definen rápido y noto enseguida si algo falla.',
     ru: 'Я сам — первый пользователь. Требования проясняются быстро, а сбои заметны сразу.',
   },
@@ -1680,7 +1671,7 @@ const UI_STRINGS = {
   },
   naviLpLead: {
     ja: '動画や音声が案内してくれる、「ナビ付き」のLPです。AIと一緒に作った、2つのバリエーションを紹介します。',
-    en: "A “guided” LP, led by video or voice. Here are two variations I built with AI.",
+    en: 'A “guided” LP, led by video or voice. Here are two variations I built with AI.',
     ko: '동영상이나 음성이 안내해 주는 ‘가이드형’ LP입니다. AI와 함께 만든 두 가지 버전을 소개합니다.',
     zh: '这是由视频或语音进行导览的「导览式」LP。介绍我与 AI 一起制作的两种版本。',
     de: 'Eine LP mit Führung: Video oder Stimme leitet Sie durch die Seite. Ich stelle zwei mit KI entwickelte Varianten vor.',
@@ -1700,7 +1691,7 @@ const UI_STRINGS = {
   },
   naviLpAboutBody: {
     ja: 'ふつうのLPは、読む人が自分で、上から下へ読み進めます。ナビ付きLPは、音声や動画の案内役が話しかけ、ページを一緒に進めてくれます。読む人は、案内に身をまかせるだけで、内容が伝わります。',
-    en: "With a normal LP, the reader scrolls from top to bottom on their own. With a guided LP, a voice or video guide talks to the reader and moves through the page together with them. The reader just follows along, and the message gets across.",
+    en: 'With a normal LP, the reader scrolls from top to bottom on their own. With a guided LP, a voice or video guide talks to the reader and moves through the page together with them. The reader just follows along, and the message gets across.',
     ko: '일반적인 LP는 읽는 사람이 스스로 위에서 아래로 읽어 나갑니다. 가이드형 LP는 음성이나 동영상 안내자가 말을 걸며, 페이지를 함께 진행해 줍니다. 읽는 사람은 안내를 따라가기만 하면 내용이 전달됩니다.',
     zh: '普通的 LP 由阅读者自己从上到下阅读。导览式 LP 则由语音或视频的导览角色主动搭话，与阅读者一起推进页面。阅读者只需跟随导览，就能理解内容。',
     de: 'Bei einer normalen LP scrollt der Leser selbst von oben nach unten. Bei einer geführten LP spricht ein Sprach- oder Video-Guide den Leser an und führt gemeinsam mit ihm durch die Seite. Der Leser muss sich nur führen lassen, und der Inhalt kommt an.',

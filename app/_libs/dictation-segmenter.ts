@@ -1,4 +1,4 @@
-import { type Lang } from './lang';
+import { type Lang, isCjkLang } from './lang';
 import { READ_ALOUD_PAUSE_MARK, READ_ALOUD_LIST_MARK, stripReadAloudMarks } from './read-aloud-marks';
 
 /**
@@ -19,9 +19,6 @@ export type DictationSegment = {
   segIndex: number;
   kind: 'heading' | 'listItem' | 'paragraph';
 };
-
-const CJK_LANGS: ReadonlySet<Lang> = new Set<Lang>(['ja', 'zh', 'ko']);
-const isCjkLang = (lang: Lang): boolean => CJK_LANGS.has(lang);
 
 // ---- 区切り記号で止めない例外（保護区間）------------------------------------
 

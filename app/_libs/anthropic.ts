@@ -1,3 +1,6 @@
+import { TRANSLATION_TARGET_LANGS } from './lang-registry';
+import type { TitleFields, ContentFields } from './news';
+
 const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
 const ANTHROPIC_VERSION = '2023-06-01';
 const DEFAULT_MODEL = 'claude-sonnet-5';
@@ -10,22 +13,9 @@ type TranslationInput = {
   contentHtml: string;
 };
 
-export type TranslationResult = {
-  title_en: string;
-  content_en: string;
-  title_ko: string;
-  content_ko: string;
-  title_zh: string;
-  content_zh: string;
-  title_de: string;
-  content_de: string;
-  title_fr: string;
-  content_fr: string;
-  title_es: string;
-  content_es: string;
-  title_ru: string;
-  content_ru: string;
-};
+// レジストリの翻訳対象言語（app/_libs/lang-registry.ts）ごとの title_*/content_* を
+// すべて必須にしたもの。Anthropic の応答はこの全フィールドを埋める必要がある。
+export type TranslationResult = Required<TitleFields> & Required<ContentFields>;
 
 const TRANSLATION_TOOL_NAME = 'submit_translation';
 
@@ -37,7 +27,7 @@ const SYSTEM_PROMPT = `あなたはIT/AI業界のコーポレートサイト記�
 - content_* の入力はHTML文字列です。タグ構造・属性は一切変更せず、タグの中のテキストのみを翻訳すること。タグを追加/削除/並べ替えしないこと。
 - 出力は必ず submit_translation ツールを呼び出して構造化データとして返すこと。英語(title_en/content_en)・韓国語(title_ko/content_ko)・中国語(title_zh/content_zh)・ドイツ語(title_de/content_de)・フランス語(title_fr/content_fr)・スペイン語(title_es/content_es)・ロシア語(title_ru/content_ru)の12フィールドすべてを埋めること。`;
 
-const TARGET_LANGS = ['en', 'ko', 'zh', 'de', 'fr', 'es', 'ru'] as const;
+const TARGET_LANGS = TRANSLATION_TARGET_LANGS;
 
 export const translateArticle = async ({
   title,
@@ -99,7 +89,8 @@ export const translateArticle = async ({
               title_de: { type: 'string', description: 'ドイツ語訳された記事タイトル' },
               content_de: {
                 type: 'string',
-                description: '入力と同じHTMLタグ構造を保ったまま、テキスト部分のみドイツ語訳した本文',
+                description:
+                  '入力と同じHTMLタグ構造を保ったまま、テキスト部分のみドイツ語訳した本文',
               },
               title_fr: { type: 'string', description: 'フランス語訳された記事タイトル' },
               content_fr: {

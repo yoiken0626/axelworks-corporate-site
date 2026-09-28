@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { client, type News, type TranslationStatus } from '@/app/_libs/microcms';
 import { updateNewsTranslation } from '@/app/_libs/microcms-management';
 import { translateArticle } from '@/app/_libs/anthropic';
+import { TRANSLATION_TARGET_LANGS } from '@/app/_libs/lang';
 
 const IN_PROGRESS_STATUSES: TranslationStatus[] = ['生成中', '完了'];
 
@@ -88,7 +89,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       status: 'ok',
       contentId,
-      langs: ['en', 'ko', 'zh', 'de', 'fr', 'es', 'ru'],
+      langs: TRANSLATION_TARGET_LANGS,
     });
   } catch (error) {
     console.error('[translate-article] translation failed', contentId, error);

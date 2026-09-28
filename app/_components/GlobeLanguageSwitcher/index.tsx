@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import classNames from 'classnames';
 import { ui } from '@/app/_libs/ui-strings';
 import { setLangCookie, type Lang } from '@/app/_libs/lang';
+import { LANGUAGES } from '@/app/_libs/lang-registry';
 import styles from './index.module.css';
 
 // three.js は重いので遅延ロード。地球儀はハイドレーション後にクライアントで描画する。
@@ -20,17 +21,13 @@ type Flag = {
   lang: Lang;
 };
 
-// 8言語すべてに対応（SUPPORTED_LANGS と同じ並び）
-const FLAGS: Flag[] = [
-  { code: 'ja', icon: 'jp', label: '日本語', lang: 'ja' },
-  { code: 'en', icon: 'us', label: 'English', lang: 'en' },
-  { code: 'ko', icon: 'kr', label: '한국어', lang: 'ko' },
-  { code: 'zh', icon: 'cn', label: '中文', lang: 'zh' },
-  { code: 'de', icon: 'de', label: 'Deutsch', lang: 'de' },
-  { code: 'fr', icon: 'fr', label: 'Français', lang: 'fr' },
-  { code: 'es', icon: 'es', label: 'Español', lang: 'es' },
-  { code: 'ru', icon: 'ru', label: 'Русский', lang: 'ru' },
-];
+// 全対応言語（レジストリの並び順＝地球儀の国旗リングの並び順）
+const FLAGS: Flag[] = LANGUAGES.map((l) => ({
+  code: l.code,
+  icon: l.flagIcon,
+  label: l.label,
+  lang: l.code,
+}));
 
 // 国旗リングは地球儀(ルート要素)の中心を基準に等角で円状に配置する。
 // 中心からの距離は CSS 変数 --gls-ring-radius で調整可能(既定はルート幅の125%)。
@@ -114,7 +111,12 @@ export default function GlobeLanguageSwitcher({ className, lang }: Props) {
         closeMenu(false);
         return;
       }
-      if (e.key !== 'ArrowRight' && e.key !== 'ArrowDown' && e.key !== 'ArrowLeft' && e.key !== 'ArrowUp') {
+      if (
+        e.key !== 'ArrowRight' &&
+        e.key !== 'ArrowDown' &&
+        e.key !== 'ArrowLeft' &&
+        e.key !== 'ArrowUp'
+      ) {
         return;
       }
       const items = itemRefs.current.filter((el): el is HTMLButtonElement => el != null);
