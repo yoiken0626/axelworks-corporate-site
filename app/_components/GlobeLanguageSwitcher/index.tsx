@@ -122,12 +122,16 @@ export default function GlobeLanguageSwitcher({ className, lang }: Props) {
                   top: `calc(50% + (${sin} * var(--gls-ring-radius, 68px)))`,
                   // 配列順（＝時計回り）に段階的な z-index を与えることで、隣り合う
                   // 国旗どうしが常に「片側の隣より上・反対側の隣より下」になる編み込み状
-                  // の重なりが連続する。最後（フィリピン）と最初（日本）の境界だけは
-                  // 巡回できず日本が下になるが、見た目の許容差として受け入れる。
+                  // の重なりが連続する。ただし z-index は循環する順序を表現できないため、
+                  // 最後（フィリピン、z-index最大）と最初（日本、z-index最小）の境界だけは
+                  // このままだと逆転する（日本が両側から覆われて見える）。この1箇所だけは
+                  // フィリピン側に CSS mask で穴を開けて見た目を補正する
+                  // （styles.flagButton の [data-code='fil'] ルール参照）。
                   zIndex: index + 1,
                 } as CSSProperties
               }
               data-state={state}
+              data-code={flag.code}
             >
               <button
                 type="button"

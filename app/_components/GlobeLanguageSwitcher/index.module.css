@@ -99,6 +99,38 @@
     box-shadow 0.25s ease;
 }
 
+/* z-index だけでは12個の循環する重なり順を表現できない（最後のフィリピンと
+   最初の日本の境界だけ、巡回できずに逆転する）。フィリピン側にだけ円形の
+   穴を CSS mask で開け、下にある日本の実際の円と寸分違わず一致させることで、
+   「日本の左側がフィリピンの上に乗る」という編み込みの見た目を補う。
+   国旗はすべて同じ直径の円を等間隔（30度）に並べているため、隣どうしの
+   中心間ベクトルは常に一定（cos15°*2sin15° = sin30° = 0.5、
+   sin15°*2sin15° = 1-cos30° ≈ 0.13397）。この定数は「30度間隔で並んだ
+   同じ大きさの円」という配置そのものから導かれるため、--gls-flag-size /
+   --gls-ring-radius の値（PC・スマホ・HeroQueen・PageReadAloudいずれも）が
+   変わっても、この1箇所だけの特別な組み合わせとして常に成立する。
+   フチは flagSize/2 のちょうど100%〜118%でフェザーにし、選択時の1.14倍
+   拡大（下の [data-state='active'] 参照）で多少ずれても不自然な境界線が
+   出ないようにしてある。 */
+.flagItem[data-code='fil'] .flagButton {
+  -webkit-mask-image: radial-gradient(
+    circle at calc(var(--gls-flag-size, 42px) / 2 + var(--gls-ring-radius, 68px) * 0.5)
+      calc(var(--gls-flag-size, 42px) / 2 - var(--gls-ring-radius, 68px) * 0.13397),
+    transparent 0,
+    transparent calc(var(--gls-flag-size, 42px) / 2),
+    black calc(var(--gls-flag-size, 42px) / 2 * 1.18)
+  );
+  mask-image: radial-gradient(
+    circle at calc(var(--gls-flag-size, 42px) / 2 + var(--gls-ring-radius, 68px) * 0.5)
+      calc(var(--gls-flag-size, 42px) / 2 - var(--gls-ring-radius, 68px) * 0.13397),
+    transparent 0,
+    transparent calc(var(--gls-flag-size, 42px) / 2),
+    black calc(var(--gls-flag-size, 42px) / 2 * 1.18)
+  );
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
 /* 選択されていない11個：消さずに透明度だけ下げる */
 .flagItem[data-state='dimmed'] .flagButton {
   opacity: 0.42;
