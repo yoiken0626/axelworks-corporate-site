@@ -1,10 +1,13 @@
 import crypto from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
-import { client, type News, type TranslationStatus } from '@/app/_libs/microcms';
-import { updateNewsTranslation } from '@/app/_libs/microcms-management';
-import { translateArticle } from '@/app/_libs/anthropic';
+import { client, type News } from '@/app/_libs/microcms';
+import { isStaleGenerating, translatePendingLanguages } from '@/app/_libs/translate-pipeline';
 
-const IN_PROGRESS_STATUSES: TranslationStatus[] = ['生成中', '完了'];
+// 未翻訳の対象言語を並行して翻訳するため、Next.jsのデフォルトより長めの実行時間を
+// 確保する。60はVercel Hobbyプランでも設定できる上限値（Pro以上はより長く設定できる
+// ので、プランに応じて引き上げてよい）。並行実行のため、対象言語が増えても実際の
+// 所要時間は「最も遅い1言語ぶん」に近い（合計時間ではない）。
+export const maxDuration = 60;
 
 const isAuthorized = (request: NextRequest) => {
   const expected = process.env.TRANSLATE_WEBHOOK_SECRET;
@@ -54,55 +57,60 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ status: 'error', message: 'article not found' }, { status: 404 });
   }
 
-  // 無限ループ防止：翻訳中/翻訳済みの記事は即座にスキップする
-  // translation_statusはmicroCMSのSelectable Field（複数選択）のため配列で返る
-  if (article.translation_status?.some((status) => IN_PROGRESS_STATUSES.includes(status))) {
+  // 多重実行防止：現在処理中（生成中）の記事はスキップする。
+  // 「翻訳済みかどうか」はステータス文字列ではなく、実際のフィールドの有無
+  // （missingTranslationLangs、translatePendingLanguages内部で判定）で判定する。こうする
+  // ことで、対応言語をレジストリに追加したあと、過去に「完了」した記事も、次にこの
+  // APIが呼ばれたときに新しい言語だけを自動で埋め合わせられる（ステータスが「完了」の
+  // まま固定されて永久にスキップされ続ける、という問題を避けられる）。
+  //
+  // ただし「生成中」になってから STALE_GENERATING_MS（10分）以上経過している場合は、
+  // 処理が途中で落ちて滞留したとみなし、ロックを無視して再試行する（isStaleGenerating）。
+  // 滞留と判定されなかった通常のロック中は、これまでどおりスキップする。
+  if (article.translation_status?.includes('生成中') && !isStaleGenerating(article)) {
     return NextResponse.json(
-      { status: 'skipped', translation_status: article.translation_status },
+      { status: 'skipped', reason: 'in progress', translation_status: article.translation_status },
       { status: 200 },
     );
   }
-
-  try {
-    await updateNewsTranslation(contentId, { translation_status: ['生成中'] });
-  } catch (error) {
-    console.error('[translate-article] failed to lock article', contentId, error);
-    return NextResponse.json(
-      { status: 'error', message: 'failed to start translation' },
-      { status: 500 },
+  if (article.translation_status?.includes('生成中')) {
+    console.warn(
+      '[translate-article] 生成中 stuck since',
+      article.translation_started,
+      '- treating as stalled and retrying',
+      contentId,
     );
   }
 
-  try {
-    // 1回の呼び出しで英語・韓国語・中国語・ドイツ語・フランス語・スペイン語・ロシア語をまとめて生成する
-    const translation = await translateArticle({
-      title: article.title,
-      contentHtml: article.content,
-    });
+  const outcome = await translatePendingLanguages(contentId, article, () =>
+    client.getListDetail<News>({ endpoint: 'news', contentId }),
+  );
 
-    await updateNewsTranslation(contentId, {
-      ...translation,
-      translation_status: ['完了'],
-    });
-
-    return NextResponse.json({
-      status: 'ok',
-      contentId,
-      langs: ['en', 'ko', 'zh', 'de', 'fr', 'es', 'ru'],
-    });
-  } catch (error) {
-    console.error('[translate-article] translation failed', contentId, error);
-
-    try {
-      await updateNewsTranslation(contentId, { translation_status: ['未処理'] });
-    } catch (revertError) {
-      console.error(
-        '[translate-article] failed to revert translation_status',
-        contentId,
-        revertError,
+  switch (outcome.status) {
+    case 'skipped':
+      return NextResponse.json({ status: 'skipped', reason: outcome.reason });
+    case 'error':
+      return NextResponse.json(
+        {
+          status: 'error',
+          message: outcome.message,
+          attempted: outcome.attempted,
+          failed: outcome.failed,
+        },
+        { status: 500 },
       );
+    case 'ok':
+    case 'partial':
+      return NextResponse.json({
+        status: outcome.status,
+        contentId,
+        verified: outcome.verified,
+        failed: outcome.failed,
+        translation_status: outcome.translation_status,
+      });
+    default: {
+      const exhaustiveCheck: never = outcome;
+      throw new Error(`unhandled outcome: ${JSON.stringify(exhaustiveCheck)}`);
     }
-
-    return NextResponse.json({ status: 'error', message: 'translation failed' }, { status: 500 });
   }
 }

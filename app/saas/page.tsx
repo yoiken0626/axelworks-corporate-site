@@ -4,7 +4,6 @@ import { cookies } from 'next/headers';
 import { LANG_COOKIE, resolveLang } from '@/app/_libs/lang';
 import { ui } from '@/app/_libs/ui-strings';
 import { SAAS_DEMO } from '@/app/_constants';
-import { SCROLL_DOCK_SENTINEL_ID } from '@/app/_libs/scroll-dock';
 import { resolvePublicImage } from '@/app/_libs/public-image';
 import PageReadAloud from '@/app/_components/PageReadAloud';
 import ButtonLink from '@/app/_components/ButtonLink';
@@ -75,9 +74,6 @@ export default async function Page() {
         {ui('saasHeading', lang)}
       </h1>
       <p className={styles.lead}>{ui('saasLead', lang)}</p>
-
-      {/* リード直後。ここが画面上端より上へ出たら地球儀・読み上げUIを画面最上部へせり上げる */}
-      <div id={SCROLL_DOCK_SENTINEL_ID} aria-hidden="true" />
 
       <div className={styles.body} data-read-aloud-body>
         <h2>{ui('saasBuildingHeading', lang)}</h2>

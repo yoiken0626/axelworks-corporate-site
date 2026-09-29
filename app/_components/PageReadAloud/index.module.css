@@ -20,12 +20,10 @@
 .globeBar,
 .controlBar {
   position: absolute;
-  /* .container の padding-top(116px) の帯（画像の上の白い余白）の中に収める。
-     地球儀を全ブレークポイントで同じ大きさ（--gls-size: 52px）にした結果、
-     国旗リングを最大展開したときの上端 ≈ frame(40) + 56 + 26 − 54(リング) − 20
-     ≈ y48 となり、ヘッダーロゴ下端（≈ y41）より下に収まる（＝スマホと同じく
-     上パディングでロゴとの重なりを解消する）。 */
-  top: 56px;
+  /* .container の padding-top(240px) の帯（画像の上の白い余白）の中に収める。
+     12国旗の常時展開リング（PC基準：地球84px・判定レイヤー外周95px）が
+     ヘッダーロゴ下端（≈ y53）より下に収まる位置。 */
+  top: 80px;
   display: flex;
   align-items: center;
   pointer-events: auto;
@@ -33,9 +31,29 @@
   transition: top 0.32s ease;
 }
 
+/* ドック: スクロールを始めるとすぐに画面最上部へせり上げる（useScrollDock、
+   しきい値 24px）。12国旗の常時展開リングは水平方向の占有幅も広く（PC: 判定
+   レイヤー外周95px は .container の左右パディング80pxより広い）、本文が長い
+   ページでスクロール中に globeBar/controlBar の高さまで来ると重なりうるため、
+   その前に画面最上部の小さな位置へ退避させる（PC でも、従来はスマホのみ
+   だったドックを有効にする）。 */
+.frame[data-docked='true'] .globeBar,
+.frame[data-docked='true'] .controlBar {
+  top: 64px;
+}
+
+/* ドック中はリングごと縮小し、スクロールで通り過ぎる本文との重なりを
+   最小限にする（配置・重なり順・クリック判定は GlobeLanguageSwitcher 側の
+   実測ベースなので、縮小しても角度判定はそのまま正しく動く）。 */
+.frame[data-docked='true'] .globe {
+  transform: scale(0.55);
+  transform-origin: top left;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .globeBar,
-  .controlBar {
+  .controlBar,
+  .globe {
     transition: none;
   }
 }
@@ -53,10 +71,6 @@
   justify-content: flex-end;
   row-gap: 6px;
 }
-
-/* デスクトップ（>950px）: globe 上端 ≈ y96。ドック時に動かす必要はない
-   （スクロールでヘッダーが画面外へ出た後、globe は画面上部・本文シートの
-   左パディング＝白い余白の上に留まり本文と重ならない）。 */
 
 .control {
   display: flex;
@@ -166,26 +180,18 @@
 
 .globe {
   flex-shrink: 0;
-  /* 地球儀は全ブレークポイント（PC・スマホ横・スマホ縦）で同じ大きさに
-     統一する。国旗アイコン 1 つ ≒ --gls-size * --gls-flag-size ≒ 52 * 0.77 ≒ 40px
-     だが、GlobeLanguageSwitcher 側で min-width: 44px を保証しているため
-     実際のタップ領域は 44px（半径22px）。8個を隣どうし重ねずに並べるには、
-     隣接する国旗の中心間距離 ≒ 2 * R * sin(22.5°) が 44px 以上必要なので
-     R ≒ 57.5px 以上（地球儀（半径26px）との非重複条件 R ≒ 48px 以上は
-     すでに満たす、より緩い条件）。現在の言語の国旗が閉じている間も常時
-     表示されるようになった結果、記事サムネイル画像とリングが重なるため、
-     この最小値に少しだけ余裕（半径換算で+2px程度）を足した 115% (≒59.8px)
-     まで縮め、重なりを減らす。 */
-  --gls-size: 52px;
-  --gls-ring-radius: 115%;
-  --gls-flag-size: 77%;
-  --gls-code-offset: 14px;
+  /* 12国旗の最終デザイン・PC基準：地球 約84px・国旗 約42px・配置半径（中心間）
+     約68px。国旗の実質的なタップ領域は見た目の大きさそのものではなく、
+     GlobeLanguageSwitcher 側の角度判定レイヤー（.hitLayer）が担う。 */
+  --gls-size: 84px;
+  --gls-ring-radius: 68px;
+  --gls-flag-size: 42px;
+  --gls-outer-radius: 95px;
+  transition: transform 0.32s ease;
   filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.28));
 }
 
-/* スマホ縦向き・横向き（およびタブレット）。地球儀の大きさ（--gls-size）は
-   全ブレークポイント共通なので、ここでは帯（.frame / .globeBar / .controlBar）
-   の位置・余白だけをスマホ用に上書きする。横向きも縦向きと同じ扱いにするため
+/* スマホ縦向き・横向き（およびタブレット）。横向きも縦向きと同じ扱いにするため
    1つの条件で縦横を両方カバーする（横向き = 812〜932px 幅も含める）。 */
 @media (max-width: 950px) {
   .frame {
@@ -193,28 +199,47 @@
     max-width: calc(100% - 32px); /* = スマホの .container max-width */
   }
 
-  /* 地球儀・読み上げコントロールは .container の広い上パディング（156px）の
-     白い帯の中、画像のすぐ上に置く。globe 中心 Y ≈ 24(frame) + 96 + 26 = 146px。
-     国旗リング（中心から約74px）の上端 ≈ 72px となり、ヘッダー下端（約56px）
-     より下に収まる（＝位置の微調整ではなく上パディングでロゴとの重なりを解消）。
-     リング左端 ≈ globe中心X(84) − 74 ≈ 10px で画面内。 */
+  /* 地球儀・読み上げコントロールは .container の広い上パディング（288px）の
+     白い帯の中、画像のすぐ上に置く。12国旗の常時展開リング（判定レイヤー
+     外周64px＝直径128px）は、読み上げコントロール（複数の44pxボタン）と
+     横並びにする幅の余裕がスマホ幅には無いため、地球儀を上・読み上げ
+     コントロールを下に縦積みにして重なりを避ける。
+     globeBar の top(140px) は、このブレークポイント内でヘッダーのナビが
+     折り返して最も高くなる幅（641px 付近で最大 約110px）でもリングの上端が
+     ヘッダーの下に隠れないよう、その高さを基準に決めている（390px 幅の
+     ハンバーガー表示時は約56pxで済むが、641〜800px幅だけナビが2行になり
+     ヘッダーが高くなる）。 */
   .globeBar {
     left: 42px;
-    top: 96px;
+    top: 140px;
   }
 
   .controlBar {
     right: 4px;
-    top: 96px;
+    /* globeBar top(140) + earth半径(24) + 判定レイヤー外周(64) + 余白(8) */
+    top: 236px;
   }
 
-  /* ドック: ヘッダー画像を過ぎてスクロールすると、画面最上部へせり上げる。
-     この時点でヘッダー（position:absolute）は画面外なので、リング上端が
-     y ≈ 6px（globe 中心 y80 − リング半径 74）でも干渉しない。
-     左右位置は変えない（左へ寄せるとリング左端が画面外へ出るため）。 */
-  .frame[data-docked='true'] .globeBar,
+  .globe {
+    /* スマホ・タブレットの記事・詳細ページ基準：地球 約48px・国旗 約28px・
+       配置半径 約46px（縦積みで読み上げコントロールと重ならない）。 */
+    --gls-size: 48px;
+    --gls-ring-radius: 46px;
+    --gls-flag-size: 28px;
+    --gls-outer-radius: 64px;
+  }
+
+  /* ドック位置（スマホ）。左右位置は変えない（左へ寄せるとリング左端が
+     画面外へ出るため）。globeBar の 48px は判定レイヤー外周（64px）が
+     ビューポート上端でクリップされない最小値。controlBar は縦積みのまま、
+     globeBar のすぐ下に追従させる。 */
+  .frame[data-docked='true'] .globeBar {
+    top: 48px;
+  }
+
   .frame[data-docked='true'] .controlBar {
-    top: 30px;
+    /* docked globeBar top(48) + earth半径(24) + 判定レイヤー外周(64) + 余白(8) */
+    top: 144px;
   }
 
   .control {

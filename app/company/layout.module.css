@@ -1,14 +1,14 @@
 /* ヒーローバナーは持たず、ヘッダー（position:absolute）直下から本文シート（白カード）を
    始める。PageReadAloud（地球儀・読み上げUI）を上部に置くため、/saas と同じく上パディングで
-   「ヘッダー分＋地球儀・読み上げUIの帯」を確保する（.container 側の余白は PageReadAloud の
-   .globeBar の top: 56px と対応）。 */
+   「ヘッダー分＋12国旗の常時展開リングの帯」を確保する（.container 側の余白は
+   PageReadAloud の .globeBar の top: 80px と対応）。 */
 .container {
   position: relative;
   background-color: #fff;
   width: 840px;
   max-width: calc(100% - 80px);
   margin: 40px auto 0;
-  padding: 116px 80px 80px;
+  padding: 240px 80px 80px;
   border-radius: 8px;
 }
 
@@ -16,6 +16,6 @@
   .container {
     max-width: calc(100% - 32px);
     margin: 24px auto 0;
-    padding: 156px 16px 40px;
+    padding: 288px 16px 40px;
   }
 }

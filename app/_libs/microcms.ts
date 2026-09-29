@@ -5,8 +5,17 @@ import { notFound } from 'next/navigation';
 // 型・表示言語解決ロジック（サーバー専用の初期化を含まない）は app/_libs/news.ts に
 // 分離してある。ここではサーバー専用のクライアント初期化・取得関数だけを持ち、
 // 既存の呼び出し元（`from '@/app/_libs/microcms'`）が変更なしで使えるよう再エクスポートする。
-export type { Category, TranslationStatus, News, Article, NewsCardData, NewsListEntry } from './news';
-export { localizedTitle, localizedContent } from './news';
+export type {
+  Category,
+  TranslationStatus,
+  News,
+  Article,
+  NewsCardData,
+  NewsListEntry,
+  TitleFields,
+  ContentFields,
+} from './news';
+export { localizedTitle, localizedContent, missingTranslationLangs } from './news';
 import type { News, Category } from './news';
 
 // 事業内容の型定義

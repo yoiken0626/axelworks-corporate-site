@@ -15,6 +15,13 @@ export const NUMBER_WORDS: Record<Lang, string[]> = {
   fr: ['zéro', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf'],
   es: ['cero', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve'],
   ru: ['ноль', 'один', 'два', 'три', 'четыре', 'пять', 'шесть', 'семь', 'восемь', 'девять'],
+  ne: ['शून्य', 'एक', 'दुई', 'तीन', 'चार', 'पाँच', 'छ', 'सात', 'आठ', 'नौ'],
+  it: ['zero', 'uno', 'due', 'tre', 'quattro', 'cinque', 'sei', 'sette', 'otto', 'nove'],
+  pt: ['zero', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove'],
+  // タガログ語（フィリピノ語）本来の数詞。スペイン語由来の数詞（uno, dos, tres...）は
+  // 時刻・金額の口語表現で使われるのが中心で、計算・数え上げの文脈ではフィリピノ語
+  // 本来の数詞が学校教育の標準（このアプリの用途に合致する）。
+  fil: ['wala', 'isa', 'dalawa', 'tatlo', 'apat', 'lima', 'anim', 'pito', 'walo', 'siyam'],
 };
 
 /** digit は 0〜9。範囲外は空文字を返す。 */
@@ -144,6 +151,83 @@ const ru = (n: number, ones: string[]): string => {
   return `${RU_TENS[tens]} ${ones[units]}`;
 };
 
+const IT_TEENS = [
+  'dieci', 'undici', 'dodici', 'tredici', 'quattordici',
+  'quindici', 'sedici', 'diciassette', 'diciotto', 'diciannove',
+];
+const IT_TENS: Record<number, string> = {
+  2: 'venti', 3: 'trenta', 4: 'quaranta', 5: 'cinquanta', 6: 'sessanta', 7: 'settanta', 8: 'ottanta', 9: 'novanta',
+};
+// イタリア語は、十の位の語末母音が、1・8（母音始まり）の前で脱落する
+// （venti+uno→ventuno、venti+otto→ventotto）。3（tre）と合成するときだけ
+// アクセント付きの tré になる（venti+tre→ventitré）。
+const it = (n: number, ones: string[]): string => {
+  if (n < 10) return ones[n];
+  if (n < 20) return IT_TEENS[n - 10];
+  const tens = Math.floor(n / 10);
+  const units = n % 10;
+  const tensWord = IT_TENS[tens];
+  if (units === 0) return tensWord;
+  if (units === 1 || units === 8) return `${tensWord.slice(0, -1)}${ones[units]}`;
+  if (units === 3) return `${tensWord}tré`;
+  return `${tensWord}${ones[units]}`;
+};
+
+const PT_TEENS = [
+  'dez', 'onze', 'doze', 'treze', 'quatorze',
+  'quinze', 'dezesseis', 'dezessete', 'dezoito', 'dezenove',
+];
+const PT_TENS: Record<number, string> = {
+  2: 'vinte', 3: 'trinta', 4: 'quarenta', 5: 'cinquenta', 6: 'sessenta', 7: 'setenta', 8: 'oitenta', 9: 'noventa',
+};
+// ブラジルポルトガル語は「十の位 + e + 一の位」の規則的な合成（vinte e um、trinta e dois）。
+const pt = (n: number, ones: string[]): string => {
+  if (n < 10) return ones[n];
+  if (n < 20) return PT_TEENS[n - 10];
+  const tens = Math.floor(n / 10);
+  const units = n % 10;
+  if (units === 0) return PT_TENS[tens];
+  return `${PT_TENS[tens]} e ${ones[units]}`;
+};
+
+const FIL_TEENS = [
+  'sampu', 'labing-isa', 'labindalawa', 'labintatlo', 'labing-apat',
+  'labinlima', 'labing-anim', 'labimpito', 'labingwalo', 'labinsiyam',
+];
+const FIL_TENS: Record<number, string> = {
+  2: 'dalawampu', 3: 'tatlumpu', 4: 'apatnapu', 5: 'limampu',
+  6: 'animnapu', 7: 'pitumpu', 8: 'walumpu', 9: 'siyamnapu',
+};
+// フィリピノ語（タガログ語）は「十の位 + 't + 一の位」の合成（dalawampu't isa = 21）。
+const fil = (n: number, ones: string[]): string => {
+  if (n < 10) return ones[n];
+  if (n < 20) return FIL_TEENS[n - 10];
+  const tens = Math.floor(n / 10);
+  const units = n % 10;
+  if (units === 0) return FIL_TENS[tens];
+  return `${FIL_TENS[tens]}'t ${ones[units]}`;
+};
+
+// ネパール語（デーヴァナーガリー文字）は、10の位＋一の位の合成規則を持たず、
+// 0〜99 の各数にそれぞれ固有の語がある（ヒンディー語と同様の不規則性）。そのため
+// 他言語のような組み立て関数ではなく、直接引きの表にする。
+// 複数の学習サイト（nepalgo.de の 1-30/31-60/61-100 各ページ、omniglot.com、
+// barala.com.np）を突き合わせて確認済み（表記ゆれ ी/ि は、いずれも実在する
+// 許容表記。29 は情報源により उन्तीस と उनन्तीस の表記が分かれたが、39/49/69/59
+// の「उनन्-」（10引く1）接頭辞の規則性と多数の情報源に合わせて उनन्तीस を採用）。
+const NE_WORDS = [
+  'शून्य', 'एक', 'दुई', 'तीन', 'चार', 'पाँच', 'छ', 'सात', 'आठ', 'नौ',
+  'दश', 'एघार', 'बाह्र', 'तेह्र', 'चौध', 'पन्ध्र', 'सोह्र', 'सत्र', 'अठार', 'उन्नाईस',
+  'बीस', 'एक्काईस', 'बाईस', 'तेईस', 'चौबीस', 'पच्चीस', 'छब्बीस', 'सत्ताईस', 'अट्ठाईस', 'उनन्तीस',
+  'तीस', 'एकतीस', 'बत्तीस', 'तेत्तीस', 'चौँतीस', 'पैँतीस', 'छत्तीस', 'सैँतीस', 'अठतीस', 'उनन्चालीस',
+  'चालीस', 'एकचालीस', 'बयालीस', 'त्रियालीस', 'चवालीस', 'पैँतालीस', 'छयालीस', 'सच्चालीस', 'अठचालीस', 'उनन्चास',
+  'पचास', 'एकाउन्न', 'बाउन्न', 'त्रिपन्न', 'चउन्न', 'पचपन्न', 'छपन्न', 'सन्ताउन्न', 'अन्ठाउन्न', 'उनन्साठी',
+  'साठी', 'एकसट्ठी', 'बयसट्ठी', 'त्रिसट्ठी', 'चौँसट्ठी', 'पैँसट्ठी', 'छयसट्ठी', 'सतसट्ठी', 'अठसट्ठी', 'उनन्सत्तरी',
+  'सत्तरी', 'एकहत्तर', 'बहत्तर', 'त्रिहत्तर', 'चौहत्तर', 'पचहत्तर', 'छयहत्तर', 'सतहत्तर', 'अठहत्तर', 'उनासी',
+  'असी', 'एकासी', 'बयासी', 'त्रियासी', 'चौरासी', 'पचासी', 'छयासी', 'सतासी', 'अठासी', 'उनान्नब्बे',
+  'नब्बे', 'एकान्नब्बे', 'बयानब्बे', 'त्रियान्नब्बे', 'चौरान्नब्बे', 'पन्चानब्बे', 'छयान्नब्बे', 'सन्तान्नब्बे', 'अन्ठान्नब्बे', 'उनान्सय',
+];
+
 /** 0〜99 の、単語での読み方。範囲外・非整数は算用数字の文字列にフォールバックする。 */
 export const extendedNumberWord = (n: number, lang: Lang): string => {
   if (!Number.isInteger(n) || n < 0 || n > 99) return String(n);
@@ -165,6 +249,14 @@ export const extendedNumberWord = (n: number, lang: Lang): string => {
       return es(n, ones);
     case 'ru':
       return ru(n, ones);
+    case 'it':
+      return it(n, ones);
+    case 'pt':
+      return pt(n, ones);
+    case 'fil':
+      return fil(n, ones);
+    case 'ne':
+      return NE_WORDS[n];
     default:
       return String(n);
   }

@@ -35,3 +35,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# 確認用スクリーンショット（コミットしない）
+/screenshots/
+
+# microCMSデータのバックアップ（コミットしない。記事の全文等を含むため）
+/backups/

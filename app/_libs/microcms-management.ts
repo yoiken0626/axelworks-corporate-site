@@ -1,8 +1,9 @@
 import { createClient } from 'microcms-js-sdk';
-import type { News } from './microcms';
+import type { News, TitleFields, ContentFields } from './microcms';
 
 // 書き込み専用クライアント。
-// title_(en|ko|zh|de|fr|es|ru) / content_(en|ko|zh|de|fr|es|ru) / translation_status の更新にのみ使用する。
+// title_*/content_*（レジストリの翻訳対象言語から自動生成、app/_libs/news.ts）
+// および translation_status の更新にのみ使用する。
 // PATCH権限のみを付与した、閲覧用(MICROCMS_API_KEY)とは別のAPIキーを想定している。
 // フロント表示に使う app/_libs/microcms.ts とは分離し、
 // このモジュールを読み込まないページのビルドがMICROCMS_MANAGEMENT_API_KEY未設定で
@@ -30,26 +31,11 @@ const getWriteClient = () => {
   return writeClient;
 };
 
-type NewsTranslationFields = Partial<
-  Pick<
-    News,
-    | 'title_en'
-    | 'content_en'
-    | 'title_ko'
-    | 'content_ko'
-    | 'title_zh'
-    | 'content_zh'
-    | 'title_de'
-    | 'content_de'
-    | 'title_fr'
-    | 'content_fr'
-    | 'title_es'
-    | 'content_es'
-    | 'title_ru'
-    | 'content_ru'
-    | 'translation_status'
-  >
->;
+// title_*/content_*（レジストリの翻訳対象言語から自動生成、app/_libs/news.ts）+ translation_status
+// + translation_started（「生成中」になった時刻。滞留検知に使う）
+type NewsTranslationFields = TitleFields &
+  ContentFields &
+  Pick<News, 'translation_status' | 'translation_started'>;
 
 // ニュース記事の翻訳関連フィールドをPATCHで更新する
 export const updateNewsTranslation = async (contentId: string, fields: NewsTranslationFields) => {

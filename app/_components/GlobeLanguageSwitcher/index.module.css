@@ -8,6 +8,7 @@
 .globeButton {
   position: absolute;
   inset: 0;
+  z-index: 0;
   width: 100%;
   height: 100%;
   padding: 0;
@@ -68,35 +69,18 @@
   padding: 0;
 }
 
+/* 12個すべての国旗を常時表示するリング。開閉のアニメーションは持たず、
+   ハイライト（.flagItem[data-state]）だけが変化する。位置（left/top）と
+   重なり順（z-index）は選択状態に関わらず一切変えない。 */
 .flagItem {
   position: absolute;
-  width: var(--gls-flag-size, 60%);
+  width: var(--gls-flag-size, 42px);
   aspect-ratio: 1;
-  /* タップ領域を44px以上に保証する（見た目上の大きさは --gls-flag-size のままで
-     十分な場合はそちらが優先され、小さな地球儀でだけこの下限が効く） */
-  min-width: 44px;
-  min-height: 44px;
-  transform: translate(-50%, -50%) scale(0.15);
-  opacity: 0;
-  transition:
-    transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
-    opacity 0.3s ease-out;
-  pointer-events: none;
-}
-
-/* 閉じていても、現在の言語の国旗だけは、開いているときとまったく同じ大きさ・
-   見た目のままその場に残す（left/top＝角度・半径はリングを開いたときと同じ値
-   のまま変えないので、国旗が動いたり入れ替わったりしない）。 */
-.flagItem[data-open='true'],
-.flagItem[data-current='true'][data-open='false'] {
-  transform: translate(-50%, -50%) scale(1);
-  opacity: 1;
-  pointer-events: auto;
+  transform: translate(-50%, -50%);
 }
 
 /* 白い縁（border）は持たず、影（box-shadow）だけで丸を浮かせる。border-box の
-   ため、ボタンの外形（getBoundingClientRect）はボーダーの有無で変わらない。
-   縁が無くなった分は flagIcon がそのまま外周まで広がる（下の flagIcon 参照）。 */
+   ため、ボタンの外形（getBoundingClientRect）はボーダーの有無で変わらない。 */
 .flagButton {
   position: relative;
   display: block;
@@ -109,16 +93,63 @@
   border: none;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   cursor: pointer;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.25s ease;
 }
 
-.flagButton:hover,
-.flagButton:focus-visible {
-  transform: scale(1.1);
+/* z-index だけでは12個の循環する重なり順を表現できない（最後のフィリピンと
+   最初の日本の境界だけ、巡回できずに逆転する）。フィリピン側にだけ円形の
+   穴を CSS mask で開け、下にある日本の実際の円と寸分違わず一致させることで、
+   「日本の左側がフィリピンの上に乗る」という編み込みの見た目を補う。
+   国旗はすべて同じ直径の円を等間隔（30度）に並べているため、隣どうしの
+   中心間ベクトルは常に一定（cos15°*2sin15° = sin30° = 0.5、
+   sin15°*2sin15° = 1-cos30° ≈ 0.13397）。この定数は「30度間隔で並んだ
+   同じ大きさの円」という配置そのものから導かれるため、--gls-flag-size /
+   --gls-ring-radius の値（PC・スマホ・HeroQueen・PageReadAloudいずれも）が
+   変わっても、この1箇所だけの特別な組み合わせとして常に成立する。
+   フチは flagSize/2 のちょうど100%〜126%でフェザーにし、選択時の1.21倍
+   拡大（下の [data-state='active'] 参照）で多少ずれても不自然な境界線が
+   出ないようにしてある。 */
+.flagItem[data-code='fil'] .flagButton {
+  -webkit-mask-image: radial-gradient(
+    circle at calc(var(--gls-flag-size, 42px) / 2 + var(--gls-ring-radius, 68px) * 0.5)
+      calc(var(--gls-flag-size, 42px) / 2 - var(--gls-ring-radius, 68px) * 0.13397),
+    transparent 0,
+    transparent calc(var(--gls-flag-size, 42px) / 2),
+    black calc(var(--gls-flag-size, 42px) / 2 * 1.26)
+  );
+  mask-image: radial-gradient(
+    circle at calc(var(--gls-flag-size, 42px) / 2 + var(--gls-ring-radius, 68px) * 0.5)
+      calc(var(--gls-flag-size, 42px) / 2 - var(--gls-ring-radius, 68px) * 0.13397),
+    transparent 0,
+    transparent calc(var(--gls-flag-size, 42px) / 2),
+    black calc(var(--gls-flag-size, 42px) / 2 * 1.26)
+  );
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+/* 選択されていない11個：消さずに透明度だけ下げる */
+.flagItem[data-state='dimmed'] .flagButton {
+  opacity: 0.42;
+}
+
+/* 選択された1個：枠線は持たず、発光と拡大だけでハイライトする。重なり順は
+   変えない（z-index は .flagItem 側で固定のまま）ので、次の国旗が半透明で
+   重なった状態はそのまま維持される。拡大率は、以前は枠線（3px）+拡大1.14倍
+   だった見た目の大きさを、枠線を無くした分だけ国旗自体を大きくすることで
+   概ね保つよう1.21倍にしてある（42pxの国旗基準：42*1.14+3 ≈ 42*1.21）。 */
+.flagItem[data-state='active'] .flagButton {
+  box-shadow:
+    0 0 14px 2px rgba(56, 132, 255, 0.55),
+    0 6px 16px rgba(0, 0, 0, 0.3);
+  transform: scale(1.21);
 }
 
 /* マウス・タッチでの選択後にフォーカスの枠が残らないよう、通常の :focus は
-   消し、キーボード操作時の :focus-visible にだけ、はっきりした枠を出す。
-   8つの国旗はすべて同じ見た目にするため、現在の言語かどうかによる差はない。 */
+   消し、キーボード操作時の :focus-visible にだけ、はっきりした枠を出す。 */
 .flagButton:focus {
   outline: none;
 }
@@ -136,33 +167,21 @@
   border-radius: 50%;
 }
 
-/* 閉じている間、現在の言語の国旗にだけ添える言語コード（国旗は「国」を表すため、
-   例: 英語=米国旗のように言語自体が分かりにくい場合がある）。--flag-cos/--flag-sin
-   は flagItem と同じ角度なので、国旗の中心から「外向き」（地球儀からより遠い方向）
-   に一定距離だけ離す。どの位置（上下左右斜め）でも、地球儀・ほかの国旗に重ならない。
-   開くとフェードアウトする（flagItem 側の transform では動かないので位置はずれない）。 */
-.flagCode {
+/* ポインター操作専用の判定レイヤー。地球儀の中心を基準にした円で clip-path し、
+   円の外（正方形の四隅）はヒットテスト対象から外れ、クリックはそのまま下の
+   要素へ通る。円の内部だけを覆うことで、国旗どうしの重なり順に関係なく
+   12個すべてを同じ広さでタップできるようにする（実際の判定は index.tsx の
+   handleRingClick が角度で行う）。 */
+.hitLayer {
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%)
-    translate(calc(var(--flag-cos, 0) * var(--gls-code-offset, 22px)), calc(var(--flag-sin, 0) * var(--gls-code-offset, 22px)));
-  font-size: 8px;
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: 0.02em;
-  color: #fff;
-  background-color: rgba(0, 0, 0, 0.7);
-  padding: 1px 4px;
-  border-radius: 999px;
-  white-space: nowrap;
-  opacity: 1;
-  transition: opacity 0.2s ease;
-  pointer-events: none;
-}
-
-.flagItem[data-open='true'] .flagCode {
-  opacity: 0;
+  width: calc(var(--gls-outer-radius, 95px) * 2);
+  height: calc(var(--gls-outer-radius, 95px) * 2);
+  transform: translate(-50%, -50%);
+  clip-path: circle(var(--gls-outer-radius, 95px) at 50% 50%);
+  z-index: 30;
+  cursor: pointer;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -170,16 +189,7 @@
     animation: none;
   }
 
-  .flagItem {
+  .flagButton {
     transition: none;
-  }
-
-  .flagCode {
-    transition: none;
-  }
-
-  .flagButton:hover,
-  .flagButton:focus-visible {
-    transform: none;
   }
 }

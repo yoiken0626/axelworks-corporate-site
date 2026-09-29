@@ -90,9 +90,10 @@ export function scrollToTop(): void {
   });
 }
 
+// U+0964（।, ダンダ）はネパール語（デーヴァナーガリー文字）の文末記号。
 export const splitSentences = (text: string): string[] =>
   text
-    .split(/(?<=[。．.!?！？\n])/)
+    .split(/(?<=[。．.!?！？।\n])/)
     .map((s) => s.trim())
     .filter(Boolean);
 

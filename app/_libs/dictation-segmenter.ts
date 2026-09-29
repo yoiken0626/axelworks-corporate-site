@@ -1,4 +1,4 @@
-import { type Lang } from './lang';
+import { type Lang, isCjkLang } from './lang';
 import { READ_ALOUD_PAUSE_MARK, READ_ALOUD_LIST_MARK, stripReadAloudMarks } from './read-aloud-marks';
 
 /**
@@ -19,9 +19,6 @@ export type DictationSegment = {
   segIndex: number;
   kind: 'heading' | 'listItem' | 'paragraph';
 };
-
-const CJK_LANGS: ReadonlySet<Lang> = new Set<Lang>(['ja', 'zh', 'ko']);
-const isCjkLang = (lang: Lang): boolean => CJK_LANGS.has(lang);
 
 // ---- 区切り記号で止めない例外（保護区間）------------------------------------
 
@@ -78,7 +75,8 @@ const isProtectedAt = (spans: Span[], index: number): boolean =>
 
 // ---- 区切り記号での分割 -------------------------------------------------------
 
-const TERMINAL_CHARS = new Set(['.', '．', '。', '?', '？', '!', '！']);
+// '।'（U+0964, ダンダ）はネパール語（デーヴァナーガリー文字）の文末記号。
+const TERMINAL_CHARS = new Set(['.', '．', '。', '?', '？', '!', '！', '।']);
 const COMMA_CHARS = new Set([',', '，', '、']);
 // 区切りの直後にあれば、次の区間ではなく直前の区間に含める閉じ引用符・閉じ括弧
 const CLOSING_CHARS = new Set(['"', "'", '”', '’', ')', '）', ']', '」', '』', '】', '}', '›', '»']);

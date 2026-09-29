@@ -1,51 +1,53 @@
+import { getLanguageByTranslationField, type TranslationSuffix } from './lang-registry';
+
 const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
 const ANTHROPIC_VERSION = '2023-06-01';
 const DEFAULT_MODEL = 'claude-sonnet-5';
-// 1回の応答で英語・韓国語・中国語・ドイツ語・フランス語・スペイン語・ロシア語の
-// タイトル＋本文HTML（計12フィールド）を返すため多めに確保する
-const DEFAULT_MAX_TOKENS = 49152;
+// 1言語ぶんのタイトル＋本文HTMLを1回の応答で返すための上限。
+// 以前は全対象言語をまとめて1回で返していたため大きな値（49152）が必要だったが、
+// 言語ごとに呼び出しを分割した（translateArticleLang）ことで、1回の応答は
+// 1記事1言語ぶんで済むようになった。
+const DEFAULT_MAX_TOKENS = 16384;
 
 type TranslationInput = {
   title: string;
   contentHtml: string;
 };
 
-export type TranslationResult = {
-  title_en: string;
-  content_en: string;
-  title_ko: string;
-  content_ko: string;
-  title_zh: string;
-  content_zh: string;
-  title_de: string;
-  content_de: string;
-  title_fr: string;
-  content_fr: string;
-  title_es: string;
-  content_es: string;
-  title_ru: string;
-  content_ru: string;
+export type LangTranslation = {
+  title: string;
+  content: string;
 };
 
 const TRANSLATION_TOOL_NAME = 'submit_translation';
 
-const SYSTEM_PROMPT = `あなたはIT/AI業界のコーポレートサイト記事を、日本語から英語・韓国語・中国語（簡体字）・ドイツ語・フランス語・スペイン語・ロシア語に翻訳するプロフェッショナル翻訳者です。
+const buildSystemPrompt = (targetLang: TranslationSuffix): string => {
+  const lang = getLanguageByTranslationField(targetLang);
+  return `あなたはIT/AI業界のコーポレートサイト記事を、日本語から${lang.translationNameJa}に翻訳するプロフェッショナル翻訳者です。
 以下のルールを厳守してください。
 
-- 英語は自然で専門的なビジネス英語に、韓国語は自然で丁寧なビジネス韓国語（하십시오体/합니다体ベース）に、中国語は自然で丁寧なビジネス中国語（簡体字・大陸標準）に、ドイツ語は自然で専門的なビジネスドイツ語（丁寧形 Sie ベース）に、フランス語は自然で専門的なビジネスフランス語（丁寧形 vous ベース）に、スペイン語は自然で丁寧なビジネススペイン語（丁寧形 usted ベース・欧州スペイン語）に、ロシア語は自然で丁寧なビジネスロシア語（敬称 вы ベース）に翻訳すること。
+- ${lang.translationInstruction}翻訳すること。
 - IT/AI関連の専門用語、製品名、固有名詞、サービス名は無理に訳さず、原語（一般的に使われる表記）のまま残すこと。
-- content_* の入力はHTML文字列です。タグ構造・属性は一切変更せず、タグの中のテキストのみを翻訳すること。タグを追加/削除/並べ替えしないこと。
-- 出力は必ず submit_translation ツールを呼び出して構造化データとして返すこと。英語(title_en/content_en)・韓国語(title_ko/content_ko)・中国語(title_zh/content_zh)・ドイツ語(title_de/content_de)・フランス語(title_fr/content_fr)・スペイン語(title_es/content_es)・ロシア語(title_ru/content_ru)の12フィールドすべてを埋めること。`;
+- content の入力はHTML文字列です。タグ構造・属性は一切変更せず、タグの中のテキストのみを翻訳すること。タグを追加/削除/並べ替えしないこと。
+- 出力は必ず submit_translation ツールを呼び出して構造化データとして返すこと。title・content の両方のフィールドを埋めること。`;
+};
 
-const TARGET_LANGS = ['en', 'ko', 'zh', 'de', 'fr', 'es', 'ru'] as const;
-
-export const translateArticle = async ({
-  title,
-  contentHtml,
-}: TranslationInput): Promise<TranslationResult> => {
+/**
+ * 記事タイトル・本文（HTML）を、指定した1言語だけに翻訳する。
+ * 言語ごとに独立した1回のAPI呼び出しにすることで、（1）出力トークン上限に
+ * 対象言語数が影響しない、（2）1言語の失敗が他言語に波及しない、（3）失敗した
+ * 言語だけを再試行できる、という3つを同時に満たす（呼び出し側 = translate-article
+ * route.ts が、未翻訳の言語ごとにこの関数を呼ぶ）。
+ */
+export const translateArticleLang = async (
+  { title, contentHtml }: TranslationInput,
+  targetLang: TranslationSuffix,
+): Promise<LangTranslation> => {
   if (!process.env.ANTHROPIC_API_KEY) {
     throw new Error('ANTHROPIC_API_KEY is required');
   }
+
+  const lang = getLanguageByTranslationField(targetLang);
 
   const response = await fetch(ANTHROPIC_API_URL, {
     method: 'POST',
@@ -57,12 +59,12 @@ export const translateArticle = async ({
     body: JSON.stringify({
       model: process.env.ANTHROPIC_MODEL || DEFAULT_MODEL,
       max_tokens: Number(process.env.ANTHROPIC_MAX_TOKENS) || DEFAULT_MAX_TOKENS,
-      system: SYSTEM_PROMPT,
+      system: buildSystemPrompt(targetLang),
       messages: [
         {
           role: 'user',
           content: [
-            '以下の記事タイトルと本文（HTML）を、英語・韓国語・中国語（簡体字）・ドイツ語・フランス語・スペイン語・ロシア語に翻訳してください。',
+            `以下の記事タイトルと本文（HTML）を${lang.translationNameJa}に翻訳してください。`,
             '',
             '## title',
             title,
@@ -75,67 +77,17 @@ export const translateArticle = async ({
       tools: [
         {
           name: TRANSLATION_TOOL_NAME,
-          description:
-            '翻訳結果（英語・韓国語・中国語・ドイツ語・フランス語・スペイン語・ロシア語のタイトルと本文HTML）を送信する',
+          description: `翻訳結果（${lang.translationNameJa}のタイトルと本文HTML）を送信する`,
           input_schema: {
             type: 'object',
             properties: {
-              title_en: { type: 'string', description: '英訳された記事タイトル' },
-              content_en: {
+              title: { type: 'string', description: `${lang.translationNameJa}に翻訳された記事タイトル` },
+              content: {
                 type: 'string',
-                description: '入力と同じHTMLタグ構造を保ったまま、テキスト部分のみ英訳した本文',
-              },
-              title_ko: { type: 'string', description: '韓国語訳された記事タイトル' },
-              content_ko: {
-                type: 'string',
-                description: '入力と同じHTMLタグ構造を保ったまま、テキスト部分のみ韓国語訳した本文',
-              },
-              title_zh: { type: 'string', description: '中国語（簡体字）訳された記事タイトル' },
-              content_zh: {
-                type: 'string',
-                description:
-                  '入力と同じHTMLタグ構造を保ったまま、テキスト部分のみ中国語（簡体字）訳した本文',
-              },
-              title_de: { type: 'string', description: 'ドイツ語訳された記事タイトル' },
-              content_de: {
-                type: 'string',
-                description: '入力と同じHTMLタグ構造を保ったまま、テキスト部分のみドイツ語訳した本文',
-              },
-              title_fr: { type: 'string', description: 'フランス語訳された記事タイトル' },
-              content_fr: {
-                type: 'string',
-                description:
-                  '入力と同じHTMLタグ構造を保ったまま、テキスト部分のみフランス語訳した本文',
-              },
-              title_es: { type: 'string', description: 'スペイン語訳された記事タイトル' },
-              content_es: {
-                type: 'string',
-                description:
-                  '入力と同じHTMLタグ構造を保ったまま、テキスト部分のみスペイン語訳した本文',
-              },
-              title_ru: { type: 'string', description: 'ロシア語訳された記事タイトル' },
-              content_ru: {
-                type: 'string',
-                description:
-                  '入力と同じHTMLタグ構造を保ったまま、テキスト部分のみロシア語訳した本文',
+                description: '入力と同じHTMLタグ構造を保ったまま、テキスト部分のみ翻訳した本文',
               },
             },
-            required: [
-              'title_en',
-              'content_en',
-              'title_ko',
-              'content_ko',
-              'title_zh',
-              'content_zh',
-              'title_de',
-              'content_de',
-              'title_fr',
-              'content_fr',
-              'title_es',
-              'content_es',
-              'title_ru',
-              'content_ru',
-            ],
+            required: ['title', 'content'],
           },
         },
       ],
@@ -145,7 +97,7 @@ export const translateArticle = async ({
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`Anthropic API request failed (${response.status}): ${errorText}`);
+    throw new Error(`Anthropic API request failed for ${targetLang} (${response.status}): ${errorText}`);
   }
 
   const data = await response.json();
@@ -154,31 +106,13 @@ export const translateArticle = async ({
   );
 
   if (!toolUseBlock) {
-    throw new Error('Anthropic API response did not include the expected tool_use block');
+    throw new Error(`Anthropic API response for ${targetLang} did not include the expected tool_use block`);
   }
 
-  const result = toolUseBlock.input as Partial<TranslationResult>;
-
-  for (const lang of TARGET_LANGS) {
-    if (!result[`title_${lang}`] || !result[`content_${lang}`]) {
-      throw new Error(`Anthropic API response is missing title/content for ${lang}`);
-    }
+  const result = toolUseBlock.input as Partial<LangTranslation>;
+  if (!result.title || !result.content) {
+    throw new Error(`Anthropic API response is missing title/content for ${targetLang}`);
   }
 
-  return {
-    title_en: result.title_en!,
-    content_en: result.content_en!,
-    title_ko: result.title_ko!,
-    content_ko: result.content_ko!,
-    title_zh: result.title_zh!,
-    content_zh: result.content_zh!,
-    title_de: result.title_de!,
-    content_de: result.content_de!,
-    title_fr: result.title_fr!,
-    content_fr: result.content_fr!,
-    title_es: result.title_es!,
-    content_es: result.content_es!,
-    title_ru: result.title_ru!,
-    content_ru: result.content_ru!,
-  };
+  return { title: result.title, content: result.content };
 };

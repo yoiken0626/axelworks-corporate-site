@@ -100,23 +100,27 @@
 }
 
 /* --- GlobeLanguageSwitcher をイラストの球体に重ねる枠 --- */
+/* GlobeLanguageSwitcher 側（.root）が --gls-size で自身の大きさを直接決めるので、
+   ここでは位置決めだけを行う（幅・aspect-ratio は持たない＝内容にサイズを委ねる、
+   position:absolute + 明示幅なしで shrink-to-fit になる）。 */
 .globeSlot {
   position: absolute;
-  width: 16%;
-  aspect-ratio: 1;
   transform: translate(-50%, -50%);
 }
 
 .globe {
-  --gls-size: 100%;
-  /* 3D地球儀本体を、イラストが持つ透明な球体の輪郭に収まる大きさに合わせる */
+  /* 12国旗の最終デザイン：地球 約84px・国旗 約42px・配置半径（中心間）約68px。
+     3D地球儀本体はイラストが持つ透明な球体の輪郭に収まるよう --globe-scale で
+     0.78倍に縮小して描画されるため、見た目の地球が約84pxになるよう
+     --gls-size は 84 / 0.78 ≈ 108px にしてある（リング半径・国旗サイズは
+     --globe-scale の影響を受けないので、そのまま目標値を指定する）。 */
+  --gls-size: 108px;
   --globe-scale: 0.78;
-  /* 横長のヒーロー画像に収まるよう、国旗リングをコンパクトに */
-  --gls-ring-radius: 88%;
-  --gls-flag-size: 46%;
-  /* 言語コードは、吹き出し（左上）・読み上げコントロール（右上）と重ならない
-     距離に抑える。国旗の位置（8方向）によらず、この値だけ外側にずらす。 */
-  --gls-code-offset: 16px;
+  --gls-ring-radius: 68px;
+  --gls-flag-size: 42px;
+  /* 判定レイヤーの外側境界＝リング半径 + 国旗半径 + 少し余裕（国旗の外周より
+     少し外まで広げる） */
+  --gls-outer-radius: 95px;
 }
 
 @media (max-width: 640px) {
@@ -150,13 +154,12 @@
     max-height: calc(2.7em + 7px);
   }
 
-  .globeSlot {
-    width: 23%;
-  }
-
   .globe {
-    --gls-ring-radius: 74%;
-    --gls-flag-size: 40%;
-    --gls-code-offset: 10px;
+    /* スマホのトップページ基準：地球 約38px・国旗 約22px・配置半径 約33px。
+       --globe-scale は変わらず0.78なので、--gls-size は 38 / 0.78 ≈ 49px。 */
+    --gls-size: 49px;
+    --gls-ring-radius: 33px;
+    --gls-flag-size: 22px;
+    --gls-outer-radius: 47px;
   }
 }

@@ -1,4 +1,7 @@
+import 'server-only';
 import crypto from 'node:crypto';
+import { type Lang, SUPPORTED_LANGS } from './lang-registry';
+import { VOICE_BY_LANG } from './tts-voices.server';
 
 // Google Cloud Text-to-Speech を「サービスアカウントJSON → 自前でJWT署名 →
 // OAuth2 アクセストークン交換 → REST 呼び出し」の最小構成で使う。
@@ -6,6 +9,9 @@ import crypto from 'node:crypto';
 
 const TOKEN_URI = 'https://oauth2.googleapis.com/token';
 const TTS_ENDPOINT = 'https://texttospeech.googleapis.com/v1/text:synthesize';
+// Gemini TTS（Preview）専用。voice.modelName / input.prompt は v1 では
+// 「Unknown name」で 400 になるため、Gemini TTS を使う言語（ne 等）だけ v1beta1 を使う。
+const TTS_ENDPOINT_GEMINI = 'https://texttospeech.googleapis.com/v1beta1/text:synthesize';
 const SCOPE = 'https://www.googleapis.com/auth/cloud-platform';
 
 type ServiceAccount = {
@@ -28,11 +34,7 @@ const loadCredentials = (): ServiceAccount => {
   let raw = rawEnv.trim();
   // 管理画面（Vercel 等）で .env の値をクォートごと貼り付けてしまったケースを救済する。
   // 例: '{"type":...}' や "{"type":...}" → 外側のクォートを外す
-  if (
-    raw.length > 1 &&
-    (raw[0] === "'" || raw[0] === '"') &&
-    raw[raw.length - 1] === raw[0]
-  ) {
+  if (raw.length > 1 && (raw[0] === "'" || raw[0] === '"') && raw[raw.length - 1] === raw[0]) {
     const inner = raw.slice(1, -1).trim();
     if (inner.startsWith('{')) {
       raw = inner;
@@ -46,9 +48,7 @@ const loadCredentials = (): ServiceAccount => {
     throw new Error('GOOGLE_APPLICATION_CREDENTIALS_JSON is not valid JSON');
   }
   if (!parsed.client_email || !parsed.private_key) {
-    throw new Error(
-      'GOOGLE_APPLICATION_CREDENTIALS_JSON is missing client_email / private_key',
-    );
+    throw new Error('GOOGLE_APPLICATION_CREDENTIALS_JSON is missing client_email / private_key');
   }
   // 環境変数経由で \n がエスケープされたまま渡ってくるケースに備えて復元する
   parsed.private_key = parsed.private_key.replace(/\\n/g, '\n');
@@ -104,41 +104,11 @@ const getAccessToken = async (): Promise<string> => {
 
 export type TtsGender = 'FEMALE' | 'MALE' | 'NEUTRAL';
 
-// 表示言語ごとの自然な女性ボイス。voices API（GET .../v1/voices?languageCode=xx-XX）で
-// name と ssmlGender=FEMALE を実機確認したうえで指定している。
-//  - ja-JP-Neural2-B  … 落ち着いた女性。ニュース読み上げに向く
-//  - en-US-Neural2-F  … 明瞭で自然な女性
-//  - ko-KR-Neural2-A  … 標準的で聞き取りやすい女性
-//  - cmn-CN-Wavenet-A … 大陸標準（簡体字）の女性。cmn-CN に Neural2 は無いため WaveNet
-//  - de-DE-Neural2-G  … ドイツ語の女性。de-DE の Neural2 女性はこの1種のみ
-//  - fr-FR-Neural2-F  … フランス語の女性。fr-FR の Neural2 女性はこの1種のみ（-G は男性）
-//  - es-ES-Neural2-A  … スペイン語（欧州）の女性。es-ES の Neural2 女性は -A / -E / -H
-//  - ru-RU-Wavenet-A … ロシア語の女性。ru-RU に Neural2 は無いため WaveNet
-//    （女性 WaveNet は -A / -C / -E。-B / -D は男性）
-//    （存在しない name を渡すと Google 側が別ボイス（男性含む）にフォールバック
-//     または 400 を返す。追加時は必ず voices API で実在と性別を確認すること）
-type VoiceKey = 'ja' | 'en' | 'ko' | 'zh' | 'de' | 'fr' | 'es' | 'ru';
+// 表示言語ごとの自然な女性ボイス（言語コード + 音声名）は VOICE_BY_LANG
+// （app/_libs/tts-voices.server.ts、server-only）に集約されている。
 
-const VOICE_BY_LANG: Record<VoiceKey, { languageCode: string; name: string }> = {
-  ja: { languageCode: 'ja-JP', name: 'ja-JP-Neural2-B' },
-  en: { languageCode: 'en-US', name: 'en-US-Neural2-F' },
-  ko: { languageCode: 'ko-KR', name: 'ko-KR-Neural2-A' },
-  zh: { languageCode: 'cmn-CN', name: 'cmn-CN-Wavenet-A' },
-  de: { languageCode: 'de-DE', name: 'de-DE-Neural2-G' },
-  fr: { languageCode: 'fr-FR', name: 'fr-FR-Neural2-F' },
-  es: { languageCode: 'es-ES', name: 'es-ES-Neural2-A' },
-  ru: { languageCode: 'ru-RU', name: 'ru-RU-Wavenet-A' },
-};
-
-const isLang = (value: string | undefined): value is VoiceKey =>
-  value === 'ja' ||
-  value === 'en' ||
-  value === 'ko' ||
-  value === 'zh' ||
-  value === 'de' ||
-  value === 'fr' ||
-  value === 'es' ||
-  value === 'ru';
+const isLang = (value: string | undefined): value is Lang =>
+  !!value && (SUPPORTED_LANGS as string[]).includes(value);
 
 /**
  * リクエストパラメータからボイスを決定する。
@@ -151,10 +121,11 @@ export const resolveVoice = (opts: {
   lang?: string;
   languageCode?: string;
   voiceName?: string;
-}): { languageCode: string; name?: string } => {
+}): { languageCode: string; name?: string; geminiModelName?: string; geminiPrompt?: string } => {
   if (opts.voiceName) {
     return {
-      languageCode: opts.languageCode || VOICE_BY_LANG[isLang(opts.lang) ? opts.lang : 'ja'].languageCode,
+      languageCode:
+        opts.languageCode || VOICE_BY_LANG[isLang(opts.lang) ? opts.lang : 'ja'].languageCode,
       name: opts.voiceName,
     };
   }
@@ -169,6 +140,13 @@ export const resolveVoice = (opts: {
 
 /**
  * テキストを合成して MP3 バイナリ（Buffer）を返す。
+ *
+ * geminiModelName が指定された言語（現状 ne のみ。VOICE_BY_LANG 参照）は、
+ * 通常の Standard/Neural2/WaveNet とはリクエスト形式が異なる Gemini TTS（Preview）で
+ * 合成する: v1beta1 エンドポイント・voice.modelName・input.prompt（自然な発話指示、
+ * 英語）を使う。v1 エンドポイントに modelName や input.prompt を送ると
+ * 「Unknown name」で 400 になるため、この分岐でエンドポイント自体を切り替える。
+ * 他の言語には一切影響しない。
  */
 export const synthesizeSpeech = async (params: {
   text: string;
@@ -176,27 +154,42 @@ export const synthesizeSpeech = async (params: {
   voiceName?: string;
   gender?: TtsGender;
   speakingRate?: number;
+  geminiModelName?: string;
+  geminiPrompt?: string;
 }): Promise<Buffer> => {
   const token = await getAccessToken();
 
-  const res = await fetch(TTS_ENDPOINT, {
+  const endpoint = params.geminiModelName ? TTS_ENDPOINT_GEMINI : TTS_ENDPOINT;
+  const body = params.geminiModelName
+    ? {
+        input: { text: params.text, ...(params.geminiPrompt ? { prompt: params.geminiPrompt } : {}) },
+        voice: {
+          languageCode: params.languageCode,
+          ...(params.voiceName ? { name: params.voiceName } : {}),
+          modelName: params.geminiModelName,
+        },
+        audioConfig: { audioEncoding: 'MP3' },
+      }
+    : {
+        input: { text: params.text },
+        voice: {
+          languageCode: params.languageCode,
+          ...(params.voiceName ? { name: params.voiceName } : {}),
+          ...(params.gender ? { ssmlGender: params.gender } : {}),
+        },
+        audioConfig: {
+          audioEncoding: 'MP3',
+          ...(params.speakingRate ? { speakingRate: params.speakingRate } : {}),
+        },
+      };
+
+  const res = await fetch(endpoint, {
     method: 'POST',
     headers: {
       authorization: `Bearer ${token}`,
       'content-type': 'application/json; charset=utf-8',
     },
-    body: JSON.stringify({
-      input: { text: params.text },
-      voice: {
-        languageCode: params.languageCode,
-        ...(params.voiceName ? { name: params.voiceName } : {}),
-        ...(params.gender ? { ssmlGender: params.gender } : {}),
-      },
-      audioConfig: {
-        audioEncoding: 'MP3',
-        ...(params.speakingRate ? { speakingRate: params.speakingRate } : {}),
-      },
-    }),
+    body: JSON.stringify(body),
   });
   if (!res.ok) {
     throw new Error(`Google TTS request failed (${res.status}): ${await res.text()}`);

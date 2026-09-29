@@ -1,7 +1,6 @@
 /* ヒーローバナーを廃止し、ヘッダー（position:absolute）直下から
    本文シート（白カード）を始める。上部パディングでヘッダー分＋
-   地球儀・読み上げUI の帯を確保する（スマホは国旗リング展開分も、
-   下の @media 参照）。
+   12国旗の常時展開リングの帯を確保する（下の @media 参照）。
    PageReadAloud はこの .container と同じ幅・センタリングの固定枠を持ち、
    その左右パディング相当の余白（ヘッダー画像の左右の白い部分）に
    地球儀（左上）と読み上げUI（右上）を置く。 */
@@ -11,11 +10,9 @@
   width: 840px;
   max-width: calc(100% - 80px);
   margin: 40px auto 0;
-  /* 上パディングで「ヘッダー分＋地球儀・読み上げUI の帯」を確保する。
-     地球儀を全ブレークポイントで同じ大きさ（--gls-size: 52px）に統一した
-     ため、国旗リングの最大展開分もこの余白に収まるよう 116px 取る
-     （PageReadAloud .globeBar の top: 56px と対応。スマホは下の @media 参照）。 */
-  padding: 116px 80px 80px;
+  /* 上パディングで「ヘッダー分＋12国旗の常時展開リングの帯」を確保する
+     （PageReadAloud .globeBar の top: 80px と対応。スマホは下の @media 参照）。 */
+  padding: 240px 80px 80px;
   border-radius: 8px;
 }
 
@@ -24,13 +21,7 @@
 @media (max-width: 950px) {
   .container {
     max-width: calc(100% - 32px);
-    /* ヘッダーの下に十分な余白を取り、地球儀の国旗リングを最大展開しても
-       リング上端がヘッダー下端（約56px）より下に来るようにする。
-       リングは globe 中心から約74px。globe をこの余白の下端（画像のすぐ上）
-       に置くと globe 中心 Y ≈ 24(margin) + 156(padding) − 34 = 146px、
-       リング上端 ≈ 146 − 74 = 72px（> 56px）。逆算した必要パディング ≒ 156px。
-       画像・タイトル・本文はこの余白の下から始まる。 */
     margin: 24px auto 0;
-    padding: 156px 16px 40px;
+    padding: 288px 16px 40px;
   }
 }
