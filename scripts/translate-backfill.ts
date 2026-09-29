@@ -4,6 +4,7 @@
 // 使い方（npm scripts、詳細はREADME参照）:
 //   npm run translate:backfill          # 確認モード（書き込みなし）。対象記事と未翻訳言語の一覧を表示する
 //   npm run translate:backfill -- --write  # 実行モード。記事を1本ずつ順番に翻訳・書き込み・検証する
+//   npm run translate:backfill -- --write --id=<contentId>  # 指定した記事（1件以上、カンマ区切り）だけに限定する
 //
 // 実行には .env.local（または .env）に以下が必要:
 //   MICROCMS_SERVICE_DOMAIN / MICROCMS_API_KEY / MICROCMS_MANAGEMENT_API_KEY / ANTHROPIC_API_KEY
@@ -48,6 +49,18 @@ if (missingEnv.length > 0) {
 const WRITE_MODE = process.argv.includes('--write');
 // 記事間の待機時間。Anthropic APIのレート制限に配慮するための間隔（ミリ秒）。
 const INTERVAL_MS = Number(process.env.TRANSLATE_BACKFILL_INTERVAL_MS) || 5000;
+// --id=<contentId>[,<contentId>...] が指定された場合、対象をその記事だけに絞る
+// （本番と共有のmicroCMSに対して、まず1記事だけで動作確認したい場合に使う）。
+const idArg = process.argv.find((arg) => arg.startsWith('--id='));
+const ONLY_IDS: Set<string> | null = idArg
+  ? new Set(
+      idArg
+        .slice('--id='.length)
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean),
+    )
+  : null;
 
 const readClient = createClient({
   serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN!,
@@ -68,9 +81,14 @@ async function main() {
   const articles = await fetchAllArticles();
   console.log(`[translate-backfill] microCMSのnews記事: 全${articles.length}件`);
 
-  const targets = articles
+  let targets = articles
     .map((article) => ({ article, missing: missingTranslationLangs(article) }))
     .filter(({ missing }) => missing.length > 0);
+
+  if (ONLY_IDS) {
+    targets = targets.filter(({ article }) => ONLY_IDS.has(article.id));
+    console.log(`[translate-backfill] --id指定により対象を絞り込み: ${Array.from(ONLY_IDS).join(', ')}`);
+  }
 
   if (targets.length === 0) {
     console.log('[translate-backfill] 未翻訳の言語がある記事はありません。');
