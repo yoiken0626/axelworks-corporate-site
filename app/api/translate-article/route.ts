@@ -1,6 +1,11 @@
 import { after, NextRequest, NextResponse } from 'next/server';
 import { client, type News } from '@/app/_libs/microcms';
-import { isStaleGenerating, translatePendingLanguages } from '@/app/_libs/translate-pipeline';
+import {
+  acquireTranslationLock,
+  isStaleGenerating,
+  runTranslation,
+  type TranslateOutcome,
+} from '@/app/_libs/translate-pipeline';
 import {
   CONTINUATION_HEADER,
   getContinuationCount,
@@ -40,13 +45,18 @@ export const maxDuration = 300;
 // GET/POST/maxDuration等の決められた名前しかexportできないため、ローカルの
 // モックテストで単体importできるロジックはそちらに置く方針にした）。
 
-// レスポンスを返したあとに、続きの処理を担う新しいリクエストを自分自身に送る。
-// Vercelの関数は、クライアント（今回であれば継続元のこのリクエスト自身）が
-// 応答を待たずに切断しても、maxDurationに達するまで実行を継続する（=送信した
-// リクエストは新しい別の関数実行として独立に走り続ける）。ここでは送信自体が
-// 完了するのを少し待つだけで、相手（続きの処理）の完了は待たない＝この呼び出し元
-// の実行時間を消費しない。
-const scheduleContinuation = (contentId: string, nextAttempt: number) => {
+// 続きの処理を担う新しいリクエストを自分自身に送る（送信するだけで、相手の処理完了は
+// 待たない）。Vercelの関数は、送信元のこの呼び出しが応答を返した（＝クライアントが
+// 切断した）あとも、maxDurationに達するまで実行を継続する（=送信したリクエストは
+// 新しい別の関数実行として独立に走り続ける）ため、ここでは送信自体が完了するのを
+// 短時間待つだけでよい。
+//
+// 呼び出し側（after()内、または後述のロック取得失敗時）で await される想定。
+// このリクエスト自身の応答（202/skipped/error）を返した後に呼ぶ場合は after() で
+// 包んで使う。
+const CONTINUATION_SEND_TIMEOUT_MS = 5_000;
+
+const sendContinuationRequest = async (contentId: string, nextAttempt: number) => {
   const baseUrl = process.env.BASE_URL;
   const secret = process.env.TRANSLATE_WEBHOOK_SECRET;
   if (!baseUrl || !secret) {
@@ -57,36 +67,93 @@ const scheduleContinuation = (contentId: string, nextAttempt: number) => {
     return;
   }
 
-  after(async () => {
-    const url = `${baseUrl.replace(/\/$/, '')}/api/translate-article`;
-    const controller = new AbortController();
-    // 送信（相手に届くまで）だけを短時間待つ。相手の処理完了は待たないため、
-    // この時間はこの呼び出し元の実行時間予算をほとんど消費しない。
-    const abortTimer = setTimeout(() => controller.abort(), 5_000);
-    try {
-      await fetch(url, {
-        method: 'POST',
-        signal: controller.signal,
-        headers: {
-          'content-type': 'application/json',
-          'x-webhook-secret': secret,
-          [CONTINUATION_HEADER]: String(nextAttempt),
-        },
-        body: JSON.stringify({ contentId }),
-      });
-    } catch (error) {
-      if (!controller.signal.aborted) {
-        console.error(
-          '[translate-article] failed to trigger continuation request',
-          contentId,
-          nextAttempt,
-          error,
-        );
-      }
-    } finally {
-      clearTimeout(abortTimer);
+  const url = `${baseUrl.replace(/\/$/, '')}/api/translate-article`;
+  const controller = new AbortController();
+  // 送信（相手に届くまで）だけを短時間待つ。相手の処理完了は待たないため、
+  // この時間はこの呼び出し元の実行時間予算をほとんど消費しない。
+  const abortTimer = setTimeout(() => controller.abort(), CONTINUATION_SEND_TIMEOUT_MS);
+  try {
+    await fetch(url, {
+      method: 'POST',
+      signal: controller.signal,
+      headers: {
+        'content-type': 'application/json',
+        'x-webhook-secret': secret,
+        [CONTINUATION_HEADER]: String(nextAttempt),
+      },
+      body: JSON.stringify({ contentId }),
+    });
+  } catch (error) {
+    if (!controller.signal.aborted) {
+      console.error('[translate-article] failed to trigger continuation request', contentId, nextAttempt, error);
     }
-  });
+  } finally {
+    clearTimeout(abortTimer);
+  }
+};
+
+// 翻訳結果を踏まえて、自分自身に続きの処理を依頼するリクエストを送るべきか判定し、
+// 必要なら送る（送信は待つが、相手の処理完了は待たない）。上限に達した場合は、
+// translation_status が「生成中」のまま残ることをログに記録する。
+const maybeScheduleContinuation = async (
+  outcome: TranslateOutcome,
+  contentId: string,
+  continuationCount: number,
+): Promise<number | undefined> => {
+  const shouldContinue = shouldScheduleContinuation(outcome.status, continuationCount);
+  if (shouldContinue) {
+    await sendContinuationRequest(contentId, continuationCount + 1);
+    return continuationCount + 1;
+  }
+  if (outcome.status === 'partial') {
+    // MAX_CONTINUATIONSに達しても未翻訳の言語が残っているケース。ここで止まり、
+    // translation_status は「生成中」のまま残る（=次のWebhook・滞留検知・
+    // バックフィルスクリプトの再実行のいずれかを待つ状態になる）。どの言語が
+    // 残ったかをログに残す（Hobbyプランはログ保持期間が短いため、気づいたら
+    // すぐダッシュボードで確認するか、translate-pipeline.ts側の言語ごとの
+    // 失敗ログ〔lang=/kind=/httpStatus=〕と合わせて原因を確認すること）。
+    console.error(
+      '[translate-article] MAX_CONTINUATIONS reached, stopping with translation_status still 生成中',
+      contentId,
+      'continuationCount',
+      continuationCount,
+      'remaining',
+      outcome.failed,
+    );
+  }
+  return undefined;
+};
+
+const buildOutcomeResponse = (outcome: TranslateOutcome, contentId: string, continuation: number | undefined) => {
+  switch (outcome.status) {
+    case 'skipped':
+      return NextResponse.json({ status: 'skipped', reason: outcome.reason });
+    case 'error':
+      return NextResponse.json(
+        {
+          status: 'error',
+          message: outcome.message,
+          attempted: outcome.attempted,
+          failed: outcome.failed,
+          continuation,
+        },
+        { status: 500 },
+      );
+    case 'ok':
+    case 'partial':
+      return NextResponse.json({
+        status: outcome.status,
+        contentId,
+        verified: outcome.verified,
+        failed: outcome.failed,
+        translation_status: outcome.translation_status,
+        continuation,
+      });
+    default: {
+      const exhaustiveCheck: never = outcome;
+      throw new Error(`unhandled outcome: ${JSON.stringify(exhaustiveCheck)}`);
+    }
+  }
 };
 
 export async function POST(request: NextRequest) {
@@ -159,62 +226,48 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  const outcome = await translatePendingLanguages(contentId, article, () =>
-    client.getListDetail<News>({ endpoint: 'news', contentId }),
-  );
+  // ロック取得（翻訳が必要かどうかの判定＋必要ならtranslation_status='生成中'の書き込み）
+  // だけをここで行い、時間のかかる実際の翻訳（runTranslation）は待たない。
+  // microCMSへの書き込みは高々1回のみで、数百ms程度で終わる想定。
+  const lockResult = await acquireTranslationLock(contentId, article);
 
-  // 未翻訳の言語がまだ残っている（partial）、または処理中にエラーが起きた場合、
-  // 継続回数が上限に達していなければ自分自身を呼び出して続きを処理させる。
-  // これにより、1回のリクエストの実行時間内に全言語を訳しきれなくても、
-  // 人手を介さず最終的に「完了」まで到達できる。
-  const shouldContinue = shouldScheduleContinuation(outcome.status, continuationCount);
-
-  if (shouldContinue) {
-    scheduleContinuation(contentId, continuationCount + 1);
-  } else if (outcome.status === 'partial') {
-    // MAX_CONTINUATIONSに達しても未翻訳の言語が残っているケース。ここで止まり、
-    // translation_status は「生成中」のまま残る（=次のWebhook・滞留検知・
-    // バックフィルスクリプトの再実行のいずれかを待つ状態になる）。どの言語が
-    // 残ったかをログに残す（Hobbyプランはログ保持期間が短いため、気づいたら
-    // すぐダッシュボードで確認するか、translate-pipeline.ts側の言語ごとの
-    // 失敗ログ〔lang=/kind=/httpStatus=〕と合わせて原因を確認すること）。
-    console.error(
-      '[translate-article] MAX_CONTINUATIONS reached, stopping with translation_status still 生成中',
-      contentId,
-      'continuationCount',
-      continuationCount,
-      'remaining',
-      outcome.failed,
-    );
+  if (!lockResult.locked) {
+    // 既に翻訳済み（skipped）、またはロック自体の書き込みに失敗した（error）場合。
+    // 応答自体はすぐ返す。ロック取得失敗（error）は継続の対象になり得るため、
+    // その送信だけはafter()に回し、応答を遅らせない（skippedの場合は
+    // shouldScheduleContinuationが常にfalseになるため、ここは何も起きない）。
+    const outcome = lockResult.outcome;
+    const continuation = shouldScheduleContinuation(outcome.status, continuationCount)
+      ? continuationCount + 1
+      : undefined;
+    after(() => maybeScheduleContinuation(outcome, contentId, continuationCount));
+    return buildOutcomeResponse(outcome, contentId, continuation);
   }
 
-  switch (outcome.status) {
-    case 'skipped':
-      return NextResponse.json({ status: 'skipped', reason: outcome.reason });
-    case 'error':
-      return NextResponse.json(
-        {
-          status: 'error',
-          message: outcome.message,
-          attempted: outcome.attempted,
-          failed: outcome.failed,
-          continuation: shouldContinue ? continuationCount + 1 : undefined,
-        },
-        { status: 500 },
+  // ここでロックの取得（＝「生成中」の書き込み）は完了している。実際の翻訳は
+  // 応答を返したあとにafter()内で行う。Webhook（microCMS）は翻訳の完了を待たずに
+  // 応答を受け取れる。after()のコールバックはこの関数の応答が返ったあとに実行され、
+  // maxDuration（300秒）に達するまで実行が継続される。
+  after(async () => {
+    try {
+      const outcome = await runTranslation(contentId, article, () =>
+        client.getListDetail<News>({ endpoint: 'news', contentId }),
       );
-    case 'ok':
-    case 'partial':
-      return NextResponse.json({
-        status: outcome.status,
+      await maybeScheduleContinuation(outcome, contentId, continuationCount);
+    } catch (error) {
+      // runTranslation自体は内部でエラーを捕捉して返す設計だが、想定外の例外
+      // （reread以外の箇所での例外等）がここまで抜けてきた場合も、
+      // [translate-pipeline] translation failed と同じ形式の1行ログを残す
+      // （言語は特定できないため lang=- とする）。「生成中」のロックはそのまま
+      // 残るため、STALE_GENERATING_MS（10分）経過後の滞留検知、または次回の
+      // Webhook・バックフィルスクリプトの再実行で回復できる。
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(
+        `[translate-pipeline] translation failed lang=- kind=unexpected_error httpStatus=- message=${message}`,
         contentId,
-        verified: outcome.verified,
-        failed: outcome.failed,
-        translation_status: outcome.translation_status,
-        continuation: shouldContinue ? continuationCount + 1 : undefined,
-      });
-    default: {
-      const exhaustiveCheck: never = outcome;
-      throw new Error(`unhandled outcome: ${JSON.stringify(exhaustiveCheck)}`);
+      );
     }
-  }
+  });
+
+  return NextResponse.json({ status: 'accepted', contentId }, { status: 202 });
 }

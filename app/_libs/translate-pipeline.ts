@@ -63,38 +63,33 @@ export type TranslateOutcome =
       translation_status: TranslationStatus;
     };
 
+export type TranslateDeps = {
+  translate?: typeof translateArticleLang;
+  write?: typeof updateNewsTranslation;
+};
+
+export type LockResult =
+  // 翻訳すべき言語が無かった（既に完了している）、またはロック取得自体に失敗した場合。
+  // どちらもmicroCMSへの書き込みは高々1回で、時間のかかる翻訳処理は発生しないため、
+  // 呼び出し側は応答をバックグラウンドに回さず、そのまま同期的に返してよい。
+  | { locked: false; outcome: TranslateOutcome }
+  // ロック（translation_status='生成中' + translation_started）の書き込みに成功した状態。
+  // 呼び出し側はここで応答を返してよく、実際の翻訳は runTranslation に任せられる。
+  | { locked: true };
+
 /**
- * 1記事ぶんの「未翻訳言語だけを翻訳し、書き込み後に読み直して検証する」処理。
- * /api/translate-article（Webhook起点）と scripts/translate-backfill.ts（手動の一括実行）の
- * 両方から呼ばれる、書き込み・検証・ステータス管理の唯一の実装。
+ * 翻訳が必要かどうかを判定し、必要ならロック（translation_status='生成中' +
+ * translation_started）を書き込むところまでを行う、高速な（microCMSへの書き込み1回だけの）
+ * 処理。/api/translate-article が「すぐに応答を返す」ために、時間のかかる実際の翻訳
+ * （runTranslation）と切り離してある。
  *
- * 呼び出し側の責務：
- * - 記事の取得（getListDetail）
- * - 「生成中」かつ滞留していない場合の多重実行防止チェック（isStaleGenerating で判定可能）
- *   ※ この関数自体は「生成中」であっても呼ばれれば処理を進める（ロック確認は呼び出し側で行う）
- *
- * 対象言語は MAX_CONCURRENCY 件ずつ並行実行し、1言語の翻訳ができ次第、他言語の完了を
- * 待たずにその場でmicroCMSへ書き込む（バッチでまとめて書き込まない）。こうすることで、
- * 一部の言語がハング・レート制限等で遅延・失敗しても、既に成功した言語の結果は
- * 呼び出し元の実行時間予算（Vercelのmaxduration等）を使い切って強制終了された場合でも
- * 失われない。SOFT_DEADLINE_MS を過ぎたら新規の翻訳は開始せず、残りは「生成中」のまま
- * 次回（Webhook再送信・滞留検知・バックフィルスクリプトの再実行のいずれか）に委ねる。
- *
- * @param reread 書き込み検証のための再取得関数。呼び出し元のクライアント（閲覧用/管理用）に委ねる
- * @param deps 翻訳・書き込みの実装を差し替えるためのフック（省略時は実際のAnthropic API /
- *   microCMSへの書き込みを使う）。ローカルでのモックテスト専用で、本番のroute.ts /
- *   scripts/translate-backfill.ts はどちらも渡さず、実際の実装がそのまま使われる。
+ * 呼び出し側の責務は translatePendingLanguages と同じ（記事の取得・多重実行防止チェック）。
  */
-export async function translatePendingLanguages(
+export async function acquireTranslationLock(
   contentId: string,
   article: News,
-  reread: () => Promise<News>,
-  deps: {
-    translate?: typeof translateArticleLang;
-    write?: typeof updateNewsTranslation;
-  } = {},
-): Promise<TranslateOutcome> {
-  const translate = deps.translate ?? translateArticleLang;
+  deps: TranslateDeps = {},
+): Promise<LockResult> {
   const write = deps.write ?? updateNewsTranslation;
 
   const missing = missingTranslationLangs(article);
@@ -108,7 +103,7 @@ export async function translatePendingLanguages(
         console.error('[translate-pipeline] failed to correct translation_status', contentId, error);
       });
     }
-    return { status: 'skipped', reason: 'already fully translated' };
+    return { locked: false, outcome: { status: 'skipped', reason: 'already fully translated' } };
   }
 
   try {
@@ -118,9 +113,40 @@ export async function translatePendingLanguages(
     });
   } catch (error) {
     console.error('[translate-pipeline] failed to lock article', contentId, error);
-    return { status: 'error', message: 'failed to start translation' };
+    return { locked: false, outcome: { status: 'error', message: 'failed to start translation' } };
   }
 
+  return { locked: true };
+}
+
+/**
+ * ロック取得済み（acquireTranslationLockがlocked:trueを返した）であることを前提に、
+ * 未翻訳言語だけを翻訳し、書き込み後に読み直して検証する処理本体。
+ * /api/translate-article（Webhook起点、after()内で呼ばれる）と
+ * scripts/translate-backfill.ts（手動の一括実行）の両方から呼ばれる。
+ *
+ * 対象言語は MAX_CONCURRENCY 件ずつ並行実行し、1言語の翻訳ができ次第、他言語の完了を
+ * 待たずにその場でmicroCMSへ書き込む（バッチでまとめて書き込まない）。こうすることで、
+ * 一部の言語がハング・レート制限等で遅延・失敗しても、既に成功した言語の結果は
+ * 呼び出し元の実行時間予算（Vercelのmaxduration等）を使い切って強制終了された場合でも
+ * 失われない。SOFT_DEADLINE_MS を過ぎたら新規の翻訳は開始せず、残りは「生成中」のまま
+ * 次回（Webhook再送信・滞留検知・バックフィルスクリプトの再実行のいずれか）に委ねる。
+ *
+ * @param reread 書き込み検証のための再取得関数。呼び出し元のクライアント（閲覧用/管理用）に委ねる
+ * @param deps 翻訳・書き込みの実装を差し替えるためのフック（省略時は実際のAnthropic API /
+ *   microCMSへの書き込みを使う）。ローカルでのモックテスト専用で、本番のroute.ts /
+ *   scripts/translate-backfill.ts はどちらも渡さず、実際の実装がそのまま使われる。
+ */
+export async function runTranslation(
+  contentId: string,
+  article: News,
+  reread: () => Promise<News>,
+  deps: TranslateDeps = {},
+): Promise<TranslateOutcome> {
+  const translate = deps.translate ?? translateArticleLang;
+  const write = deps.write ?? updateNewsTranslation;
+
+  const missing = missingTranslationLangs(article);
   const startedAt = Date.now();
   const succeeded: TranslationSuffix[] = [];
   const failed: TranslationSuffix[] = [];
@@ -233,4 +259,24 @@ export async function translatePendingLanguages(
     failed: stillMissing,
     translation_status: allDone ? '完了' : '生成中',
   };
+}
+
+/**
+ * acquireTranslationLock + runTranslation をまとめて同期的に行う、従来どおりの
+ * 「呼び出したら完了まで待つ」インターフェース。scripts/translate-backfill.ts
+ * （応答を急ぐ必要のないローカル実行専用スクリプト）はこちらを使う。
+ * /api/translate-article は、すぐに応答を返すためロック取得と実処理を分離して
+ * 個別に呼ぶ（acquireTranslationLock を先に呼び、応答後に runTranslation をafter()内で呼ぶ）。
+ */
+export async function translatePendingLanguages(
+  contentId: string,
+  article: News,
+  reread: () => Promise<News>,
+  deps: TranslateDeps = {},
+): Promise<TranslateOutcome> {
+  const lockResult = await acquireTranslationLock(contentId, article, deps);
+  if (!lockResult.locked) {
+    return lockResult.outcome;
+  }
+  return runTranslation(contentId, article, reread, deps);
 }
