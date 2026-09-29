@@ -21,6 +21,35 @@ export type LangTranslation = {
 
 const TRANSLATION_TOOL_NAME = 'submit_translation';
 
+/**
+ * 言語ごとの翻訳失敗を、原因の種類が一目で分かる形で呼び出し側（translate-pipeline.ts）に
+ * 伝えるためのエラー型。ログに「どの言語が」「何が原因で」失敗したかを1行で残せるように、
+ * targetLang・kind・httpStatus を構造化して持たせる（メッセージ文字列の目視・パースに頼らない）。
+ */
+export type TranslationErrorKind =
+  | 'missing_api_key'
+  | 'timeout'
+  | 'http_error'
+  | 'invalid_response'
+  | 'network_error';
+
+export class TranslationError extends Error {
+  readonly targetLang: TranslationSuffix;
+  readonly kind: TranslationErrorKind;
+  readonly httpStatus?: number;
+
+  constructor(
+    message: string,
+    options: { targetLang: TranslationSuffix; kind: TranslationErrorKind; httpStatus?: number },
+  ) {
+    super(message);
+    this.name = 'TranslationError';
+    this.targetLang = options.targetLang;
+    this.kind = options.kind;
+    this.httpStatus = options.httpStatus;
+  }
+}
+
 const buildSystemPrompt = (targetLang: TranslationSuffix): string => {
   const lang = getLanguageByTranslationField(targetLang);
   return `あなたはIT/AI業界のコーポレートサイト記事を、日本語から${lang.translationNameJa}に翻訳するプロフェッショナル翻訳者です。
@@ -53,7 +82,10 @@ export const translateArticleLang = async (
   timeoutMs = DEFAULT_TIMEOUT_MS,
 ): Promise<LangTranslation> => {
   if (!process.env.ANTHROPIC_API_KEY) {
-    throw new Error('ANTHROPIC_API_KEY is required');
+    throw new TranslationError('ANTHROPIC_API_KEY is required', {
+      targetLang,
+      kind: 'missing_api_key',
+    });
   }
 
   const lang = getLanguageByTranslationField(targetLang);
@@ -111,7 +143,10 @@ export const translateArticleLang = async (
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`Anthropic API request failed for ${targetLang} (${response.status}): ${errorText}`);
+      throw new TranslationError(
+        `Anthropic API request failed for ${targetLang} (${response.status}): ${errorText}`,
+        { targetLang, kind: 'http_error', httpStatus: response.status },
+      );
     }
 
     const data = await response.json();
@@ -120,20 +155,35 @@ export const translateArticleLang = async (
     );
 
     if (!toolUseBlock) {
-      throw new Error(`Anthropic API response for ${targetLang} did not include the expected tool_use block`);
+      throw new TranslationError(
+        `Anthropic API response for ${targetLang} did not include the expected tool_use block`,
+        { targetLang, kind: 'invalid_response' },
+      );
     }
 
     const result = toolUseBlock.input as Partial<LangTranslation>;
     if (!result.title || !result.content) {
-      throw new Error(`Anthropic API response is missing title/content for ${targetLang}`);
+      throw new TranslationError(`Anthropic API response is missing title/content for ${targetLang}`, {
+        targetLang,
+        kind: 'invalid_response',
+      });
     }
 
     return { title: result.title, content: result.content };
   } catch (error) {
-    if (controller.signal.aborted) {
-      throw new Error(`Anthropic API request timed out for ${targetLang} after ${timeoutMs}ms`);
+    if (error instanceof TranslationError) {
+      throw error;
     }
-    throw error;
+    if (controller.signal.aborted) {
+      throw new TranslationError(`Anthropic API request timed out for ${targetLang} after ${timeoutMs}ms`, {
+        targetLang,
+        kind: 'timeout',
+      });
+    }
+    throw new TranslationError(
+      `Anthropic API request errored for ${targetLang}: ${error instanceof Error ? error.message : String(error)}`,
+      { targetLang, kind: 'network_error' },
+    );
   } finally {
     clearTimeout(timeout);
   }

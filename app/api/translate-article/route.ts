@@ -1,36 +1,44 @@
-import crypto from 'node:crypto';
 import { after, NextRequest, NextResponse } from 'next/server';
 import { client, type News } from '@/app/_libs/microcms';
 import { isStaleGenerating, translatePendingLanguages } from '@/app/_libs/translate-pipeline';
+import {
+  CONTINUATION_HEADER,
+  getContinuationCount,
+  isAuthorized,
+  shouldScheduleContinuation,
+} from '@/app/_libs/translate-webhook';
 
-// 未翻訳の対象言語を並行して翻訳するための実行時間。ローカル計測（jrfu_fjoeと同程度の
-// 長さの記事）で、ネパール語の翻訳に61秒かかるケースを確認した。1言語の翻訳だけで
-// 60秒を超え得るため、60秒では足りない。120秒あれば、1言語あたりの想定タイムアウト
-// （PER_LANG_TIMEOUT_MS、translate-pipeline.ts参照）に余裕を持たせても収まる。
-// ※ Vercelのプランによって設定できる上限が異なる（Hobbyは60秒までなど、プランや
-// Fluid Compute設定で変わる）。デプロイ前に実際のプランで120秒が設定可能か確認する
-// こと。上限に収まらない場合は、後段の自己継続（scheduleContinuation）が複数回の
-// 呼び出しに分けて処理を引き継ぐため、この値を60秒に戻しても機能は破綻しない
-// （1回あたりに進む言語数が減り、完了までにかかる継続回数が増えるだけ）。
-export const maxDuration = 120;
+// 未翻訳の対象言語を並行して翻訳するための実行時間。
+// Vercelダッシュボード（Settings → Functions）で確認済み: 本プロジェクトはFluid
+// Computeが有効で、Hobbyプランでの関数実行時間は300秒が既定値かつ上限（これが
+// このプロジェクトで設定できる実行時間の上限）。
+// ローカル計測（jrfu_fjoeと同程度の長さの記事）で、ネパール語の翻訳に61.4秒かかる
+// ケースを確認しており、1言語の翻訳だけでも相応の時間がかかり得る。300秒あれば、
+// 1言語あたりのタイムアウト（PER_LANG_TIMEOUT_MS=90秒、translate-pipeline.ts参照）
+// に対して観測値の約5倍の余裕があり、同時実行数（MAX_CONCURRENCY=4）で対象言語
+// 最大11件を処理しても、通常は1回のリクエスト内で全言語が完了する（本文を分けて
+// 翻訳する必要はない）。後段の自己継続（scheduleContinuation）は、稀に1回で
+// 完了しきれなかった場合（レート制限・想定以上の遅延など）のための安全網として残す。
+export const maxDuration = 300;
 
 // 1回のリクエストで処理しきれなかった言語が残っている場合に、自分自身
 // （/api/translate-article）をもう一度呼び出して続きを処理させるための仕組み。
 // Vercel Cron Jobsによる定期スキャンも検討したが、（1）Cron Jobsの実行間隔は
 // プランに依存し、Hobbyプランでは1日1回までに制限され得るため記事公開直後の
 // 自動完了には向かない、（2）記事公開のタイミングで即座に反応できる、という理由から
-// 自己継続方式を採用した。多重実行防止のロック（translation_status='生成中'）は
-// 通常のWebhook起点のリクエストに対してはそのまま機能させつつ、継続リクエストだけは
-// 明示的なヘッダーで許可することでバイパスする（＝同じ処理チェーンの続きであると
-// 判別できるようにする）。無限ループ防止のため、継続回数に上限を設ける。
-const CONTINUATION_HEADER = 'x-translate-continuation';
-const MAX_CONTINUATIONS = 6;
-
-const getContinuationCount = (request: NextRequest): number => {
-  const raw = request.headers.get(CONTINUATION_HEADER);
-  const parsed = raw ? Number(raw) : 0;
-  return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
-};
+// 自己継続方式を採用した。
+//
+// 認証について: x-translate-continuation ヘッダーは、多重実行防止の「生成中」ロック
+// チェックだけをバイパスする（＝同じ処理チェーンの続きであると判別するための印）
+// もので、認証をバイパスするものではない。POST関数はこのヘッダーの有無に関わらず
+// 冒頭で isAuthorized(request) を必ず通す（下記参照）ため、正しい
+// TRANSLATE_WEBHOOK_SECRET を持たないリクエストは、このヘッダーを付けていても
+// 401で拒否される。無限ループ防止のため、継続回数にも上限を設ける
+// （MAX_CONTINUATIONS、app/_libs/translate-webhook.ts）。
+// isAuthorized / getContinuationCount / shouldScheduleContinuation は、
+// app/_libs/translate-webhook.ts に切り出している（Next.jsのRoute Handlerは
+// GET/POST/maxDuration等の決められた名前しかexportできないため、ローカルの
+// モックテストで単体importできるロジックはそちらに置く方針にした）。
 
 // レスポンスを返したあとに、続きの処理を担う新しいリクエストを自分自身に送る。
 // Vercelの関数は、クライアント（今回であれば継続元のこのリクエスト自身）が
@@ -79,24 +87,6 @@ const scheduleContinuation = (contentId: string, nextAttempt: number) => {
       clearTimeout(abortTimer);
     }
   });
-};
-
-const isAuthorized = (request: NextRequest) => {
-  const expected = process.env.TRANSLATE_WEBHOOK_SECRET;
-  // シークレット未設定時はfail-closed（誰も呼び出せない状態）にする
-  if (!expected) {
-    return false;
-  }
-
-  const provided = request.headers.get('x-webhook-secret') || '';
-  const expectedBuffer = Buffer.from(expected);
-  const providedBuffer = Buffer.from(provided);
-
-  if (expectedBuffer.length !== providedBuffer.length) {
-    return false;
-  }
-
-  return crypto.timingSafeEqual(expectedBuffer, providedBuffer);
 };
 
 export async function POST(request: NextRequest) {
@@ -177,15 +167,23 @@ export async function POST(request: NextRequest) {
   // 継続回数が上限に達していなければ自分自身を呼び出して続きを処理させる。
   // これにより、1回のリクエストの実行時間内に全言語を訳しきれなくても、
   // 人手を介さず最終的に「完了」まで到達できる。
-  const shouldContinue =
-    (outcome.status === 'partial' || outcome.status === 'error') && continuationCount < MAX_CONTINUATIONS;
+  const shouldContinue = shouldScheduleContinuation(outcome.status, continuationCount);
 
   if (shouldContinue) {
     scheduleContinuation(contentId, continuationCount + 1);
   } else if (outcome.status === 'partial') {
+    // MAX_CONTINUATIONSに達しても未翻訳の言語が残っているケース。ここで止まり、
+    // translation_status は「生成中」のまま残る（=次のWebhook・滞留検知・
+    // バックフィルスクリプトの再実行のいずれかを待つ状態になる）。どの言語が
+    // 残ったかをログに残す（Hobbyプランはログ保持期間が短いため、気づいたら
+    // すぐダッシュボードで確認するか、translate-pipeline.ts側の言語ごとの
+    // 失敗ログ〔lang=/kind=/httpStatus=〕と合わせて原因を確認すること）。
     console.error(
-      '[translate-article] reached MAX_CONTINUATIONS, leaving remaining languages for the next webhook/backfill',
+      '[translate-article] MAX_CONTINUATIONS reached, stopping with translation_status still 生成中',
       contentId,
+      'continuationCount',
+      continuationCount,
+      'remaining',
       outcome.failed,
     );
   }

@@ -1,6 +1,6 @@
 import { missingTranslationLangs, type News, type TranslationStatus } from './news';
 import { updateNewsTranslation } from './microcms-management';
-import { translateArticleLang } from './anthropic';
+import { translateArticleLang, TranslationError } from './anthropic';
 import type { TranslationSuffix } from './lang-registry';
 
 // 「生成中」になってからこの時間以上経過していたら、処理が途中で止まった（滞留）と
@@ -10,7 +10,8 @@ export const STALE_GENERATING_MS = 10 * 60 * 1000; // 10分
 
 // 同時に翻訳する言語数の上限。対象言語数（12言語対応後は最大11）ぶんを無制限に
 // 並行実行すると、Anthropic APIのレート制限や輻輳による遅延の影響を受けやすくなる
-// ため、上限を設けて順番に処理する。
+// ため、上限を設けて順番に処理する（本番でこの問題が実際に起きたことを、Vercelの
+// 実行ログ〔200 OKで約157秒・全言語失敗〕から確認済み）。
 const MAX_CONCURRENCY = 4;
 
 // 1言語ぶんの翻訳リクエストのタイムアウト。ハングした1言語が他言語の処理・保存を
@@ -19,20 +20,24 @@ const MAX_CONCURRENCY = 4;
 // 値の根拠: jrfu_fjoe（本文2070文字）と同程度の長さの記事で実測したところ、
 // 英語は20.8秒、ネパール語は61.4秒かかった（2026-09-29計測、書き込みなし）。
 // 対応言語の中では非CJK・非ラテン文字（ネパール語・ロシア語等）が特に時間を要する
-// 傾向があるため、観測値に十分な余裕（+約5割）を持たせている。より長い記事では
-// さらに時間がかかる可能性があるため、Vercelの実行ログで実際のtook ms（
+// 傾向があるため、観測値（最大61.4秒）に対して+約5割の余裕を持たせている。より長い
+// 記事ではさらに時間がかかる可能性があるため、Vercelの実行ログで実際のtook ms（
 // translate-pipeline.ts のログ）を継続的に確認し、必要なら調整すること。
 const PER_LANG_TIMEOUT_MS = 90_000;
 
 // この経過時間を過ぎたら、新しい言語の翻訳を開始しない（既に走っているものは
 // PER_LANG_TIMEOUT_MSで打ち切られるのを待つ）。/api/translate-article の
-// maxDuration（120秒、route.ts参照）より十分小さい値にして、1言語ぶんの
-// タイムアウト（PER_LANG_TIMEOUT_MS）と、読み直し・ステータス確定の書き込みに
-// 使う時間（合わせて約30秒）を残す： 120 - 90 - 10（書き込み等のバッファ）= 20秒。
-// 通常は同時実行数（MAX_CONCURRENCY）ぶんの言語がこの猶予内にすぐ開始されるため、
-// 1回のリクエストで処理される言語数はおおむねMAX_CONCURRENCY件になる。残りは
+// maxDuration（300秒、route.ts参照。Vercelダッシュボードで確認したHobby+Fluid
+// Computeの上限）より十分小さい値にして、1言語ぶんのタイムアウト
+// （PER_LANG_TIMEOUT_MS）と、読み直し・ステータス確定の書き込みに使う時間を残す：
+// 300 - 90（1言語タイムアウト）- 20（書き込み等のバッファ）= 190秒。
+// 同時実行数（MAX_CONCURRENCY=4）で対象言語（最大11）を処理する場合、最悪でも
+// ceil(11/4)=3ラウンド。1ラウンドが観測値程度（数十秒）で終わる通常のケースでは、
+// 190秒の猶予内に3ラウンドとも開始でき、1回のリクエストで全言語が完了する
+// （本文を分割する必要はない）。仮に複数言語が同時にPER_LANG_TIMEOUT_MS近くまで
+// かかる稀なケースでは、一部の言語がこの猶予を過ぎて未着手のまま残るが、その分は
 // route.ts の自己継続（scheduleContinuation）が次のリクエストとして引き継ぐ。
-const SOFT_DEADLINE_MS = 20_000;
+const SOFT_DEADLINE_MS = 190_000;
 
 /**
  * 「生成中」のまま滞留しているか（=ロックを無視して再試行してよいか）を判定する。
@@ -76,12 +81,22 @@ export type TranslateOutcome =
  * 次回（Webhook再送信・滞留検知・バックフィルスクリプトの再実行のいずれか）に委ねる。
  *
  * @param reread 書き込み検証のための再取得関数。呼び出し元のクライアント（閲覧用/管理用）に委ねる
+ * @param deps 翻訳・書き込みの実装を差し替えるためのフック（省略時は実際のAnthropic API /
+ *   microCMSへの書き込みを使う）。ローカルでのモックテスト専用で、本番のroute.ts /
+ *   scripts/translate-backfill.ts はどちらも渡さず、実際の実装がそのまま使われる。
  */
 export async function translatePendingLanguages(
   contentId: string,
   article: News,
   reread: () => Promise<News>,
+  deps: {
+    translate?: typeof translateArticleLang;
+    write?: typeof updateNewsTranslation;
+  } = {},
 ): Promise<TranslateOutcome> {
+  const translate = deps.translate ?? translateArticleLang;
+  const write = deps.write ?? updateNewsTranslation;
+
   const missing = missingTranslationLangs(article);
   if (missing.length === 0) {
     // 無限ループ防止：全言語が翻訳済みの記事は、翻訳結果の保存が起こす2回目以降の
@@ -89,7 +104,7 @@ export async function translatePendingLanguages(
     if (!article.translation_status?.includes('完了')) {
       // ステータス表記だけが古い（例: 対応言語追加直後で、実際は既に全部埋まっている）
       // 場合は、翻訳は行わずステータスだけ補正する。
-      await updateNewsTranslation(contentId, { translation_status: ['完了'] }).catch((error) => {
+      await write(contentId, { translation_status: ['完了'] }).catch((error) => {
         console.error('[translate-pipeline] failed to correct translation_status', contentId, error);
       });
     }
@@ -97,7 +112,7 @@ export async function translatePendingLanguages(
   }
 
   try {
-    await updateNewsTranslation(contentId, {
+    await write(contentId, {
       translation_status: ['生成中'],
       translation_started: new Date().toISOString(),
     });
@@ -120,20 +135,29 @@ export async function translatePendingLanguages(
       const suffix = missing[index];
       const langStartedAt = Date.now();
       try {
-        const translation = await translateArticleLang(
+        const translation = await translate(
           { title: article.title, contentHtml: article.content },
           suffix,
           PER_LANG_TIMEOUT_MS,
         );
         // 他言語の完了を待たず、翻訳できた言語からすぐに保存する。
-        await updateNewsTranslation(contentId, {
+        await write(contentId, {
           [`title_${suffix}`]: translation.title,
           [`content_${suffix}`]: translation.content,
         });
         succeeded.push(suffix);
       } catch (error) {
         failed.push(suffix);
-        console.error('[translate-pipeline] translation failed', contentId, suffix, error);
+        // 言語コード・エラーの種類・HTTPステータスが一目で分かる形で1行にまとめる。
+        // Hobbyプランはログの保持期間が短いため、原因調査のために詳細を都度確認する
+        // 前提ではなく、この1行だけで判断できることを重視している。
+        const kind = error instanceof TranslationError ? error.kind : 'unknown';
+        const httpStatus = error instanceof TranslationError ? (error.httpStatus ?? '-') : '-';
+        const message = error instanceof Error ? error.message : String(error);
+        console.error(
+          `[translate-pipeline] translation failed lang=${suffix} kind=${kind} httpStatus=${httpStatus} message=${message}`,
+          contentId,
+        );
       } finally {
         console.log(`[translate-pipeline] ${suffix} took ${Date.now() - langStartedAt}ms`, contentId);
       }
@@ -185,7 +209,7 @@ export async function translatePendingLanguages(
   // 再試行対象になる）。
   if (allDone) {
     try {
-      await updateNewsTranslation(contentId, { translation_status: ['完了'] });
+      await write(contentId, { translation_status: ['完了'] });
     } catch (error) {
       console.error('[translate-pipeline] failed to finalize translation_status', contentId, error);
       return {
