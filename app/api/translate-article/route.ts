@@ -69,7 +69,9 @@ export async function POST(request: NextRequest) {
   // （missingTranslationLangs）で判定する。こうすることで、対応言語をレジストリに
   // 追加したあと、過去に「完了」した記事も、次にこのAPIが呼ばれたときに新しい言語
   // だけを自動で埋め合わせられる（ステータスが「完了」のまま固定されて永久にスキップ
-  // され続ける、という問題を避けられる）。
+  // され続ける、という問題を避けられる）。このチェックは意図的に「生成中」だけを
+  // 見る（「完了」は見ない）ため、status=完了でも missingTranslationLangs が非空を
+  // 返す記事は下の分岐で翻訳対象になる。
   if (article.translation_status?.includes('生成中')) {
     return NextResponse.json(
       { status: 'skipped', reason: 'in progress', translation_status: article.translation_status },
@@ -103,17 +105,21 @@ export async function POST(request: NextRequest) {
 
   // 未翻訳の言語だけを、言語ごとに独立したAPI呼び出しで並行に翻訳する。
   // 1言語の失敗（レート制限・一時的なAPIエラー等）が他言語に波及しないよう
-  // Promise.allSettled を使い、失敗した言語のフィールドは書き込まない
-  // （＝次回このAPIが呼ばれたときに missingTranslationLangs が再び対象として返す
-  // ので、失敗した言語だけが自然に再試行される）。
+  // Promise.allSettled を使う。所要時間は診断用に言語ごとに計測してログに残す
+  // （認証情報等は含まないため出力して問題ない）。
   const settled = await Promise.allSettled(
-    missing.map((suffix) =>
-      translateArticleLang({ title: article.title, contentHtml: article.content }, suffix),
-    ),
+    missing.map(async (suffix) => {
+      const startedAt = Date.now();
+      try {
+        return await translateArticleLang({ title: article.title, contentHtml: article.content }, suffix);
+      } finally {
+        console.log(`[translate-article] ${suffix} took ${Date.now() - startedAt}ms`, contentId);
+      }
+    }),
   );
 
   const fields: Record<string, string> = {};
-  const translated: TranslationSuffix[] = [];
+  const attempted: TranslationSuffix[] = [];
   const failed: TranslationSuffix[] = [];
 
   settled.forEach((result, index) => {
@@ -121,32 +127,97 @@ export async function POST(request: NextRequest) {
     if (result.status === 'fulfilled') {
       fields[`title_${suffix}`] = result.value.title;
       fields[`content_${suffix}`] = result.value.content;
-      translated.push(suffix);
+      attempted.push(suffix);
     } else {
       failed.push(suffix);
       console.error('[translate-article] translation failed', contentId, suffix, result.reason);
     }
   });
 
-  // 今回の対象言語（未翻訳だった言語）のうち、翻訳が失敗して残った言語が無ければ
-  // 「完了」、1つでも残っていれば「未処理」に戻す（次回の呼び出しで、残った言語
-  // だけが missingTranslationLangs により再試行される）。
-  const finalStatus: TranslationStatus = failed.length === 0 ? '完了' : '未処理';
+  // Anthropicが返した分だけ書き込む（失敗した言語のフィールドには触れない）。
+  if (Object.keys(fields).length > 0) {
+    try {
+      await updateNewsTranslation(contentId, fields);
+    } catch (error) {
+      console.error('[translate-article] failed to save translation', contentId, error);
+      // 書き込み自体が失敗した場合、ステータスは「生成中」のまま残す（下記の
+      // 「なぜ未処理に戻さないか」のコメントと同じ理由）。次は手動での再実行が必要。
+      return NextResponse.json(
+        { status: 'error', message: 'failed to save translation', attempted, failed },
+        { status: 500 },
+      );
+    }
+  }
 
-  try {
-    await updateNewsTranslation(contentId, { ...fields, translation_status: [finalStatus] });
-  } catch (error) {
-    console.error('[translate-article] failed to save translation', contentId, error);
-    return NextResponse.json(
-      { status: 'error', message: 'failed to save translation', translated, failed },
-      { status: 500 },
+  // 書き込み検証：保存したはずの言語を実際に読み直し、title_*/content_* の両方に
+  // 値が入っているか確認してから初めて「成功」とみなす。書き込みAPIがエラーを
+  // 返さなくても、対象フィールドが存在しない・反映されていない等の理由で実際には
+  // 保存されていない場合があり得るため、応答が正常でも中身を信用しない。
+  const verified: TranslationSuffix[] = [];
+  const verificationFailed: TranslationSuffix[] = [...failed];
+  if (attempted.length > 0) {
+    let reread: News;
+    try {
+      reread = await client.getListDetail<News>({ endpoint: 'news', contentId });
+    } catch (error) {
+      console.error(
+        '[translate-article] failed to re-read article for verification',
+        contentId,
+        error,
+      );
+      reread = article; // 読み直し自体に失敗した場合は、安全側に倒して全て未検証扱いにする
+    }
+    for (const suffix of attempted) {
+      const ok = !!reread[`title_${suffix}`] && !!reread[`content_${suffix}`];
+      if (ok) {
+        verified.push(suffix);
+      } else {
+        verificationFailed.push(suffix);
+        console.error('[translate-article] verification failed after write', contentId, suffix);
+      }
+    }
+  }
+
+  // 全対象言語（今回未翻訳だった言語すべて）が検証まで通った場合のみ「完了」にする。
+  // 1つでも失敗・未検証が残る場合、ステータスは「未処理」に戻さず「生成中」のまま
+  // 残す。理由：本番にはまだ新パイプライン未対応の旧コードがデプロイされており、
+  // 旧コードは translation_status が「未処理」だと（「生成中」「完了」以外の値なので）
+  // 多重実行防止チェックを素通りしてしまい、この記事の英語などの既存翻訳を独自に
+  // 再生成・上書きしてしまう恐れがある。「生成中」のままにしておけば、新旧どちらの
+  // コードの多重実行防止チェックにも確実に引っかかるため、旧コードによる上書きを
+  // 防げる（新パイプラインが本番稼働した後は、この制約は不要になるため「未処理」に
+  // 戻して自動再試行させる設計に戻してよい）。
+  const allVerified = verificationFailed.length === 0;
+  const finalStatus: TranslationStatus | null = allVerified ? '完了' : null;
+
+  if (finalStatus) {
+    try {
+      await updateNewsTranslation(contentId, { translation_status: [finalStatus] });
+    } catch (error) {
+      console.error('[translate-article] failed to finalize translation_status', contentId, error);
+      return NextResponse.json(
+        {
+          status: 'error',
+          message: 'failed to finalize status',
+          verified,
+          failed: verificationFailed,
+        },
+        { status: 500 },
+      );
+    }
+  } else {
+    console.error(
+      '[translate-article] leaving translation_status as 生成中 due to unverified/failed languages',
+      contentId,
+      verificationFailed,
     );
   }
 
   return NextResponse.json({
-    status: failed.length === 0 ? 'ok' : 'partial',
+    status: allVerified ? 'ok' : 'partial',
     contentId,
-    translated,
-    failed,
+    verified,
+    failed: verificationFailed,
+    translation_status: finalStatus ?? '生成中',
   });
 }
