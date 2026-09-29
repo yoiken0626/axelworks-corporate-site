@@ -109,7 +109,7 @@
    同じ大きさの円」という配置そのものから導かれるため、--gls-flag-size /
    --gls-ring-radius の値（PC・スマホ・HeroQueen・PageReadAloudいずれも）が
    変わっても、この1箇所だけの特別な組み合わせとして常に成立する。
-   フチは flagSize/2 のちょうど100%〜118%でフェザーにし、選択時の1.14倍
+   フチは flagSize/2 のちょうど100%〜126%でフェザーにし、選択時の1.21倍
    拡大（下の [data-state='active'] 参照）で多少ずれても不自然な境界線が
    出ないようにしてある。 */
 .flagItem[data-code='fil'] .flagButton {
@@ -118,14 +118,14 @@
       calc(var(--gls-flag-size, 42px) / 2 - var(--gls-ring-radius, 68px) * 0.13397),
     transparent 0,
     transparent calc(var(--gls-flag-size, 42px) / 2),
-    black calc(var(--gls-flag-size, 42px) / 2 * 1.18)
+    black calc(var(--gls-flag-size, 42px) / 2 * 1.26)
   );
   mask-image: radial-gradient(
     circle at calc(var(--gls-flag-size, 42px) / 2 + var(--gls-ring-radius, 68px) * 0.5)
       calc(var(--gls-flag-size, 42px) / 2 - var(--gls-ring-radius, 68px) * 0.13397),
     transparent 0,
     transparent calc(var(--gls-flag-size, 42px) / 2),
-    black calc(var(--gls-flag-size, 42px) / 2 * 1.18)
+    black calc(var(--gls-flag-size, 42px) / 2 * 1.26)
   );
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
@@ -136,15 +136,16 @@
   opacity: 0.42;
 }
 
-/* 選択された1個：枠線・発光・わずかな拡大でハイライトする。重なり順は変えない
-   （z-index は .flagItem 側で固定のまま）ので、次の国旗が半透明で重なった
-   状態はそのまま維持される。 */
+/* 選択された1個：枠線は持たず、発光と拡大だけでハイライトする。重なり順は
+   変えない（z-index は .flagItem 側で固定のまま）ので、次の国旗が半透明で
+   重なった状態はそのまま維持される。拡大率は、以前は枠線（3px）+拡大1.14倍
+   だった見た目の大きさを、枠線を無くした分だけ国旗自体を大きくすることで
+   概ね保つよう1.21倍にしてある（42pxの国旗基準：42*1.14+3 ≈ 42*1.21）。 */
 .flagItem[data-state='active'] .flagButton {
   box-shadow:
-    0 0 0 3px var(--color-button-primary),
     0 0 14px 2px rgba(56, 132, 255, 0.55),
     0 6px 16px rgba(0, 0, 0, 0.3);
-  transform: scale(1.14);
+  transform: scale(1.21);
 }
 
 /* マウス・タッチでの選択後にフォーカスの枠が残らないよう、通常の :focus は
