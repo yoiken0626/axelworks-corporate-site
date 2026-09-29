@@ -8,6 +8,21 @@ import type { TranslationSuffix } from './lang-registry';
 // scripts/translate-backfill.ts（手動の一括実行）の両方から共有する。
 export const STALE_GENERATING_MS = 10 * 60 * 1000; // 10分
 
+// 同時に翻訳する言語数の上限。対象言語数（12言語対応後は最大11）ぶんを無制限に
+// 並行実行すると、Anthropic APIのレート制限や輻輳による遅延の影響を受けやすくなる
+// ため、上限を設けて順番に処理する。
+const MAX_CONCURRENCY = 4;
+
+// 1言語ぶんの翻訳リクエストのタイムアウト。ハングした1言語が他言語の処理・保存を
+// 巻き込んで全体を止めないよう、十分短く打ち切る。
+const PER_LANG_TIMEOUT_MS = 20_000;
+
+// この経過時間を過ぎたら、新しい言語の翻訳を開始しない（既に走っているものは
+// PER_LANG_TIMEOUT_MSで打ち切られるのを待つ）。/api/translate-article の
+// maxDuration（60秒、route.ts参照）より十分小さい値にして、読み直し・ステータス
+// 確定の書き込みに使う時間を残す。
+const SOFT_DEADLINE_MS = 25_000;
+
 /**
  * 「生成中」のまま滞留しているか（=ロックを無視して再試行してよいか）を判定する。
  * translation_started が無い（旧コードが生成中にした・書き込みに失敗した等）場合は、
@@ -42,6 +57,13 @@ export type TranslateOutcome =
  * - 「生成中」かつ滞留していない場合の多重実行防止チェック（isStaleGenerating で判定可能）
  *   ※ この関数自体は「生成中」であっても呼ばれれば処理を進める（ロック確認は呼び出し側で行う）
  *
+ * 対象言語は MAX_CONCURRENCY 件ずつ並行実行し、1言語の翻訳ができ次第、他言語の完了を
+ * 待たずにその場でmicroCMSへ書き込む（バッチでまとめて書き込まない）。こうすることで、
+ * 一部の言語がハング・レート制限等で遅延・失敗しても、既に成功した言語の結果は
+ * 呼び出し元の実行時間予算（Vercelのmaxduration等）を使い切って強制終了された場合でも
+ * 失われない。SOFT_DEADLINE_MS を過ぎたら新規の翻訳は開始せず、残りは「生成中」のまま
+ * 次回（Webhook再送信・滞留検知・バックフィルスクリプトの再実行のいずれか）に委ねる。
+ *
  * @param reread 書き込み検証のための再取得関数。呼び出し元のクライアント（閲覧用/管理用）に委ねる
  */
 export async function translatePendingLanguages(
@@ -73,111 +95,107 @@ export async function translatePendingLanguages(
     return { status: 'error', message: 'failed to start translation' };
   }
 
-  // 未翻訳の言語だけを、言語ごとに独立したAPI呼び出しで並行に翻訳する。
-  // 1言語の失敗（レート制限・一時的なAPIエラー等）が他言語に波及しないよう
-  // Promise.allSettled を使う。所要時間は診断用に言語ごとに計測してログに残す
-  // （認証情報等は含まないため出力して問題ない）。
-  const settled = await Promise.allSettled(
-    missing.map(async (suffix) => {
-      const startedAt = Date.now();
+  const startedAt = Date.now();
+  const succeeded: TranslationSuffix[] = [];
+  const failed: TranslationSuffix[] = [];
+  let nextIndex = 0;
+
+  const worker = async () => {
+    while (Date.now() - startedAt < SOFT_DEADLINE_MS) {
+      const index = nextIndex;
+      nextIndex += 1;
+      if (index >= missing.length) return;
+
+      const suffix = missing[index];
+      const langStartedAt = Date.now();
       try {
-        return await translateArticleLang({ title: article.title, contentHtml: article.content }, suffix);
+        const translation = await translateArticleLang(
+          { title: article.title, contentHtml: article.content },
+          suffix,
+          PER_LANG_TIMEOUT_MS,
+        );
+        // 他言語の完了を待たず、翻訳できた言語からすぐに保存する。
+        await updateNewsTranslation(contentId, {
+          [`title_${suffix}`]: translation.title,
+          [`content_${suffix}`]: translation.content,
+        });
+        succeeded.push(suffix);
+      } catch (error) {
+        failed.push(suffix);
+        console.error('[translate-pipeline] translation failed', contentId, suffix, error);
       } finally {
-        console.log(`[translate-pipeline] ${suffix} took ${Date.now() - startedAt}ms`, contentId);
+        console.log(`[translate-pipeline] ${suffix} took ${Date.now() - langStartedAt}ms`, contentId);
       }
-    }),
+    }
+  };
+
+  await Promise.all(
+    Array.from({ length: Math.min(MAX_CONCURRENCY, missing.length) }, () => worker()),
   );
 
-  const fields: Record<string, string> = {};
-  const attempted: TranslationSuffix[] = [];
-  const failed: TranslationSuffix[] = [];
-
-  settled.forEach((result, index) => {
-    const suffix = missing[index];
-    if (result.status === 'fulfilled') {
-      fields[`title_${suffix}`] = result.value.title;
-      fields[`content_${suffix}`] = result.value.content;
-      attempted.push(suffix);
-    } else {
-      failed.push(suffix);
-      console.error('[translate-pipeline] translation failed', contentId, suffix, result.reason);
-    }
-  });
-
-  // Anthropicが返した分だけ書き込む（失敗した言語のフィールドには触れない）。
-  if (Object.keys(fields).length > 0) {
-    try {
-      await updateNewsTranslation(contentId, fields);
-    } catch (error) {
-      console.error('[translate-pipeline] failed to save translation', contentId, error);
-      // 書き込み自体が失敗した場合、ステータスは「生成中」のまま残す（下記の
-      // 「なぜ未処理に戻さないか」のコメントと同じ理由）。次は再実行（Webhook再送信・
-      // 滞留検知・バックフィルスクリプトの再実行のいずれか）が必要。
-      return { status: 'error', message: 'failed to save translation', attempted, failed };
-    }
+  const notAttempted = missing.filter(
+    (suffix) => !succeeded.includes(suffix) && !failed.includes(suffix),
+  );
+  if (notAttempted.length > 0) {
+    console.warn(
+      '[translate-pipeline] soft deadline reached before all languages were attempted, remaining for next run',
+      contentId,
+      notAttempted,
+    );
   }
 
-  // 書き込み検証：保存したはずの言語を実際に読み直し、title_*/content_* の両方に
-  // 値が入っているか確認してから初めて「成功」とみなす。書き込みAPIがエラーを
-  // 返さなくても、対象フィールドが存在しない・反映されていない等の理由で実際には
-  // 保存されていない場合があり得るため、応答が正常でも中身を信用しない。
-  const verified: TranslationSuffix[] = [];
-  const verificationFailed: TranslationSuffix[] = [...failed];
-  if (attempted.length > 0) {
-    let rereadArticle: News;
-    try {
-      rereadArticle = await reread();
-    } catch (error) {
-      console.error('[translate-pipeline] failed to re-read article for verification', contentId, error);
-      rereadArticle = article; // 読み直し自体に失敗した場合は、安全側に倒して全て未検証扱いにする
-    }
-    for (const suffix of attempted) {
-      const ok = !!rereadArticle[`title_${suffix}`] && !!rereadArticle[`content_${suffix}`];
-      if (ok) {
-        verified.push(suffix);
-      } else {
-        verificationFailed.push(suffix);
-        console.error('[translate-pipeline] verification failed after write', contentId, suffix);
-      }
-    }
+  // 書き込み検証：このリクエストで保存できたはずの言語を実際に読み直して確認する。
+  // 書き込みAPIがエラーを返さなくても、対象フィールドが存在しない・反映されていない
+  // 等の理由で実際には保存されていない場合があり得るため、応答が正常でも中身を
+  // 信用せず、missingTranslationLangs で再度判定する。
+  let rereadArticle: News;
+  try {
+    rereadArticle = await reread();
+  } catch (error) {
+    console.error('[translate-pipeline] failed to re-read article for verification', contentId, error);
+    return {
+      status: 'error',
+      message: 'failed to re-read article for verification',
+      attempted: succeeded,
+      failed: [...failed, ...notAttempted],
+    };
   }
 
-  // 全対象言語（今回未翻訳だった言語すべて）が検証まで通った場合のみ「完了」にする。
-  // 1つでも失敗・未検証が残る場合、ステータスは「未処理」に戻さず「生成中」のまま
-  // 残す。理由：本番にはまだ新パイプライン未対応の旧コードがデプロイされており、
-  // 旧コードは translation_status が「未処理」だと（「生成中」「完了」以外の値なので）
-  // 多重実行防止チェックを素通りしてしまい、この記事の英語などの既存翻訳を独自に
-  // 再生成・上書きしてしまう恐れがある。「生成中」のままにしておけば、新旧どちらの
-  // コードの多重実行防止チェックにも確実に引っかかるため、旧コードによる上書きを
-  // 防げる。新パイプラインが本番稼働した後も、「生成中」のまま残しておいて問題ない
-  // （STALE_GENERATING_MS 経過後は isStaleGenerating により自動的に再試行対象になる）。
-  const allVerified = verificationFailed.length === 0;
-  const finalStatus: TranslationStatus | null = allVerified ? '完了' : null;
+  const stillMissing = missingTranslationLangs(rereadArticle);
+  const allDone = stillMissing.length === 0;
 
-  if (finalStatus) {
+  // 1つでも未翻訳の言語が残る場合、ステータスは「未処理」に戻さず「生成中」のまま
+  // 残す。理由：本番にはまだ新パイプライン未対応の旧コードがデプロイされている
+  // 可能性があり、旧コードは translation_status が「未処理」だと（「生成中」「完了」
+  // 以外の値なので）多重実行防止チェックを素通りしてしまい、この記事の既存翻訳を
+  // 独自に再生成・上書きしてしまう恐れがある。「生成中」のままにしておけば、新旧
+  // どちらのコードの多重実行防止チェックにも確実に引っかかるため、旧コードによる
+  // 上書きを防げる（STALE_GENERATING_MS 経過後は isStaleGenerating により自動的に
+  // 再試行対象になる）。
+  if (allDone) {
     try {
-      await updateNewsTranslation(contentId, { translation_status: [finalStatus] });
+      await updateNewsTranslation(contentId, { translation_status: ['完了'] });
     } catch (error) {
       console.error('[translate-pipeline] failed to finalize translation_status', contentId, error);
       return {
         status: 'error',
         message: 'failed to finalize status',
-        attempted: verified,
-        failed: verificationFailed,
+        attempted: succeeded,
+        failed: [],
       };
     }
   } else {
     console.error(
-      '[translate-pipeline] leaving translation_status as 生成中 due to unverified/failed languages',
+      '[translate-pipeline] leaving translation_status as 生成中: still missing',
       contentId,
-      verificationFailed,
+      stillMissing,
     );
   }
 
   return {
-    status: allVerified ? 'ok' : 'partial',
-    verified,
-    failed: verificationFailed,
-    translation_status: finalStatus ?? '生成中',
+    status: allDone ? 'ok' : 'partial',
+    verified: succeeded.filter((suffix) => !stillMissing.includes(suffix)),
+    failed: stillMissing,
+    translation_status: allDone ? '完了' : '生成中',
   };
 }
