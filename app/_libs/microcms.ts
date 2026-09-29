@@ -15,7 +15,7 @@ export type {
   TitleFields,
   ContentFields,
 } from './news';
-export { localizedTitle, localizedContent } from './news';
+export { localizedTitle, localizedContent, missingTranslationLangs } from './news';
 import type { News, Category } from './news';
 
 // 事業内容の型定義

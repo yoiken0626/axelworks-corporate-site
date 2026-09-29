@@ -1,6 +1,11 @@
 import Link from 'next/link';
 import ButtonLink from '@/app/_components/ButtonLink';
+import { LANGUAGES } from '@/app/_libs/lang';
 import styles from './page.module.css';
+
+// 「自動で◯か国語に翻訳される」の文言用。対応言語数・言語名の並びを
+// レジストリから算出し、対応言語が増減しても固定値を直す必要が無いようにする。
+const TRANSLATED_LANGUAGE_NAMES_JA = LANGUAGES.map((l) => l.translationNameJa ?? '日本語').join('・');
 
 export default function Page() {
   return (
@@ -67,7 +72,7 @@ export default function Page() {
         <p>このサイト自体が、その成果物です。</p>
         <ul>
           <li>
-            記事を書くと、自動で8か国語（日本語・英語・韓国語・中国語・ドイツ語・フランス語・スペイン語・ロシア語）に翻訳される仕組み
+            記事を書くと、自動で{LANGUAGES.length}か国語（{TRANSLATED_LANGUAGE_NAMES_JA}）に翻訳される仕組み
           </li>
           <li>3D地球儀のUIで、クリックひとつで表示言語を切り替えられる機能</li>
           <li>サイトの内容を音声で読み上げ、今読んでいる場所をハイライト表示する機能</li>
@@ -84,7 +89,7 @@ export default function Page() {
 
         <h2>私を採用していただくと、何ができるのか</h2>
         <ul>
-          <li>8か国語対応の企業サイト制作（このサイトが、まさにその実例です）</li>
+          <li>{LANGUAGES.length}か国語対応の企業サイト制作（このサイトが、まさにその実例です）</li>
           <li>商談予約フォーム付きのLP制作</li>
           <li>マルチテナント型SaaS開発</li>
           <li>AX/DX 社内ナレッジマネジメント・リスキリング支援</li>

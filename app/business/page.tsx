@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
-import { LANG_COOKIE, resolveLang } from '@/app/_libs/lang';
+import { LANG_COOKIE, resolveLang, LANGUAGES, TRANSLATION_TARGET_LANGS } from '@/app/_libs/lang';
 import { ui } from '@/app/_libs/ui-strings';
 import styles from './page.module.css';
 import ButtonLink from '@/app/_components/ButtonLink';
@@ -51,12 +51,11 @@ const sections: Section[] = [
   {
     status: '提供中',
     category: 'FOR BUSINESS',
-    title: '8か国語対応コーポレートサイト・LP制作',
+    title: `${LANGUAGES.length}か国語対応コーポレートサイト・LP制作`,
     subtitle: '会社の魅力を、世界に伝わるWebサイトへ',
-    description:
-      'このAXelWorksのサイト自体が、まさにその実例です。日本語で記事を書くだけで7言語へ自動翻訳される仕組み、3D地球儀のUIでの言語切り替え、音声読み上げ機能まで、すべて自社サイトで実装・運用しています。',
+    description: `このAXelWorksのサイト自体が、まさにその実例です。日本語で記事を書くだけで${TRANSLATION_TARGET_LANGS.length}言語へ自動翻訳される仕組み、3D地球儀のUIでの言語切り替え、音声読み上げ機能まで、すべて自社サイトで実装・運用しています。`,
     image: '/business-multilingual.png',
-    imageAlt: '8か国語対応コーポレートサイト・LP制作のイメージ',
+    imageAlt: `${LANGUAGES.length}か国語対応コーポレートサイト・LP制作のイメージ`,
     links: [
       {
         label: '記事「Claude Code Proプランでもここまでできた──相談→指示→実装のリレー開発術」を読む',

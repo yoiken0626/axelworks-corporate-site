@@ -16,6 +16,9 @@ import { LANGUAGES, type Lang } from './lang-registry';
 //  - es-ES-Neural2-A  … スペイン語（欧州）の女性。es-ES の Neural2 女性は -A / -E / -H
 //  - ru-RU-Wavenet-A … ロシア語の女性。ru-RU に Neural2 は無いため WaveNet
 //    （女性 WaveNet は -A / -C / -E。-B / -D は男性）
+//  - it-IT-Neural2-A … イタリア語の女性。voices API で実在・FEMALE を確認済み
+//  - pt-BR-Neural2-A … ブラジルポルトガル語の女性。voices API で実在・FEMALE を
+//    確認済み（pt-PT ではなく pt-BR。ポルトガル本国の音声とは別物）
 //    （存在しない name を渡すと Google 側が別ボイス（男性含む）にフォールバック
 //     または 400 を返す。追加時は必ず voices API で実在と性別を確認すること）
 //
@@ -30,6 +33,8 @@ const VOICE_NAME: Record<Lang, string> = {
   fr: 'fr-FR-Neural2-F',
   es: 'es-ES-Neural2-A',
   ru: 'ru-RU-Wavenet-A',
+  it: 'it-IT-Neural2-A',
+  pt: 'pt-BR-Neural2-A',
 };
 
 // 言語コード（レジストリの speechLangCode）と音声名（上記、server-only）を合わせた、

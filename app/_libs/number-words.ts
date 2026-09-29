@@ -15,6 +15,8 @@ export const NUMBER_WORDS: Record<Lang, string[]> = {
   fr: ['zéro', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf'],
   es: ['cero', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve'],
   ru: ['ноль', 'один', 'два', 'три', 'четыре', 'пять', 'шесть', 'семь', 'восемь', 'девять'],
+  it: ['zero', 'uno', 'due', 'tre', 'quattro', 'cinque', 'sei', 'sette', 'otto', 'nove'],
+  pt: ['zero', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove'],
 };
 
 /** digit は 0〜9。範囲外は空文字を返す。 */
@@ -144,6 +146,45 @@ const ru = (n: number, ones: string[]): string => {
   return `${RU_TENS[tens]} ${ones[units]}`;
 };
 
+const IT_TEENS = [
+  'dieci', 'undici', 'dodici', 'tredici', 'quattordici',
+  'quindici', 'sedici', 'diciassette', 'diciotto', 'diciannove',
+];
+const IT_TENS: Record<number, string> = {
+  2: 'venti', 3: 'trenta', 4: 'quaranta', 5: 'cinquanta', 6: 'sessanta', 7: 'settanta', 8: 'ottanta', 9: 'novanta',
+};
+// イタリア語は、十の位の語末母音が、1・8（母音始まり）の前で脱落する
+// （venti+uno→ventuno、venti+otto→ventotto）。3（tre）と合成するときだけ
+// アクセント付きの tré になる（venti+tre→ventitré）。
+const it = (n: number, ones: string[]): string => {
+  if (n < 10) return ones[n];
+  if (n < 20) return IT_TEENS[n - 10];
+  const tens = Math.floor(n / 10);
+  const units = n % 10;
+  const tensWord = IT_TENS[tens];
+  if (units === 0) return tensWord;
+  if (units === 1 || units === 8) return `${tensWord.slice(0, -1)}${ones[units]}`;
+  if (units === 3) return `${tensWord}tré`;
+  return `${tensWord}${ones[units]}`;
+};
+
+const PT_TEENS = [
+  'dez', 'onze', 'doze', 'treze', 'quatorze',
+  'quinze', 'dezesseis', 'dezessete', 'dezoito', 'dezenove',
+];
+const PT_TENS: Record<number, string> = {
+  2: 'vinte', 3: 'trinta', 4: 'quarenta', 5: 'cinquenta', 6: 'sessenta', 7: 'setenta', 8: 'oitenta', 9: 'noventa',
+};
+// ブラジルポルトガル語は「十の位 + e + 一の位」の規則的な合成（vinte e um、trinta e dois）。
+const pt = (n: number, ones: string[]): string => {
+  if (n < 10) return ones[n];
+  if (n < 20) return PT_TEENS[n - 10];
+  const tens = Math.floor(n / 10);
+  const units = n % 10;
+  if (units === 0) return PT_TENS[tens];
+  return `${PT_TENS[tens]} e ${ones[units]}`;
+};
+
 /** 0〜99 の、単語での読み方。範囲外・非整数は算用数字の文字列にフォールバックする。 */
 export const extendedNumberWord = (n: number, lang: Lang): string => {
   if (!Number.isInteger(n) || n < 0 || n > 99) return String(n);
@@ -165,6 +206,10 @@ export const extendedNumberWord = (n: number, lang: Lang): string => {
       return es(n, ones);
     case 'ru':
       return ru(n, ones);
+    case 'it':
+      return it(n, ones);
+    case 'pt':
+      return pt(n, ones);
     default:
       return String(n);
   }

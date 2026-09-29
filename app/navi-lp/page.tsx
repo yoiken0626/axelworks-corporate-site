@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
-import { LANG_COOKIE, resolveLang } from '@/app/_libs/lang';
+import { LANG_COOKIE, resolveLang, LANGUAGES } from '@/app/_libs/lang';
 import { ui } from '@/app/_libs/ui-strings';
 import { NAVI_LP_LINKS } from '@/app/_constants';
 import { SCROLL_DOCK_SENTINEL_ID } from '@/app/_libs/scroll-dock';
@@ -28,6 +28,10 @@ export default async function Page() {
   const guidedImageSrc = resolvePublicImage('navi-lp', SCREENSHOTS.guided);
   const lpNotesImageSrc = resolvePublicImage('navi-lp', SCREENSHOTS.lpNotes);
 
+  // 対応言語数を伝える文言（{langCount}）は、固定値ではなくレジストリから算出する
+  const guidedPoint4 = ui('naviLpGuidedPoint4', lang).replace('{langCount}', String(LANGUAGES.length));
+  const lpNotesPoint2 = ui('naviLpLpNotesPoint2', lang).replace('{langCount}', String(LANGUAGES.length));
+
   // 読み上げ対象：見出しと本文（表示言語に合わせる）
   const segments = [
     ui('naviLpHeading', lang),
@@ -40,7 +44,7 @@ export default async function Page() {
     ui('naviLpGuidedPoint1', lang),
     ui('naviLpGuidedPoint2', lang),
     ui('naviLpGuidedPoint3', lang),
-    ui('naviLpGuidedPoint4', lang),
+    guidedPoint4,
     ui('naviLpGuidedSuitable', lang),
     ui('naviLpGuidedArticleLinkLabel', lang),
     ui('saasArticleLangNote', lang),
@@ -48,7 +52,7 @@ export default async function Page() {
     ui('naviLpLpNotesTagline', lang),
     ui('naviLpLpNotesIntro', lang),
     ui('naviLpLpNotesPoint1', lang),
-    ui('naviLpLpNotesPoint2', lang),
+    lpNotesPoint2,
     ui('naviLpLpNotesPoint3', lang),
     ui('naviLpLpNotesPoint4', lang),
     ui('naviLpLpNotesSuitable', lang),
@@ -104,7 +108,7 @@ export default async function Page() {
               <li>{ui('naviLpGuidedPoint1', lang)}</li>
               <li>{ui('naviLpGuidedPoint2', lang)}</li>
               <li>{ui('naviLpGuidedPoint3', lang)}</li>
-              <li>{ui('naviLpGuidedPoint4', lang)}</li>
+              <li>{guidedPoint4}</li>
             </ul>
             <p className={styles.variantSuitable}>{ui('naviLpGuidedSuitable', lang)}</p>
             <div className={styles.variantActions}>
@@ -140,7 +144,7 @@ export default async function Page() {
             )}
             <ul>
               <li>{ui('naviLpLpNotesPoint1', lang)}</li>
-              <li>{ui('naviLpLpNotesPoint2', lang)}</li>
+              <li>{lpNotesPoint2}</li>
               <li>{ui('naviLpLpNotesPoint3', lang)}</li>
               <li>{ui('naviLpLpNotesPoint4', lang)}</li>
             </ul>

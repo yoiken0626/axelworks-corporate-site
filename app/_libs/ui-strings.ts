@@ -17,6 +17,8 @@ const UI_STRINGS = {
     fr: "AXelWorks — se relier au monde en plusieurs langues, aux côtés de l'IA",
     es: 'AXelWorks — conectar con el mundo en muchos idiomas, junto con la IA',
     ru: 'AXelWorks — связываем мир на многих языках вместе с ИИ',
+    it: "AXelWorks — in contatto con il mondo in tante lingue, insieme all'IA",
+    pt: 'AXelWorks — conectando-se com o mundo em muitos idiomas, ao lado da IA',
   },
 
   // ヘッダー / フッター共通のナビゲーション
@@ -29,6 +31,8 @@ const UI_STRINGS = {
     fr: 'Articles',
     es: 'Artículos',
     ru: 'Статьи',
+    it: 'Articoli',
+    pt: 'Artigos',
   },
   navBusiness: {
     ja: '事業内容',
@@ -39,6 +43,8 @@ const UI_STRINGS = {
     fr: 'Activités',
     es: 'Servicios',
     ru: 'Услуги',
+    it: 'Attività',
+    pt: 'Serviços',
   },
   navAbout: {
     ja: '私たちについて',
@@ -49,6 +55,8 @@ const UI_STRINGS = {
     fr: 'Qui nous sommes',
     es: 'Quiénes somos',
     ru: 'Кто мы',
+    it: 'Chi siamo',
+    pt: 'Quem somos',
   },
   navContact: {
     ja: 'お問い合わせ',
@@ -59,6 +67,8 @@ const UI_STRINGS = {
     fr: 'Contact',
     es: 'Contacto',
     ru: 'Контакты',
+    it: 'Contatti',
+    pt: 'Contato',
   },
 
   // アクセシビリティ用のラベル
@@ -71,6 +81,8 @@ const UI_STRINGS = {
     fr: 'Aller au contenu principal',
     es: 'Saltar al contenido principal',
     ru: 'Перейти к основному содержанию',
+    it: 'Salta al contenuto principale',
+    pt: 'Pular para o conteúdo principal',
   },
   navMain: {
     ja: 'メインメニュー',
@@ -81,6 +93,8 @@ const UI_STRINGS = {
     fr: 'Menu principal',
     es: 'Menú principal',
     ru: 'Главное меню',
+    it: 'Menu principale',
+    pt: 'Menu principal',
   },
   navFooter: {
     ja: 'フッターメニュー',
@@ -91,6 +105,8 @@ const UI_STRINGS = {
     fr: 'Menu de pied de page',
     es: 'Menú de pie de página',
     ru: 'Меню в подвале',
+    it: 'Menu di piè di pagina',
+    pt: 'Menu de rodapé',
   },
   menuOpen: {
     ja: 'メニューを開く',
@@ -101,6 +117,8 @@ const UI_STRINGS = {
     fr: 'Ouvrir le menu',
     es: 'Abrir el menú',
     ru: 'Открыть меню',
+    it: 'Apri il menu',
+    pt: 'Abrir o menu',
   },
   menuClose: {
     ja: 'メニューを閉じる',
@@ -111,6 +129,8 @@ const UI_STRINGS = {
     fr: 'Fermer le menu',
     es: 'Cerrar el menú',
     ru: 'Закрыть меню',
+    it: 'Chiudi il menu',
+    pt: 'Fechar o menu',
   },
   paginationLabel: {
     ja: 'ページ送り',
@@ -121,6 +141,8 @@ const UI_STRINGS = {
     fr: 'Pagination',
     es: 'Paginación',
     ru: 'Постраничная навигация',
+    it: 'Paginazione',
+    pt: 'Paginação',
   },
   paginationPage: {
     ja: '{n}ページ目',
@@ -131,6 +153,8 @@ const UI_STRINGS = {
     fr: 'Page {n}',
     es: 'Página {n}',
     ru: 'Страница {n}',
+    it: 'Pagina {n}',
+    pt: 'Página {n}',
   },
   opensInNewTab: {
     ja: '（新しいタブで開く）',
@@ -141,6 +165,8 @@ const UI_STRINGS = {
     fr: '(ouvre dans un nouvel onglet)',
     es: '(se abre en una pestaña nueva)',
     ru: '(откроется в новой вкладке)',
+    it: '(si apre in una nuova scheda)',
+    pt: '(abre em uma nova guia)',
   },
 
   // ヘッダーナビ（/hire-me。日本語のみ）
@@ -159,6 +185,8 @@ const UI_STRINGS = {
     fr: '© {year} AXelWorks',
     es: '© {year} AXelWorks',
     ru: '© {year} AXelWorks',
+    it: '© {year} AXelWorks',
+    pt: '© {year} AXelWorks',
   },
 
   // News セクション（トップページの記事グリッド見出し・読み上げ文言）
@@ -171,6 +199,8 @@ const UI_STRINGS = {
     fr: 'Articles',
     es: 'Artículos',
     ru: 'Статьи',
+    it: 'Articoli',
+    pt: 'Artigos',
   },
   // ニュース一覧ページ（/news, /news/p/N）の h1
   newsListHeading: {
@@ -182,6 +212,8 @@ const UI_STRINGS = {
     fr: 'Articles',
     es: 'Artículos',
     ru: 'Статьи',
+    it: 'Articoli',
+    pt: 'Artigos',
   },
   seeMore: {
     ja: 'もっとみる',
@@ -192,6 +224,8 @@ const UI_STRINGS = {
     fr: 'Voir plus',
     es: 'Ver más',
     ru: 'Подробнее',
+    it: 'Vedi altro',
+    pt: 'Ver mais',
   },
   newsListLink: {
     ja: '記事一覧へ',
@@ -202,6 +236,8 @@ const UI_STRINGS = {
     fr: 'Tous les articles',
     es: 'Ver todos los artículos',
     ru: 'Все статьи',
+    it: 'Vedi tutti gli articoli',
+    pt: 'Ver todos os artigos',
   },
   // トップページの記事グリッド「もっと見る」ボタン（読み込み中）
   loadMoreLoading: {
@@ -213,6 +249,8 @@ const UI_STRINGS = {
     fr: 'Chargement…',
     es: 'Cargando…',
     ru: 'Загрузка…',
+    it: 'Caricamento…',
+    pt: 'Carregando…',
   },
   // 取得失敗時のエラーメッセージ（下にボタンは残るので再度押せる旨は含めない）
   loadMoreError: {
@@ -224,6 +262,8 @@ const UI_STRINGS = {
     fr: 'Échec du chargement des articles. Veuillez réessayer.',
     es: 'No se pudieron cargar más artículos. Inténtelo de nuevo.',
     ru: 'Не удалось загрузить статьи. Повторите попытку.',
+    it: 'Impossibile caricare altri articoli. Riprovi.',
+    pt: 'Falha ao carregar mais artigos. Tente novamente.',
   },
   // 追加読み込み完了時の読み上げ用アナウンス（{n} は追加件数）
   loadMoreAnnouncement: {
@@ -235,6 +275,8 @@ const UI_STRINGS = {
     fr: '{n} articles supplémentaires ajoutés',
     es: 'Se añadieron {n} artículos más',
     ru: 'Добавлено ещё {n} статей',
+    it: 'Aggiunti altri {n} articoli',
+    pt: '{n} artigos adicionados',
   },
 
   // 記事詳細ページの目次
@@ -247,6 +289,8 @@ const UI_STRINGS = {
     fr: 'Sommaire',
     es: 'Índice',
     ru: 'Содержание',
+    it: 'Indice',
+    pt: 'Índice',
   },
 
   // 下層ページのヒーローバナー小見出し（news はバナー廃止済み）
@@ -259,6 +303,8 @@ const UI_STRINGS = {
     fr: 'Activités',
     es: 'Servicios',
     ru: 'Услуги',
+    it: 'Attività',
+    pt: 'Serviços',
   },
 
   // ページ読み上げコントロール
@@ -271,6 +317,8 @@ const UI_STRINGS = {
     fr: 'Lire cette page à voix haute',
     es: 'Leer esta página en voz alta',
     ru: 'Озвучить эту страницу',
+    it: 'Leggi questa pagina ad alta voce',
+    pt: 'Ler esta página em voz alta',
   },
   readAloudPause: {
     ja: '読み上げを一時停止',
@@ -281,6 +329,8 @@ const UI_STRINGS = {
     fr: 'Suspendre la lecture',
     es: 'Pausar la lectura',
     ru: 'Приостановить озвучивание',
+    it: 'Metti in pausa la lettura',
+    pt: 'Pausar a leitura',
   },
   readAloudStop: {
     ja: '読み上げを停止',
@@ -291,6 +341,8 @@ const UI_STRINGS = {
     fr: 'Arrêter la lecture',
     es: 'Detener la lectura',
     ru: 'Остановить озвучивание',
+    it: 'Interrompi la lettura',
+    pt: 'Parar a leitura',
   },
   readAloudSpeed: {
     ja: '速度',
@@ -301,6 +353,8 @@ const UI_STRINGS = {
     fr: 'Vitesse',
     es: 'Velocidad',
     ru: 'Скорость',
+    it: 'Velocità',
+    pt: 'Velocidade',
   },
   // 「繰り返し」ボタン（停止中/未選択時のラベル。押すと回数を選ぶメニューが開く）
   readAloudRepeat: {
@@ -312,6 +366,8 @@ const UI_STRINGS = {
     fr: 'Répéter',
     es: 'Repetir',
     ru: 'Повторить',
+    it: 'Ripeti',
+    pt: 'Repetir',
   },
   // 「繰り返し」ボタン（繰り返し中のラベル。押すとメニューは開かず、今の周を
   // 最後まで読んだところで止まる）
@@ -324,6 +380,8 @@ const UI_STRINGS = {
     fr: 'Arrêter la répétition',
     es: 'Detener la repetición',
     ru: 'Остановить повтор',
+    it: 'Interrompi la ripetizione',
+    pt: 'Parar a repetição',
   },
   // 繰り返し回数メニューの見出し（メニューの aria-label にも使う）
   readAloudRepeatMenuHeading: {
@@ -335,6 +393,8 @@ const UI_STRINGS = {
     fr: 'Nombre de répétitions',
     es: 'Número de repeticiones',
     ru: 'Количество повторов',
+    it: 'Numero di ripetizioni',
+    pt: 'Número de repetições',
   },
   // 繰り返し回数メニューの各項目（{count} は REPEAT_OPTIONS の値に置換）
   readAloudRepeatOption: {
@@ -346,6 +406,8 @@ const UI_STRINGS = {
     fr: '{count} fois',
     es: '{count} veces',
     ru: '{count} раз',
+    it: '{count} volte',
+    pt: '{count} vezes',
   },
   // 繰り返し再生中の進行状況（aria-live で通知。読み上げ音声には含めない）
   readAloudRepeatProgress: {
@@ -357,6 +419,8 @@ const UI_STRINGS = {
     fr: 'Répétition {lap} sur {count}',
     es: 'Repetición {lap} de {count}',
     ru: 'Повтор {lap} из {count}',
+    it: 'Ripetizione {lap} di {count}',
+    pt: 'Repetição {lap} de {count}',
   },
   // 記事が長く音声キャッシュの上限を超えたため、繰り返し再生を無効化した旨の控えめな注記
   readAloudRepeatUnavailable: {
@@ -368,6 +432,8 @@ const UI_STRINGS = {
     fr: 'Cet article est trop long pour la lecture en boucle.',
     es: 'Este artículo es demasiado largo para la repetición.',
     ru: 'Эта статья слишком длинная для повтора воспроизведения.',
+    it: 'Questo articolo è troppo lungo per la ripetizione.',
+    pt: 'Este artigo é longo demais para a repetição.',
   },
   // /api/tts が失敗した（403/429/502等）ときの控えめなエラー表示。読み上げ対象の
   // テキストには含めず、aria-live での通知にのみ使う。
@@ -380,6 +446,8 @@ const UI_STRINGS = {
     fr: "La lecture à voix haute n'est pas disponible pour le moment. Veuillez réessayer plus tard.",
     es: 'La lectura en voz alta no está disponible en este momento. Inténtelo de nuevo más tarde.',
     ru: 'Озвучивание сейчас недоступно. Повторите попытку позже.',
+    it: 'La lettura ad alta voce non è disponibile al momento. Riprovi più tardi.',
+    pt: 'A leitura em voz alta não está disponível no momento. Tente novamente mais tarde.',
   },
 
   // 地球儀（言語切り替え）ボタンの aria-label。{lang} は選択中の言語の現地語名
@@ -393,8 +461,10 @@ const UI_STRINGS = {
     fr: 'Langue actuelle : {lang}. Changer de langue',
     es: 'Idioma actual: {lang}. Cambiar idioma',
     ru: 'Текущий язык: {lang}. Изменить язык',
+    it: 'Lingua attuale: {lang}. Cambia lingua',
+    pt: 'Idioma atual: {lang}. Mudar idioma',
   },
-  // 言語選択メニュー（8言語の国旗リング）の aria-label
+  // 言語選択メニュー（対応言語ぶんの国旗リング）の aria-label
   globeLanguageMenuHeading: {
     ja: '言語を選択',
     en: 'Select language',
@@ -404,6 +474,8 @@ const UI_STRINGS = {
     fr: 'Choisir la langue',
     es: 'Seleccionar idioma',
     ru: 'Выбрать язык',
+    it: 'Seleziona la lingua',
+    pt: 'Selecionar idioma',
   },
 
   // ディクテーション練習モード（記事ページのみ）
@@ -416,6 +488,8 @@ const UI_STRINGS = {
     fr: 'Exercice',
     es: 'Práctica',
     ru: 'Практика',
+    it: 'Esercizio',
+    pt: 'Prática',
   },
   practiceEntryAriaLabel: {
     ja: 'ディクテーション練習を開く',
@@ -426,6 +500,8 @@ const UI_STRINGS = {
     fr: 'Ouvrir l’exercice de dictée',
     es: 'Abrir la práctica de dictado',
     ru: 'Открыть практику диктанта',
+    it: "Apri l'esercizio di dettato",
+    pt: 'Abrir a prática de ditado',
   },
   practicePanelHeading: {
     ja: 'ディクテーション練習',
@@ -436,6 +512,8 @@ const UI_STRINGS = {
     fr: 'Exercice de dictée',
     es: 'Práctica de dictado',
     ru: 'Практика диктанта',
+    it: 'Esercizio di dettato',
+    pt: 'Prática de ditado',
   },
   practiceBoundaryLabel: {
     ja: '区切り',
@@ -446,6 +524,8 @@ const UI_STRINGS = {
     fr: 'Points de pause',
     es: 'Puntos de pausa',
     ru: 'Точки паузы',
+    it: 'Punti di pausa',
+    pt: 'Pontos de pausa',
   },
   practiceBoundaryCommaPeriod: {
     ja: 'カンマ・ピリオド',
@@ -456,6 +536,8 @@ const UI_STRINGS = {
     fr: 'Virgules et points',
     es: 'Comas y puntos',
     ru: 'Запятые и точки',
+    it: 'Virgole e punti',
+    pt: 'Vírgulas e pontos',
   },
   practiceBoundarySentence: {
     ja: '1文',
@@ -466,6 +548,8 @@ const UI_STRINGS = {
     fr: 'Phrases entières',
     es: 'Oraciones completas',
     ru: 'Целые предложения',
+    it: 'Frasi complete',
+    pt: 'Frases completas',
   },
   // 進み具合の表示（例: "3 / 42"）。{current} / {total} を置換する
   practiceProgress: {
@@ -477,6 +561,8 @@ const UI_STRINGS = {
     fr: '{current} / {total}',
     es: '{current} / {total}',
     ru: '{current} / {total}',
+    it: '{current} / {total}',
+    pt: '{current} / {total}',
   },
   practiceRevealShow: {
     ja: '答えを見る',
@@ -487,6 +573,8 @@ const UI_STRINGS = {
     fr: 'Afficher la réponse',
     es: 'Ver la respuesta',
     ru: 'Показать ответ',
+    it: 'Mostra la risposta',
+    pt: 'Mostrar resposta',
   },
   practiceRevealHide: {
     ja: '隠す',
@@ -497,6 +585,8 @@ const UI_STRINGS = {
     fr: 'Masquer',
     es: 'Ocultar',
     ru: 'Скрыть',
+    it: 'Nascondi',
+    pt: 'Ocultar',
   },
   practiceHiddenNote: {
     ja: '紙に書き取ってから「答えを見る」を押してください',
@@ -507,6 +597,8 @@ const UI_STRINGS = {
     fr: 'Écrivez-le sur papier, puis appuyez sur « Afficher la réponse »',
     es: 'Escríbalo en papel y luego pulse "Ver la respuesta"',
     ru: 'Запишите на бумаге, затем нажмите «Показать ответ»',
+    it: 'Lo scriva su carta, poi tocchi «Mostra la risposta»',
+    pt: 'Escreva no papel e depois toque em "Mostrar resposta"',
   },
   practiceStart: {
     ja: '開始',
@@ -517,6 +609,8 @@ const UI_STRINGS = {
     fr: 'Démarrer',
     es: 'Empezar',
     ru: 'Начать',
+    it: 'Inizia',
+    pt: 'Iniciar',
   },
   practiceReplay: {
     ja: 'もう一度',
@@ -527,6 +621,8 @@ const UI_STRINGS = {
     fr: 'Réécouter',
     es: 'Repetir',
     ru: 'Ещё раз',
+    it: 'Riascolta',
+    pt: 'Ouvir novamente',
   },
   practiceNext: {
     ja: '次へ',
@@ -537,6 +633,8 @@ const UI_STRINGS = {
     fr: 'Suivant',
     es: 'Siguiente',
     ru: 'Далее',
+    it: 'Avanti',
+    pt: 'Próximo',
   },
   practicePrevious: {
     ja: '前へ',
@@ -547,6 +645,8 @@ const UI_STRINGS = {
     fr: 'Précédent',
     es: 'Anterior',
     ru: 'Назад',
+    it: 'Indietro',
+    pt: 'Anterior',
   },
   practiceFinish: {
     ja: '終了',
@@ -557,6 +657,8 @@ const UI_STRINGS = {
     fr: 'Terminer',
     es: 'Finalizar',
     ru: 'Завершить',
+    it: 'Termina',
+    pt: 'Finalizar',
   },
   practiceFinishedHeading: {
     ja: 'おわりました',
@@ -567,6 +669,8 @@ const UI_STRINGS = {
     fr: 'Terminé !',
     es: '¡Completado!',
     ru: 'Готово!',
+    it: 'Fatto!',
+    pt: 'Concluído!',
   },
   practiceRestart: {
     ja: '最初から',
@@ -577,6 +681,8 @@ const UI_STRINGS = {
     fr: 'Recommencer',
     es: 'Empezar de nuevo',
     ru: 'Начать сначала',
+    it: 'Ricomincia',
+    pt: 'Recomeçar',
   },
   // 練習の種類（手書き／リピート再生）を選ぶ2択の見出し・aria-label
   practiceTypeLabel: {
@@ -588,6 +694,8 @@ const UI_STRINGS = {
     fr: "Type d'exercice",
     es: 'Tipo de práctica',
     ru: 'Тип практики',
+    it: 'Tipo di esercizio',
+    pt: 'Tipo de prática',
   },
   practiceTypeDictation: {
     ja: '手書き',
@@ -598,6 +706,8 @@ const UI_STRINGS = {
     fr: 'Écriture manuscrite',
     es: 'Escritura a mano',
     ru: 'Письмо от руки',
+    it: 'Scrittura a mano',
+    pt: 'Escrita à mão',
   },
   // 既存の繰り返し機能の英語表記「Repeat」とは区別する（区間ごとに自動で
   // 進み続ける「リピート再生」練習モード）
@@ -610,6 +720,8 @@ const UI_STRINGS = {
     fr: 'Lecture en boucle',
     es: 'Reproducción en bucle',
     ru: 'Повторное воспроизведение',
+    it: 'Riproduzione in loop',
+    pt: 'Reprodução em loop',
   },
   // リピート再生専用のボタン（自動で進むのを一時的に止める・続きから再開する）
   practicePause: {
@@ -621,6 +733,8 @@ const UI_STRINGS = {
     fr: 'Pause',
     es: 'Pausa',
     ru: 'Пауза',
+    it: 'Pausa',
+    pt: 'Pausa',
   },
   practiceResume: {
     ja: '再開',
@@ -631,6 +745,8 @@ const UI_STRINGS = {
     fr: 'Reprendre',
     es: 'Reanudar',
     ru: 'Продолжить',
+    it: 'Riprendi',
+    pt: 'Retomar',
   },
 
   // Business セクション
@@ -644,6 +760,8 @@ const UI_STRINGS = {
     fr: 'Notre activité',
     es: 'Nuestra actividad',
     ru: 'Наша деятельность',
+    it: 'La nostra attività',
+    pt: 'Nossos serviços',
   },
   businessBody1: {
     ja: '当社は、次世代テクノロジーの研究開発・製造・販売を行う革新的な企業です。',
@@ -654,6 +772,8 @@ const UI_STRINGS = {
     fr: 'Nous sommes une entreprise innovante spécialisée dans la recherche, le développement, la fabrication et la commercialisation de technologies de nouvelle génération.',
     es: 'Somos una empresa innovadora dedicada a la investigación, el desarrollo, la fabricación y la venta de tecnología de nueva generación.',
     ru: 'Мы — инновационная компания, занимающаяся исследованиями, разработкой, производством и продажей технологий нового поколения.',
+    it: "Siamo un'azienda innovativa impegnata nella ricerca, sviluppo, produzione e vendita di tecnologie di nuova generazione.",
+    pt: 'Somos uma empresa inovadora dedicada à pesquisa, desenvolvimento, fabricação e venda de tecnologia de próxima geração.',
   },
   businessBody2: {
     ja: 'AI、ロボット工学、自律システムなど、幅広い分野でのソリューション提供を通じて、社会の進化と未来の創造に貢献します。',
@@ -664,6 +784,8 @@ const UI_STRINGS = {
     fr: "Grâce à des solutions dans de nombreux domaines — IA, robotique, systèmes autonomes et bien d'autres —, nous contribuons au progrès de la société et à la construction de l'avenir.",
     es: 'A través de soluciones en una amplia variedad de campos —IA, robótica, sistemas autónomos y más—, contribuimos al avance de la sociedad y a la creación del futuro.',
     ru: 'Предлагая решения в самых разных областях — искусственный интеллект, робототехника, автономные системы и многое другое, — мы вносим вклад в развитие общества и создание будущего.',
+    it: "Attraverso soluzioni in un'ampia gamma di settori — IA, robotica, sistemi autonomi e altro ancora — contribuiamo al progresso della società e alla creazione del futuro.",
+    pt: 'Por meio de soluções em uma ampla gama de áreas — IA, robótica, sistemas autônomos e muito mais —, contribuímos para o avanço da sociedade e a criação do futuro.',
   },
 
   // About Us セクション
@@ -677,6 +799,8 @@ const UI_STRINGS = {
     fr: 'Qui nous sommes',
     es: 'Quiénes somos',
     ru: 'Кто мы',
+    it: 'Chi siamo',
+    pt: 'Quem somos',
   },
   // トップページの要約。全文は /company ページ
   aboutLead: {
@@ -688,6 +812,8 @@ const UI_STRINGS = {
     fr: 'Un seul employé. Mais personne ne travaille seul ici.',
     es: 'Un solo empleado. Pero aquí nadie trabaja solo.',
     ru: 'Один сотрудник. Но здесь никто не работает в одиночку.',
+    it: 'Un solo dipendente. Ma qui nessuno lavora da solo.',
+    pt: 'Um único funcionário. Mas aqui ninguém trabalha sozinho.',
   },
   aboutSummary: {
     ja: 'AIと人がお互いの得意で働き、企業の「面倒」を減らすアプリと、人の「学びたい」を後押しするアプリをつくっています。',
@@ -698,6 +824,8 @@ const UI_STRINGS = {
     fr: "L'humain et l'IA jouent chacun de leurs forces pour créer des applications qui allègent les corvées des entreprises et d'autres qui soutiennent celles et ceux qui veulent apprendre.",
     es: 'Las personas y la IA aportan cada una sus fortalezas para crear aplicaciones que reducen las tareas tediosas de las empresas y otras que apoyan a quienes quieren aprender.',
     ru: 'Человек и ИИ используют свои сильные стороны и создают приложения, которые избавляют бизнес от рутины, и приложения для тех, кто хочет учиться.',
+    it: "Le persone e l'IA mettono in campo ciascuna i propri punti di forza, creando app che riducono il lavoro noioso delle aziende e app che sostengono chi vuole imparare.",
+    pt: 'Pessoas e IA usam cada uma seus próprios pontos fortes, criando aplicativos que reduzem tarefas tediosas das empresas e aplicativos que apoiam quem quer aprender.',
   },
 
   // /company ページ（私たちについて）。リード2行（companyLeadLine1/2）は、
@@ -713,6 +841,8 @@ const UI_STRINGS = {
     fr: 'Un seul employé.',
     es: 'Un solo empleado.',
     ru: 'Один сотрудник.',
+    it: 'Un solo dipendente.',
+    pt: 'Um único funcionário.',
   },
   companyLeadLine2: {
     ja: 'でも、仕事は一人でやらない。',
@@ -723,6 +853,8 @@ const UI_STRINGS = {
     fr: 'Mais personne ne travaille seul ici.',
     es: 'Pero aquí nadie trabaja solo.',
     ru: 'Но здесь никто не работает в одиночку.',
+    it: 'Ma qui nessuno lavora da solo.',
+    pt: 'Mas aqui ninguém trabalha sozinho.',
   },
   companyHeading: {
     ja: 'AIと人が、お互いの得意で働く会社。',
@@ -733,6 +865,8 @@ const UI_STRINGS = {
     fr: "Une entreprise où l'humain et l'IA jouent chacun de leurs forces.",
     es: 'Una empresa donde las personas y la IA aportan cada una sus fortalezas.',
     ru: 'Компания, где человек и ИИ используют свои сильные стороны.',
+    it: "Un'azienda in cui le persone e l'IA mettono in campo ciascuna i propri punti di forza.",
+    pt: 'Uma empresa onde pessoas e IA usam cada uma seus próprios pontos fortes.',
   },
   companyBody: {
     ja: 'AIと長年のIT経験を組み合わせ、企業の「面倒」を減らすアプリと、人の「学びたい」を後押しするアプリをつくります。開発の過程もすべて公開しながら、AIと一緒に会社を育てていきます。',
@@ -743,6 +877,8 @@ const UI_STRINGS = {
     fr: "En combinant l'IA à de longues années d'expérience en informatique, je crée des applications qui allègent les corvées des entreprises et d'autres qui soutiennent celles et ceux qui veulent apprendre. Je partage tout le processus de développement en toute transparence, et fais grandir cette entreprise aux côtés de l'IA.",
     es: 'Combinando la IA con muchos años de experiencia en TI, creo aplicaciones que reducen las tareas tediosas de las empresas y otras que apoyan a quienes quieren aprender. Comparto todo el proceso de desarrollo de forma abierta, y hago crecer esta empresa junto con la IA.',
     ru: 'Сочетая ИИ с многолетним опытом в сфере IT, я создаю приложения, которые избавляют бизнес от рутины, и приложения для тех, кто хочет учиться. Открыто делясь всем процессом разработки, я развиваю эту компанию вместе с ИИ.',
+    it: "Combinando l'IA con anni di esperienza nel settore IT, creo app che riducono il lavoro noioso delle aziende e app che sostengono chi vuole imparare. Condivido apertamente tutto il processo di sviluppo, facendo crescere questa azienda insieme all'IA.",
+    pt: 'Combinando a IA com anos de experiência em TI, crio aplicativos que reduzem tarefas tediosas das empresas e aplicativos que apoiam quem quer aprender. Compartilho todo o processo de desenvolvimento de forma aberta, fazendo esta empresa crescer junto com a IA.',
   },
   companyRepHeading: {
     ja: '代表について',
@@ -753,6 +889,8 @@ const UI_STRINGS = {
     fr: 'À propos du fondateur',
     es: 'Sobre el fundador',
     ru: 'Об основателе',
+    it: 'Il fondatore',
+    pt: 'Sobre o fundador',
   },
   companyRepBody: {
     ja: '約39年、IT業界でエンジニアとして生きてきました。今はAIエージェント達と共に、一人企業に挑戦中です。',
@@ -763,9 +901,11 @@ const UI_STRINGS = {
     fr: "Depuis environ 39 ans, je travaille en tant qu'ingénieur dans le secteur informatique. Aujourd'hui, avec des agents IA à mes côtés, je me lance le défi d'une entreprise individuelle.",
     es: 'Durante unos 39 años he trabajado como ingeniero en el sector de TI. Ahora, junto con agentes de IA, me embarco en el reto de dirigir una empresa unipersonal.',
     ru: 'Около 39 лет я работаю инженером в сфере IT. Сейчас вместе с ИИ-агентами я берусь за вызов — компанию, где работает один человек.',
+    it: "Da circa 39 anni lavoro come ingegnere nel settore IT. Ora, insieme ad agenti IA, mi sto cimentando nella sfida di gestire un'azienda individuale.",
+    pt: 'Há cerca de 39 anos trabalho como engenheiro no setor de TI. Agora, junto com agentes de IA, estou encarando o desafio de administrar uma empresa unipessoal.',
   },
-  // 代表者名（8言語）。人名は翻訳せず、各言語の慣習に合わせる：
-  // ja=原表記、en/de/fr/es=ヘボン式ローマ字（西欧語共通・名→ニックネーム→姓の順）、
+  // 代表者名（対応言語ぶん）。人名は翻訳せず、各言語の慣習に合わせる：
+  // ja=原表記、en/de/fr/es/it/pt=ヘボン式ローマ字（西欧語共通・名→ニックネーム→姓の順）、
   // ru=ポリワーノフ式キリル転写（Kennyはラテン文字のまま）、
   // ko=姓→ニックネーム→名の語順でハングル転写（Kennyはラテン文字のまま）、
   // zh=日本語と同じ漢字表記（中国語圏では人名の漢字をそのまま使うのが慣習）。
@@ -778,6 +918,8 @@ const UI_STRINGS = {
     fr: 'Kenichi (Kenny) Yoshida',
     es: 'Kenichi (Kenny) Yoshida',
     ru: 'Кэнъити (Kenny) Ёсида',
+    it: 'Kenichi (Kenny) Yoshida',
+    pt: 'Kenichi (Kenny) Yoshida',
   },
   companyRepNote: {
     ja: '法人設立準備中｜所在地・登記情報は設立後に掲載予定',
@@ -788,6 +930,8 @@ const UI_STRINGS = {
     fr: "Immatriculation de la société en cours | L'adresse et les informations d'enregistrement seront publiées après l'immatriculation",
     es: 'Constitución de la sociedad en trámite | La dirección y los datos registrales se publicarán tras la constitución',
     ru: 'Регистрация юридического лица готовится | Адрес и регистрационные данные будут опубликованы после регистрации',
+    it: "Costituzione della società in corso | L'indirizzo e i dati di registrazione saranno pubblicati dopo la costituzione",
+    pt: 'Constituição da empresa em andamento | O endereço e os dados de registro serão publicados após a constituição',
   },
 
   // トップページの「私を採用情報」誘導セクション（/hire-me へ）。
@@ -814,6 +958,8 @@ const UI_STRINGS = {
     fr: 'Contact',
     es: 'Contacto',
     ru: 'Связаться с нами',
+    it: 'Contatti',
+    pt: 'Contato',
   },
   businessContactBody: {
     ja: 'ご相談・お見積もりなど、お気軽にお問い合わせください。',
@@ -824,6 +970,8 @@ const UI_STRINGS = {
     fr: 'Questions, devis ou simple idée à échanger : n’hésitez pas à nous contacter.',
     es: 'Consultas, presupuestos o cualquier idea que quiera comentar: escríbanos sin compromiso.',
     ru: 'Консультация, смета или просто идея для обсуждения — напишите нам.',
+    it: "Domande, preventivi o semplicemente un'idea da discutere: non esiti a contattarci.",
+    pt: 'Dúvidas, orçamentos ou apenas uma ideia para conversar — sinta-se à vontade para entrar em contato.',
   },
   businessContactLink: {
     ja: 'お問い合わせフォームへ',
@@ -834,6 +982,8 @@ const UI_STRINGS = {
     fr: 'Accéder au formulaire de contact',
     es: 'Ir al formulario de contacto',
     ru: 'Перейти к форме обращения',
+    it: 'Vai al modulo di contatto',
+    pt: 'Ir para o formulário de contato',
   },
 
   // ----- Contact セクション（左カラム） -----
@@ -847,6 +997,8 @@ const UI_STRINGS = {
     fr: 'Ce petit « souci » qui vous bloque,',
     es: 'Ese pequeño «problema» que le frena,',
     ru: 'Та самая «небольшая загвоздка»,',
+    it: 'Quel piccolo intoppo che la blocca,',
+    pt: 'Aquele pequeno problema que está te incomodando,',
   },
   contactHeadingAccent: {
     ja: '聞かせてください。',
@@ -857,6 +1009,8 @@ const UI_STRINGS = {
     fr: 'parlons-en ensemble.',
     es: 'cuéntenoslo.',
     ru: 'расскажите нам о ней.',
+    it: 'ce lo racconti.',
+    pt: 'conte para nós.',
   },
   contactLead1: {
     ja: 'まだアイデアが固まっていなくても大丈夫です。',
@@ -867,6 +1021,8 @@ const UI_STRINGS = {
     fr: "Peu importe si votre idée n'est pas encore aboutie.",
     es: 'No pasa nada si su idea aún no está del todo definida.',
     ru: 'Ничего страшного, если ваша идея ещё не оформилась.',
+    it: 'Va benissimo anche se la sua idea non è ancora del tutto definita.',
+    pt: 'Não tem problema se sua ideia ainda não estiver totalmente definida.',
   },
   contactLead2: {
     ja: 'できることから、一緒に考えます。',
@@ -877,6 +1033,8 @@ const UI_STRINGS = {
     fr: 'Nous réfléchirons ensemble à la prochaine étape.',
     es: 'Pensaremos juntos en el siguiente paso.',
     ru: 'Вместе подумаем над следующим шагом.',
+    it: 'Penseremo insieme al prossimo passo.',
+    pt: 'Vamos pensar juntos no próximo passo.',
   },
   contactService1: {
     ja: 'AIエージェント実装支援（法人向けコンサルティング）',
@@ -887,6 +1045,8 @@ const UI_STRINGS = {
     fr: "Accompagnement à la mise en œuvre d'agents IA (conseil aux entreprises)",
     es: 'Apoyo en la implementación de agentes de IA (consultoría para empresas)',
     ru: 'Поддержка внедрения ИИ-агентов (консалтинг для компаний)',
+    it: "Supporto all'implementazione di agenti IA (consulenza per aziende)",
+    pt: 'Suporte à implementação de agentes de IA (consultoria para empresas)',
   },
   contactService2: {
     ja: '受託開発・SaaS開発',
@@ -897,6 +1057,8 @@ const UI_STRINGS = {
     fr: 'Développement sur mesure et développement SaaS',
     es: 'Desarrollo por encargo y desarrollo SaaS',
     ru: 'Разработка на заказ и разработка SaaS',
+    it: 'Sviluppo su commessa e sviluppo SaaS',
+    pt: 'Desenvolvimento sob encomenda e desenvolvimento de SaaS',
   },
   contactService3: {
     ja: 'AI・IT研修事業「AX Academy」',
@@ -907,6 +1069,8 @@ const UI_STRINGS = {
     fr: 'Formations IA et IT « AX Academy »',
     es: 'Formación en IA e IT «AX Academy»',
     ru: 'Обучение ИИ и ИТ «AX Academy»',
+    it: 'Formazione in IA e IT — «AX Academy»',
+    pt: 'Treinamento em IA e TI — "AX Academy"',
   },
 
   // ----- Contact フォーム -----
@@ -919,6 +1083,8 @@ const UI_STRINGS = {
     fr: 'Nom',
     es: 'Nombre',
     ru: 'Имя',
+    it: 'Nome',
+    pt: 'Nome',
   },
   formNamePlaceholder: {
     ja: '山田 太郎',
@@ -929,6 +1095,8 @@ const UI_STRINGS = {
     fr: 'Jean Dupont',
     es: 'Juan Pérez',
     ru: 'Иван Иванов',
+    it: 'Mario Rossi',
+    pt: 'João Silva',
   },
   formEmail: {
     ja: 'メールアドレス',
@@ -939,6 +1107,8 @@ const UI_STRINGS = {
     fr: 'Adresse e-mail',
     es: 'Correo electrónico',
     ru: 'Электронная почта',
+    it: 'Email',
+    pt: 'E-mail',
   },
   formConsultation: {
     ja: 'ご相談内容',
@@ -949,6 +1119,8 @@ const UI_STRINGS = {
     fr: 'Votre demande',
     es: '¿Sobre qué desea hablar?',
     ru: 'Ваш запрос',
+    it: 'Di cosa vorrebbe parlare?',
+    pt: 'Sobre o que você gostaria de falar?',
   },
   formConsultationPlaceholder: {
     ja: '選択してください',
@@ -959,6 +1131,8 @@ const UI_STRINGS = {
     fr: 'Sélectionnez',
     es: 'Seleccione una opción',
     ru: 'Выберите',
+    it: "Selezioni un'opzione",
+    pt: 'Selecione uma opção',
   },
   formMessage: {
     ja: 'メッセージ',
@@ -969,6 +1143,8 @@ const UI_STRINGS = {
     fr: 'Message',
     es: 'Mensaje',
     ru: 'Сообщение',
+    it: 'Messaggio',
+    pt: 'Mensagem',
   },
   formMessagePlaceholder: {
     ja: 'まだぼんやりした内容でも、お気軽にどうぞ。',
@@ -979,6 +1155,8 @@ const UI_STRINGS = {
     fr: 'Même une idée encore vague suffit — écrivez-nous librement.',
     es: 'Aunque sea una idea aún vaga, escríbanos sin problema.',
     ru: 'Даже если идея пока размытая, пишите смело.',
+    it: "Va bene anche un'idea ancora vaga: scriva pure liberamente.",
+    pt: 'Mesmo uma ideia ainda vaga está tudo bem — escreva à vontade.',
   },
   formRequired: {
     ja: '必須',
@@ -989,6 +1167,8 @@ const UI_STRINGS = {
     fr: 'Obligatoire',
     es: 'Obligatorio',
     ru: 'Обязательно',
+    it: 'Obbligatorio',
+    pt: 'Obrigatório',
   },
   formOptional: {
     ja: '任意',
@@ -999,6 +1179,8 @@ const UI_STRINGS = {
     fr: 'Facultatif',
     es: 'Opcional',
     ru: 'Необязательно',
+    it: 'Facoltativo',
+    pt: 'Opcional',
   },
   formCalendarLegend: {
     ja: 'Google Meet相談（顔出し不要）の候補日時を選択してください（最大{max}件）',
@@ -1009,6 +1191,8 @@ const UI_STRINGS = {
     fr: "Choisissez jusqu'à {max} créneaux pour un échange sur Google Meet (caméra facultative)",
     es: 'Elija hasta {max} horarios para una reunión por Google Meet (cámara opcional)',
     ru: 'Выберите до {max} вариантов даты и времени для встречи в Google Meet (камера по желанию)',
+    it: 'Scelga fino a {max} orari preferiti per una videochiamata su Google Meet (webcam facoltativa)',
+    pt: 'Escolha até {max} horários preferidos para uma chamada no Google Meet (câmera opcional)',
   },
   formCalendarNote: {
     ja: '直近の営業日から自動で3日分表示しています',
@@ -1019,6 +1203,8 @@ const UI_STRINGS = {
     fr: "Les 3 prochains jours ouvrés s'affichent automatiquement",
     es: 'Se muestran automáticamente los próximos 3 días hábiles',
     ru: 'Автоматически показаны ближайшие 3 рабочих дня',
+    it: 'Vengono mostrati automaticamente i prossimi 3 giorni lavorativi',
+    pt: 'Os próximos 3 dias úteis são exibidos automaticamente',
   },
   formTimeColumn: {
     ja: '時間帯',
@@ -1029,6 +1215,8 @@ const UI_STRINGS = {
     fr: 'Horaire',
     es: 'Franja horaria',
     ru: 'Время',
+    it: 'Orario',
+    pt: 'Horário',
   },
   formSlotClosed: {
     ja: '（受付終了）',
@@ -1039,6 +1227,8 @@ const UI_STRINGS = {
     fr: '(clôturé)',
     es: '(cerrado)',
     ru: '(приём закрыт)',
+    it: '(chiuso)',
+    pt: '(encerrado)',
   },
   formSlotsCounter: {
     ja: '{n} / {max}件選択中',
@@ -1049,6 +1239,8 @@ const UI_STRINGS = {
     fr: '{n} / {max} sélectionné(s)',
     es: '{n} / {max} seleccionados',
     ru: 'Выбрано {n} / {max}',
+    it: '{n} di {max} selezionati',
+    pt: '{n} de {max} selecionados',
   },
   formSubmit: {
     ja: '相談内容を送る',
@@ -1059,6 +1251,8 @@ const UI_STRINGS = {
     fr: 'Envoyer le message',
     es: 'Enviar mensaje',
     ru: 'Отправить сообщение',
+    it: 'Invia messaggio',
+    pt: 'Enviar mensagem',
   },
   formSubmitting: {
     ja: '送信中…',
@@ -1069,6 +1263,8 @@ const UI_STRINGS = {
     fr: 'Envoi en cours…',
     es: 'Enviando…',
     ru: 'Отправка…',
+    it: 'Invio in corso…',
+    pt: 'Enviando…',
   },
   formSubmitNote: {
     ja: '入力内容と選択した候補日時を、担当者へメールで送信します。',
@@ -1079,6 +1275,8 @@ const UI_STRINGS = {
     fr: 'Vos informations et les créneaux choisis seront transmis par e-mail à notre équipe.',
     es: 'Sus datos y los horarios seleccionados se enviarán por correo a nuestro equipo.',
     ru: 'Ваши данные и выбранные варианты времени будут отправлены нашей команде по электронной почте.',
+    it: 'I suoi dati e gli orari selezionati verranno inviati via email al nostro team.',
+    pt: 'Seus dados e os horários selecionados serão enviados por e-mail à nossa equipe.',
   },
   formSuccessTitle: {
     ja: '送信しました。ありがとうございます。',
@@ -1089,6 +1287,8 @@ const UI_STRINGS = {
     fr: 'Envoyé – merci !',
     es: 'Enviado. ¡Gracias!',
     ru: 'Отправлено. Спасибо!',
+    it: 'Inviato: grazie!',
+    pt: 'Enviado — obrigado!',
   },
   formSuccessBody: {
     ja: '担当者が内容を確認のうえ、いただいたメールアドレス宛に日程のご連絡をいたします。通常2〜3営業日以内にご返信します。',
@@ -1099,6 +1299,8 @@ const UI_STRINGS = {
     fr: "Notre équipe examinera votre message et vous écrira par e-mail pour convenir d'un rendez-vous, généralement sous 2 à 3 jours ouvrés.",
     es: 'Nuestro equipo revisará su mensaje y le escribirá por correo para concertar una cita, normalmente en un plazo de 2 a 3 días hábiles.',
     ru: 'Наша команда рассмотрит ваше сообщение и напишет вам на указанный адрес электронной почты, чтобы согласовать время — обычно в течение 2–3 рабочих дней.',
+    it: 'Il nostro team esaminerà il suo messaggio e le scriverà via email per fissare un orario, di norma entro 2-3 giorni lavorativi.',
+    pt: 'Nossa equipe vai analisar sua mensagem e enviar um e-mail para combinar um horário, normalmente em até 2 a 3 dias úteis.',
   },
 
   // ご相談内容の選択肢
@@ -1111,6 +1313,8 @@ const UI_STRINGS = {
     fr: "Mise en œuvre d'agents IA",
     es: 'Implementación de agentes de IA',
     ru: 'Внедрение ИИ-агентов',
+    it: 'Implementazione di agenti IA',
+    pt: 'Implementação de agentes de IA',
   },
   consultDev: {
     ja: '受託開発・SaaS開発相談',
@@ -1121,6 +1325,8 @@ const UI_STRINGS = {
     fr: 'Développement sur mesure / SaaS',
     es: 'Desarrollo por encargo / SaaS',
     ru: 'Разработка на заказ / SaaS',
+    it: 'Sviluppo su commessa / SaaS',
+    pt: 'Desenvolvimento sob encomenda / SaaS',
   },
   consultTraining: {
     ja: 'AI・IT研修相談（AX Academy）',
@@ -1131,6 +1337,8 @@ const UI_STRINGS = {
     fr: 'Formations IA et IT (AX Academy)',
     es: 'Formación en IA e IT (AX Academy)',
     ru: 'Обучение ИИ и ИТ (AX Academy)',
+    it: 'Formazione in IA e IT (AX Academy)',
+    pt: 'Treinamento em IA e TI (AX Academy)',
   },
   consultOther: {
     ja: 'その他',
@@ -1141,6 +1349,8 @@ const UI_STRINGS = {
     fr: 'Autre',
     es: 'Otro',
     ru: 'Другое',
+    it: 'Altro',
+    pt: 'Outro',
   },
 
   // バリデーションエラー
@@ -1153,6 +1363,8 @@ const UI_STRINGS = {
     fr: 'Veuillez saisir votre nom.',
     es: 'Introduzca su nombre.',
     ru: 'Введите ваше имя.',
+    it: 'Inserisca il suo nome.',
+    pt: 'Digite seu nome.',
   },
   errEmailRequired: {
     ja: 'メールアドレスを入力してください',
@@ -1163,6 +1375,8 @@ const UI_STRINGS = {
     fr: 'Veuillez saisir votre adresse e-mail.',
     es: 'Introduzca su correo electrónico.',
     ru: 'Введите адрес электронной почты.',
+    it: 'Inserisca il suo indirizzo email.',
+    pt: 'Digite seu endereço de e-mail.',
   },
   errEmailInvalid: {
     ja: 'メールアドレスの形式が正しくありません',
@@ -1173,6 +1387,8 @@ const UI_STRINGS = {
     fr: 'Veuillez saisir une adresse e-mail valide.',
     es: 'Introduzca un correo electrónico válido.',
     ru: 'Введите корректный адрес электронной почты.',
+    it: 'Inserisca un indirizzo email valido.',
+    pt: 'Digite um endereço de e-mail válido.',
   },
   errConsultationRequired: {
     ja: 'ご相談内容を選択してください',
@@ -1183,6 +1399,8 @@ const UI_STRINGS = {
     fr: 'Veuillez sélectionner un sujet.',
     es: 'Seleccione un tema.',
     ru: 'Выберите тему.',
+    it: 'Selezioni un argomento.',
+    pt: 'Selecione um assunto.',
   },
   errSlotsRequired: {
     ja: '候補日時を1件以上選択してください',
@@ -1193,6 +1411,8 @@ const UI_STRINGS = {
     fr: 'Veuillez sélectionner au moins un créneau.',
     es: 'Seleccione al menos un horario.',
     ru: 'Выберите хотя бы один вариант времени.',
+    it: 'Selezioni almeno un orario.',
+    pt: 'Selecione pelo menos um horário.',
   },
   errSubmitFailed: {
     ja: '送信に失敗しました。お手数ですが時間をおいて再度お試しいただくか、直接メールにてご連絡ください。',
@@ -1203,6 +1423,8 @@ const UI_STRINGS = {
     fr: "Une erreur s'est produite. Veuillez réessayer plus tard ou nous contacter directement par e-mail.",
     es: 'Se ha producido un error. Vuelva a intentarlo más tarde o contáctenos directamente por correo.',
     ru: 'Произошла ошибка. Повторите попытку позже или свяжитесь с нами напрямую по электронной почте.',
+    it: 'Si è verificato un problema. Riprovi più tardi oppure ci contatti direttamente via email.',
+    pt: 'Algo deu errado. Tente novamente mais tarde ou entre em contato diretamente por e-mail.',
   },
   errNetwork: {
     ja: 'ネットワークエラーにより送信できませんでした。通信環境をご確認のうえ再度お試しください。',
@@ -1213,6 +1435,8 @@ const UI_STRINGS = {
     fr: "L'envoi a échoué en raison d'une erreur réseau. Veuillez vérifier votre connexion et réessayer.",
     es: 'No se pudo enviar debido a un error de red. Compruebe su conexión e inténtelo de nuevo.',
     ru: 'Не удалось отправить из-за сетевой ошибки. Проверьте подключение и повторите попытку.',
+    it: 'Impossibile inviare a causa di un errore di rete. Verifichi la connessione e riprovi.',
+    pt: 'Não foi possível enviar devido a um erro de rede. Verifique sua conexão e tente novamente.',
   },
   errNotConfigured: {
     ja: '送信設定が未完了のため送信できませんでした。お手数ですが時間をおいて再度お試しください。',
@@ -1223,6 +1447,8 @@ const UI_STRINGS = {
     fr: "Le formulaire n'est pas encore entièrement configuré. Veuillez réessayer plus tard.",
     es: 'El formulario aún no está del todo configurado. Vuelva a intentarlo más tarde.',
     ru: 'Форма ещё не полностью настроена. Повторите попытку позже.',
+    it: 'Il modulo non è ancora configurato completamente. Riprovi più tardi.',
+    pt: 'O formulário ainda não está totalmente configurado. Tente novamente mais tarde.',
   },
 
   // SaaS開発ページ（/saas）
@@ -1235,6 +1461,8 @@ const UI_STRINGS = {
     fr: 'Développement SaaS',
     es: 'Desarrollo SaaS',
     ru: 'Разработка SaaS',
+    it: 'Sviluppo SaaS',
+    pt: 'Desenvolvimento de SaaS',
   },
   // /saas・/navi-lp の見出し付近に置く「事業内容に戻る」リンク（ヘッダーが使えない場合の保険）
   backToBusinessLabel: {
@@ -1246,6 +1474,8 @@ const UI_STRINGS = {
     fr: '← Retour aux activités',
     es: '← Volver a Servicios',
     ru: '← Назад к Услугам',
+    it: '← Torna alle Attività',
+    pt: '← Voltar para Serviços',
   },
   saasHeading: {
     ja: 'SaaS開発',
@@ -1256,6 +1486,8 @@ const UI_STRINGS = {
     fr: 'Développement SaaS',
     es: 'Desarrollo SaaS',
     ru: 'Разработка SaaS',
+    it: 'Sviluppo SaaS',
+    pt: 'Desenvolvimento de SaaS',
   },
   saasLead: {
     ja: '自分のnoteのデータで動く、マルチテナント型のSaaS「noteAnalytics」を、AIと一緒に作っています。',
@@ -1266,6 +1498,8 @@ const UI_STRINGS = {
     fr: "Je développe, avec l'aide de l'IA, noteAnalytics, un SaaS multi-tenant qui fonctionne avec mes propres données note.",
     es: 'Estoy creando, junto con la IA, noteAnalytics, un SaaS multiinquilino que funciona con mis propios datos de note.',
     ru: 'Вместе с ИИ я разрабатываю noteAnalytics — мультитенантный SaaS, работающий на основе моих собственных данных note.',
+    it: "Sto sviluppando, insieme all'IA, noteAnalytics, un SaaS multi-tenant alimentato dai miei stessi dati di note.",
+    pt: 'Estou desenvolvendo, junto com a IA, o noteAnalytics, um SaaS multi-tenant que funciona com meus próprios dados do note.',
   },
   saasBuildingHeading: {
     ja: '作っているもの',
@@ -1276,6 +1510,8 @@ const UI_STRINGS = {
     fr: 'Ce que je développe',
     es: 'Lo que estoy creando',
     ru: 'Что я разрабатываю',
+    it: 'Cosa sto sviluppando',
+    pt: 'O que estou desenvolvendo',
   },
   saasBuildingBody: {
     ja: 'noteのフォロワー数、スキ・フォロー・コメントなどのデータを集めて、1つのダッシュボードで見られるWebシステムです。複数のアカウントを、まとめて見ることができます。',
@@ -1286,6 +1522,8 @@ const UI_STRINGS = {
     fr: "Un système web qui rassemble les données note (nombre d'abonnés, likes, follows, commentaires) dans un tableau de bord unique. Plusieurs comptes peuvent être consultés ensemble.",
     es: 'Un sistema web que reúne los datos de note —número de seguidores, me gusta, seguimientos y comentarios— en un único panel. Se pueden ver varias cuentas a la vez.',
     ru: 'Веб-система, которая собирает данные note — число подписчиков, лайки, подписки и комментарии — в единой панели. Несколько аккаунтов можно просматривать вместе.',
+    it: "Un sistema web che raccoglie i dati di note — numero di follower, mi piace, follow e commenti — in un'unica dashboard. È possibile visualizzare più account insieme.",
+    pt: 'Um sistema web que reúne os dados do note — número de seguidores, curtidas, follows e comentários — em um único painel. É possível visualizar várias contas juntas.',
   },
   saasScreensHeading: {
     ja: '主な画面',
@@ -1296,6 +1534,8 @@ const UI_STRINGS = {
     fr: 'Écrans principaux',
     es: 'Pantallas principales',
     ru: 'Основные экраны',
+    it: 'Schermate principali',
+    pt: 'Telas principais',
   },
   saasScreenYojitsuTitle: {
     ja: '予実管理',
@@ -1306,6 +1546,8 @@ const UI_STRINGS = {
     fr: 'Suivi objectifs / réalisé',
     es: 'Objetivo frente a real',
     ru: 'План/факт',
+    it: 'Obiettivo vs. effettivo',
+    pt: 'Meta vs. real',
   },
   saasScreenYojitsuDesc: {
     ja: '月ごとのフォロワー数の目標と実績を、複合グラフで見ます。',
@@ -1316,6 +1558,8 @@ const UI_STRINGS = {
     fr: "Visualisez l'objectif et le résultat mensuels d'abonnés dans un graphique combiné.",
     es: 'Vea el objetivo y el resultado mensual de seguidores en un gráfico combinado.',
     ru: 'Ежемесячная цель и фактическое число подписчиков на комбинированной диаграмме.',
+    it: "Visualizzi l'obiettivo mensile di follower e i numeri effettivi in un grafico combinato.",
+    pt: 'Veja a meta mensal de seguidores e os números reais em um gráfico combinado.',
   },
   saasScreenFollowerTitle: {
     ja: 'フォロワー数',
@@ -1326,6 +1570,8 @@ const UI_STRINGS = {
     fr: "Nombre d'abonnés",
     es: 'Número de seguidores',
     ru: 'Число подписчиков',
+    it: 'Numero di follower',
+    pt: 'Número de seguidores',
   },
   saasScreenFollowerDesc: {
     ja: 'アカウントごとの日別の推移を、年・月で絞り込んで見ます。',
@@ -1336,6 +1582,8 @@ const UI_STRINGS = {
     fr: 'Évolution quotidienne par compte, filtrée par année et par mois.',
     es: 'Evolución diaria por cuenta, filtrada por año y mes.',
     ru: 'Ежедневная динамика по каждому аккаунту с фильтром по году и месяцу.',
+    it: "Visualizzi l'andamento giornaliero di ogni account, filtrato per anno e mese.",
+    pt: 'Veja a tendência diária de cada conta, filtrada por ano e mês.',
   },
   saasScreenNotificationTitle: {
     ja: '通知分析',
@@ -1346,6 +1594,8 @@ const UI_STRINGS = {
     fr: 'Analyse des notifications',
     es: 'Análisis de notificaciones',
     ru: 'Анализ уведомлений',
+    it: 'Analisi delle notifiche',
+    pt: 'Análise de notificações',
   },
   saasScreenNotificationDesc: {
     ja: 'スキ・フォロー・コメントを、曜日別・時間帯別に見ます。',
@@ -1356,6 +1606,8 @@ const UI_STRINGS = {
     fr: 'Likes, follows et commentaires par jour de la semaine et par tranche horaire.',
     es: 'Me gusta, seguimientos y comentarios por día de la semana y franja horaria.',
     ru: 'Лайки, подписки и комментарии по дням недели и времени суток.',
+    it: 'Visualizzi mi piace, follow e commenti suddivisi per giorno della settimana e fascia oraria.',
+    pt: 'Veja curtidas, follows e comentários divididos por dia da semana e horário.',
   },
   saasScreenAccessTitle: {
     ja: 'アクセス分析',
@@ -1366,6 +1618,8 @@ const UI_STRINGS = {
     fr: 'Analyse du trafic',
     es: 'Análisis de accesos',
     ru: 'Анализ посещений',
+    it: 'Analisi degli accessi',
+    pt: 'Análise de acessos',
   },
   saasScreenAccessDesc: {
     ja: 'Google Analytics 4のデータを、地図で見ます（実装予定）。',
@@ -1376,6 +1630,8 @@ const UI_STRINGS = {
     fr: 'Données Google Analytics 4 affichées sur une carte (à venir).',
     es: 'Datos de Google Analytics 4 en un mapa (próximamente).',
     ru: 'Данные Google Analytics 4 на карте (в разработке).',
+    it: 'Visualizzi i dati di Google Analytics 4 su una mappa (in arrivo).',
+    pt: 'Veja os dados do Google Analytics 4 em um mapa (em breve).',
   },
   saasScreensNote: {
     ja: 'スマホ、タブレット、PCに対応しています。',
@@ -1386,6 +1642,8 @@ const UI_STRINGS = {
     fr: 'Fonctionne sur smartphone, tablette et ordinateur.',
     es: 'Funciona en smartphones, tabletas y ordenadores.',
     ru: 'Работает на смартфонах, планшетах и компьютерах.',
+    it: 'Funziona su smartphone, tablet e PC.',
+    pt: 'Funciona em smartphones, tablets e computadores.',
   },
   saasApproachHeading: {
     ja: 'つくり方の考え方',
@@ -1396,6 +1654,8 @@ const UI_STRINGS = {
     fr: 'Ma méthode de développement',
     es: 'Mi forma de construirlo',
     ru: 'Подход к разработке',
+    it: 'Come lo sviluppo',
+    pt: 'Como eu construo',
   },
   saasApproachSelfTitle: {
     ja: 'まず自分から',
@@ -1406,6 +1666,8 @@ const UI_STRINGS = {
     fr: "D'abord moi-même",
     es: 'Empezar por mí mismo',
     ru: 'Сначала для себя',
+    it: 'Prima di tutto io stesso',
+    pt: 'Primeiro eu mesmo',
   },
   saasApproachSelfDesc: {
     ja: '最初のユーザーは自分です。要件が速く決まり、動かなければすぐに気づけます。',
@@ -1416,6 +1678,8 @@ const UI_STRINGS = {
     fr: 'Je suis mon propre premier utilisateur. Les besoins se précisent vite, et je remarque immédiatement si quelque chose ne fonctionne pas.',
     es: 'El primer usuario soy yo mismo. Los requisitos se definen rápido y noto enseguida si algo falla.',
     ru: 'Я сам — первый пользователь. Требования проясняются быстро, а сбои заметны сразу.',
+    it: 'Sono il primo utente. I requisiti si definiscono rapidamente e mi accorgo subito se qualcosa non funziona.',
+    pt: 'Eu sou o primeiro usuário. Os requisitos se definem rápido, e percebo na hora se algo quebra.',
   },
   saasApproachMultiTenantTitle: {
     ja: '最初から複数の企業に対応',
@@ -1426,6 +1690,8 @@ const UI_STRINGS = {
     fr: 'Multi-entreprises dès le départ',
     es: 'Multiempresa desde el principio',
     ru: 'С самого начала для нескольких компаний',
+    it: "Multi-tenant fin dall'inizio",
+    pt: 'Multi-tenant desde o início',
   },
   saasApproachMultiTenantDesc: {
     ja: '1社で使うところから始めて、複数の企業に提供できる構造で作っています。',
@@ -1436,6 +1702,8 @@ const UI_STRINGS = {
     fr: "L'usage commence avec une seule entreprise, mais la structure est conçue pour en servir plusieurs.",
     es: 'Empieza usándolo una sola empresa, pero está construido con una estructura pensada para varias empresas.',
     ru: 'Начинается с использования одной компанией, но структура рассчитана на несколько компаний.',
+    it: 'Inizia servendo una sola azienda, ma è costruito con una struttura in grado di servirne molte.',
+    pt: 'Começa servindo uma única empresa, mas é construído com uma estrutura capaz de atender muitas.',
   },
   saasApproachAssetsTitle: {
     ja: '既存の資産を活かす',
@@ -1446,6 +1714,8 @@ const UI_STRINGS = {
     fr: "Valoriser l'existant",
     es: 'Aprovechar lo que ya existe',
     ru: 'Использование существующих ресурсов',
+    it: 'Riutilizzo delle risorse esistenti',
+    pt: 'Reaproveitando recursos existentes',
   },
   saasApproachAssetsDesc: {
     ja: 'GASとスプレッドシートで集めたデータを、Google Sheets APIで取り込みます。',
@@ -1456,6 +1726,8 @@ const UI_STRINGS = {
     fr: "Les données collectées via Google Apps Script et les feuilles de calcul sont importées grâce à l'API Google Sheets.",
     es: 'Los datos recopilados con Google Apps Script y hojas de cálculo se importan mediante la API de Google Sheets.',
     ru: 'Данные, собранные с помощью Google Apps Script и таблиц, импортируются через Google Sheets API.',
+    it: "I dati raccolti con Google Apps Script e i fogli di calcolo vengono importati tramite l'API di Google Sheets.",
+    pt: 'Os dados coletados com Google Apps Script e planilhas são importados por meio da API do Google Sheets.',
   },
   saasApproachMigrationTitle: {
     ja: '移行しやすい構成',
@@ -1466,6 +1738,8 @@ const UI_STRINGS = {
     fr: 'Architecture facile à migrer',
     es: 'Arquitectura fácil de migrar',
     ru: 'Архитектура, удобная для переноса',
+    it: 'Facile da migrare in futuro',
+    pt: 'Fácil de migrar depois',
   },
   saasApproachMigrationDesc: {
     ja: 'Next.js、Vercel、Supabaseで動いています。将来、AWSやGCP、Azureへ移りやすい構成です。',
@@ -1476,6 +1750,8 @@ const UI_STRINGS = {
     fr: 'Il fonctionne sur Next.js, Vercel et Supabase, une architecture qui pourra facilement migrer vers AWS, GCP ou Azure.',
     es: 'Funciona con Next.js, Vercel y Supabase, una configuración que podrá migrarse fácilmente a AWS, GCP o Azure más adelante.',
     ru: 'Работает на Next.js, Vercel и Supabase — эту конфигурацию будет легко перенести на AWS, GCP или Azure в будущем.',
+    it: 'Funziona su Next.js, Vercel e Supabase, una configurazione che in futuro si potrà migrare facilmente verso AWS, GCP o Azure.',
+    pt: 'Funciona em Next.js, Vercel e Supabase — uma configuração que poderá ser facilmente migrada para AWS, GCP ou Azure mais adiante.',
   },
   saasApproachAiTitle: {
     ja: 'AIと開発',
@@ -1486,6 +1762,8 @@ const UI_STRINGS = {
     fr: "Développer avec l'IA",
     es: 'Desarrollo con IA',
     ru: 'Разработка вместе с ИИ',
+    it: "Sviluppare con l'IA",
+    pt: 'Desenvolvendo com IA',
   },
   saasApproachAiDesc: {
     ja: '仕様書をClaudeと一緒に作り、Claude Codeで実装しています。',
@@ -1496,6 +1774,8 @@ const UI_STRINGS = {
     fr: 'Je rédige les spécifications avec Claude, puis je les implémente avec Claude Code.',
     es: 'Redacto las especificaciones junto con Claude y las implemento con Claude Code.',
     ru: 'Спецификацию я составляю вместе с Claude, а реализую с помощью Claude Code.',
+    it: 'Scrivo le specifiche insieme a Claude, poi le implemento con Claude Code.',
+    pt: 'Escrevo as especificações junto com o Claude e depois as implemento com o Claude Code.',
   },
   saasDemoHeading: {
     ja: 'デモサイト',
@@ -1506,6 +1786,8 @@ const UI_STRINGS = {
     fr: 'Site de démonstration',
     es: 'Sitio de demostración',
     ru: 'Демо-сайт',
+    it: 'Sito demo',
+    pt: 'Site de demonstração',
   },
   saasDemoBody: {
     ja: '実際に動くデモを、お試しいただけます。参照のみのデモ環境で、テストデータで動いています。本番のデータは含まれていません。',
@@ -1516,6 +1798,8 @@ const UI_STRINGS = {
     fr: "N'hésitez pas à essayer la démo, pleinement fonctionnelle. Il s'agit d'un environnement de démonstration en lecture seule, avec des données de test — aucune donnée de production n'y figure.",
     es: 'Puede probar la demostración, que funciona de verdad. Es un entorno de solo lectura con datos de prueba; no incluye datos de producción.',
     ru: 'Вы можете опробовать полностью рабочую демоверсию. Это демо-среда только для просмотра, работающая на тестовых данных — производственные данные не используются.',
+    it: 'Può provare la demo funzionante. È un ambiente demo di sola consultazione che utilizza dati di prova: non contiene dati di produzione.',
+    pt: 'Você pode experimentar a demonstração, que funciona de verdade. É um ambiente somente de visualização, com dados de teste — não há dados de produção.',
   },
   saasDemoButton: {
     ja: 'デモサイトを開く',
@@ -1526,6 +1810,8 @@ const UI_STRINGS = {
     fr: 'Ouvrir le site de démonstration',
     es: 'Abrir el sitio de demostración',
     ru: 'Открыть демо-сайт',
+    it: 'Apri il sito demo',
+    pt: 'Abrir o site de demonstração',
   },
   saasDemoIdLabel: {
     ja: 'ログインID',
@@ -1536,6 +1822,8 @@ const UI_STRINGS = {
     fr: 'Identifiant',
     es: 'ID de acceso',
     ru: 'Логин',
+    it: 'ID di accesso',
+    pt: 'ID de login',
   },
   saasDemoPasswordLabel: {
     ja: 'パスワード',
@@ -1546,6 +1834,8 @@ const UI_STRINGS = {
     fr: 'Mot de passe',
     es: 'Contraseña',
     ru: 'Пароль',
+    it: 'Password',
+    pt: 'Senha',
   },
   saasArticleHeading: {
     ja: '関連するnote記事',
@@ -1556,6 +1846,8 @@ const UI_STRINGS = {
     fr: 'Article note associé',
     es: 'Artículo relacionado en note',
     ru: 'Связанная статья на note',
+    it: 'Articolo note correlato',
+    pt: 'Artigo relacionado no note',
   },
   saasArticleBody: {
     ja: '開発の経緯と設計の考え方は、noteにまとめています。記事の後半（有料）では、実際にClaude Codeに渡した、仕様書と開発指示書の全文を公開しています。',
@@ -1566,6 +1858,8 @@ const UI_STRINGS = {
     fr: "J'ai résumé sur note le contexte du développement et ma réflexion sur la conception. Dans la seconde partie de l'article (payante), je publie l'intégralité du cahier des charges et des instructions que j'ai réellement transmis à Claude Code.",
     es: 'He resumido en note los antecedentes y el enfoque del diseño. En la segunda mitad del artículo (de pago) publico el texto completo de las especificaciones e instrucciones que realmente entregué a Claude Code.',
     ru: 'Предысторию разработки и логику проектирования я изложил в статье на note. Во второй, платной части статьи я публикую полный текст спецификации и инструкций, которые реально передал Claude Code.',
+    it: "Ho raccontato il contesto e le scelte di progettazione su note. Nella seconda parte dell'articolo (a pagamento) pubblico il testo completo delle specifiche e delle istruzioni che ho realmente fornito a Claude Code.",
+    pt: 'Escrevi sobre o histórico e o raciocínio de design no note. Na segunda parte do artigo (paga), publico o texto completo da especificação e das instruções que realmente dei ao Claude Code.',
   },
   saasArticleLinkLabel: {
     ja: '【マルチテナント型SaaSの開発はまず自分から:デモサイト有り】Vol.4～自分のnoteデータで作るSaaSのリアル、ポートフォリオはデプロイしてから語れ～',
@@ -1576,6 +1870,8 @@ const UI_STRINGS = {
     fr: '【マルチテナント型SaaSの開発はまず自分から:デモサイト有り】Vol.4～自分のnoteデータで作るSaaSのリアル、ポートフォリオはデプロイしてから語れ～',
     es: '【マルチテナント型SaaSの開発はまず自分から:デモサイト有り】Vol.4～自分のnoteデータで作るSaaSのリアル、ポートフォリオはデプロイしてから語れ～',
     ru: '【マルチテナント型SaaSの開発はまず自分から:デモサイト有り】Vol.4～自分のnoteデータで作るSaaSのリアル、ポートフォリオはデプロイしてから語れ～',
+    it: '【マルチテナント型SaaSの開発はまず自分から:デモサイト有り】Vol.4～自分のnoteデータで作るSaaSのリアル、ポートフォリオはデプロイしてから語れ～',
+    pt: '【マルチテナント型SaaSの開発はまず自分から:デモサイト有り】Vol.4～自分のnoteデータで作るSaaSのリアル、ポートフォリオはデプロイしてから語れ～',
   },
   saasArticleLangNote: {
     ja: '（記事は日本語です）',
@@ -1586,6 +1882,8 @@ const UI_STRINGS = {
     fr: "(L'article est rédigé en japonais.)",
     es: '(El artículo está escrito en japonés.)',
     ru: '(Статья написана на японском языке.)',
+    it: "(L'articolo è in giapponese.)",
+    pt: '(O artigo está em japonês.)',
   },
   saasContactHeading: {
     ja: 'ご相談',
@@ -1596,6 +1894,8 @@ const UI_STRINGS = {
     fr: 'Nous contacter',
     es: 'Consultas',
     ru: 'Консультация',
+    it: 'Contattaci',
+    pt: 'Fale conosco',
   },
   saasContactBody: {
     ja: 'SaaSの開発や、データの可視化のご相談は、お問い合わせからどうぞ。',
@@ -1606,6 +1906,8 @@ const UI_STRINGS = {
     fr: 'Pour toute question sur le développement SaaS ou la visualisation de données, contactez-moi.',
     es: 'Para consultas sobre desarrollo de SaaS o visualización de datos, póngase en contacto conmigo.',
     ru: 'По вопросам разработки SaaS или визуализации данных, пожалуйста, свяжитесь со мной.',
+    it: 'Per domande sullo sviluppo SaaS o sulla visualizzazione dei dati, non esiti a contattarci.',
+    pt: 'Para dúvidas sobre desenvolvimento de SaaS ou visualização de dados, entre em contato.',
   },
   saasScreenshotYojitsuAlt: {
     ja: '予実管理ページの複合グラフの画面',
@@ -1616,6 +1918,8 @@ const UI_STRINGS = {
     fr: 'Écran du graphique combiné objectifs / réalisé',
     es: 'Pantalla del gráfico combinado de objetivo y resultado',
     ru: 'Экран с комбинированной диаграммой плана и факта',
+    it: 'Schermata del grafico combinato obiettivo vs. effettivo',
+    pt: 'Tela do gráfico combinado de meta vs. real',
   },
   saasScreenshotDashboardAlt: {
     ja: '複数のグラフが並ぶダッシュボードの画面',
@@ -1626,6 +1930,8 @@ const UI_STRINGS = {
     fr: 'Écran du tableau de bord avec plusieurs graphiques côte à côte',
     es: 'Pantalla del panel con varios gráficos dispuestos juntos',
     ru: 'Экран панели с несколькими диаграммами рядом',
+    it: 'Schermata della dashboard con più grafici affiancati',
+    pt: 'Tela do painel com vários gráficos lado a lado',
   },
   saasScreenshotFollowerAlt: {
     ja: 'フォロワー数ページの日別推移グラフの画面',
@@ -1636,6 +1942,8 @@ const UI_STRINGS = {
     fr: "Écran du graphique d'évolution quotidienne des abonnés",
     es: 'Pantalla del gráfico de evolución diaria de seguidores',
     ru: 'Экран с графиком ежедневной динамики подписчиков',
+    it: "Schermata del grafico dell'andamento giornaliero dei follower",
+    pt: 'Tela do gráfico de tendência diária de seguidores',
   },
   saasScreenshotNotificationAlt: {
     ja: '通知分析ページの曜日別・時間帯別グラフの画面',
@@ -1646,6 +1954,8 @@ const UI_STRINGS = {
     fr: 'Écran des notifications par jour de la semaine et tranche horaire',
     es: 'Pantalla de notificaciones por día de la semana y franja horaria',
     ru: 'Экран с уведомлениями по дням недели и времени суток',
+    it: 'Schermata delle notifiche suddivise per giorno della settimana e fascia oraria',
+    pt: 'Tela das notificações divididas por dia da semana e horário',
   },
   saasLearnMoreLabel: {
     ja: '詳しく見る',
@@ -1656,6 +1966,8 @@ const UI_STRINGS = {
     fr: 'En savoir plus',
     es: 'Ver más',
     ru: 'Подробнее',
+    it: 'Scopri di più',
+    pt: 'Saiba mais',
   },
 
   // ナビ付きLPページ（/navi-lp）
@@ -1668,6 +1980,8 @@ const UI_STRINGS = {
     fr: 'LP guidée',
     es: 'LP guiada',
     ru: 'LP с гидом',
+    it: 'LP guidata',
+    pt: 'LP guiada',
   },
   naviLpLead: {
     ja: '動画や音声が案内してくれる、「ナビ付き」のLPです。AIと一緒に作った、2つのバリエーションを紹介します。',
@@ -1678,6 +1992,8 @@ const UI_STRINGS = {
     fr: 'Une LP « guidée », où une vidéo ou une voix vous accompagne. Je présente deux variantes que j’ai créées avec l’IA.',
     es: 'Una LP "guiada", donde un vídeo o una voz le acompaña. Presento dos variantes que he creado con IA.',
     ru: 'LP с гидом — видео или голос ведёт вас по странице. Представляю два варианта, созданных вместе с ИИ.',
+    it: "Una LP «guidata», condotta da un video o da una voce. Ecco due varianti che ho realizzato con l'IA.",
+    pt: 'Uma LP "guiada", conduzida por vídeo ou voz. Aqui estão duas variações que criei com a IA.',
   },
   naviLpAboutHeading: {
     ja: 'ナビ付きLPとは',
@@ -1688,6 +2004,8 @@ const UI_STRINGS = {
     fr: 'Qu’est-ce qu’une LP guidée ?',
     es: '¿Qué es una LP guiada?',
     ru: 'Что такое LP с гидом',
+    it: "Cos'è una LP guidata?",
+    pt: 'O que é uma LP guiada?',
   },
   naviLpAboutBody: {
     ja: 'ふつうのLPは、読む人が自分で、上から下へ読み進めます。ナビ付きLPは、音声や動画の案内役が話しかけ、ページを一緒に進めてくれます。読む人は、案内に身をまかせるだけで、内容が伝わります。',
@@ -1698,6 +2016,8 @@ const UI_STRINGS = {
     fr: 'Sur une LP classique, le lecteur fait défiler la page seul, de haut en bas. Sur une LP guidée, un guide vocal ou vidéo s’adresse au lecteur et avance dans la page avec lui. Le lecteur n’a qu’à se laisser guider pour que le message passe.',
     es: 'En una LP normal, el lector avanza solo de arriba abajo. En una LP guiada, una voz o un vídeo guía habla con el lector y avanza por la página junto con él. El lector solo tiene que dejarse guiar para que el mensaje llegue.',
     ru: 'На обычной LP читатель сам листает страницу сверху вниз. На LP с гидом голосовой или видео-гид обращается к читателю и вместе с ним продвигается по странице. Читателю достаточно довериться гиду — и суть будет понятна.',
+    it: "In una LP normale, il lettore scorre la pagina da solo, dall'alto verso il basso. In una LP guidata, una guida vocale o video si rivolge al lettore e avanza insieme a lui nella pagina. Al lettore basta lasciarsi guidare, e il messaggio arriva.",
+    pt: 'Em uma LP normal, o leitor rola a página sozinho, de cima para baixo. Em uma LP guiada, um guia de voz ou vídeo fala com o leitor e avança pela página junto com ele. O leitor só precisa se deixar guiar, e a mensagem chega.',
   },
   naviLpVariantsHeading: {
     ja: '2つのバリエーション',
@@ -1708,6 +2028,8 @@ const UI_STRINGS = {
     fr: 'Deux variantes',
     es: 'Dos variantes',
     ru: 'Два варианта',
+    it: 'Due varianti',
+    pt: 'Duas variações',
   },
   naviLpGuidedTitle: {
     ja: '音声ガイドLP',
@@ -1718,6 +2040,8 @@ const UI_STRINGS = {
     fr: 'LP guidée par la voix',
     es: 'LP guiada por voz',
     ru: 'LP с голосовым гидом',
+    it: 'LP guidata dalla voce',
+    pt: 'LP guiada por voz',
   },
   naviLpGuidedIntro: {
     ja: '動画の人物が話しかけ、その声に合わせて、ページが動き出します。最後は、面談の相談フォームで止まります。',
@@ -1728,6 +2052,8 @@ const UI_STRINGS = {
     fr: 'Une personne en vidéo vous parle, et la page évolue au rythme de sa voix. Elle se termine sur un formulaire de prise de rendez-vous.',
     es: 'Una persona en vídeo le habla, y la página avanza al ritmo de su voz. Termina en un formulario de solicitud de reunión.',
     ru: 'Человек в видео обращается к вам, и страница движется в такт его голосу. В конце — форма для записи на консультацию.',
+    it: 'Una persona in video le parla, e la pagina si muove seguendo la sua voce. Termina con un modulo di richiesta per un appuntamento.',
+    pt: 'Uma pessoa em vídeo fala com você, e a página se move ao ritmo da voz dela. Termina em um formulário de solicitação de reunião.',
   },
   naviLpGuidedPoint1: {
     ja: '動画、音声、ページの動きが、ひとつにつながります。',
@@ -1738,6 +2064,8 @@ const UI_STRINGS = {
     fr: 'Vidéo, voix et animation de la page ne font qu’un.',
     es: 'El vídeo, la voz y el movimiento de la página se conectan en uno.',
     ru: 'Видео, голос и движение страницы объединены в единое целое.',
+    it: "Video, voce e movimento della pagina sono collegati in un'unica esperienza.",
+    pt: 'Vídeo, voz e movimento da página estão todos conectados em um só.',
   },
   naviLpGuidedPoint2: {
     ja: '話が進むと、その内容のセクションが現れます。',
@@ -1748,6 +2076,8 @@ const UI_STRINGS = {
     fr: 'À mesure que le discours avance, la section correspondante apparaît.',
     es: 'A medida que avanza el discurso, aparece la sección correspondiente.',
     ru: 'По мере развития рассказа появляется соответствующий раздел.',
+    it: 'Man mano che il discorso procede, appare la sezione corrispondente.',
+    pt: 'À medida que a fala avança, a seção correspondente aparece.',
   },
   naviLpGuidedPoint3: {
     ja: '最後は、相談フォームへ。候補日時を選んで送れます。すぐに予約が確定するのではなく、メールの返信で日程を決めます。',
@@ -1758,16 +2088,21 @@ const UI_STRINGS = {
     fr: 'Elle se termine par un formulaire de demande. Vous pouvez choisir des créneaux proposés et les envoyer. Le rendez-vous n’est pas confirmé immédiatement : la date est fixée par une réponse par e-mail.',
     es: 'Termina en un formulario de solicitud. Puede elegir horarios propuestos y enviarlos. La cita no se confirma al instante: la fecha se decide con una respuesta por correo.',
     ru: 'В конце — форма заявки. Можно выбрать предполагаемое время и отправить. Встреча подтверждается не мгновенно — дата согласовывается ответным письмом.',
+    it: "Termina con un modulo di richiesta. Può scegliere alcuni orari indicativi e inviarli. L'appuntamento non viene confermato immediatamente: la data viene fissata con una risposta via email.",
+    pt: 'Termina em um formulário de solicitação. Você pode escolher horários candidatos e enviá-los. A reunião não é confirmada na hora — o horário é definido por uma resposta por e-mail.',
   },
+  // {langCount} は対応言語数（レジストリの LANGUAGES.length）に置換する。固定値にしない。
   naviLpGuidedPoint4: {
-    ja: '今は日本語版です。今後、8か国語に広げる予定です。',
-    en: "It's currently Japanese-only. I plan to expand it to 8 languages later.",
-    ko: '지금은 일본어판입니다. 앞으로 8개 언어로 넓힐 예정입니다.',
-    zh: '目前仅有日语版本。今后计划扩展至 8 种语言。',
-    de: 'Aktuell nur auf Japanisch verfügbar. Eine Erweiterung auf 8 Sprachen ist geplant.',
-    fr: 'Actuellement disponible uniquement en japonais. Une extension à 8 langues est prévue.',
-    es: 'Por ahora solo está en japonés. Está previsto ampliarla a 8 idiomas.',
-    ru: 'Пока доступна только на японском. В будущем планирую расширить до 8 языков.',
+    ja: '今は日本語版です。今後、{langCount}か国語に広げる予定です。',
+    en: "It's currently Japanese-only. I plan to expand it to {langCount} languages later.",
+    ko: '지금은 일본어판입니다. 앞으로 {langCount}개 언어로 넓힐 예정입니다.',
+    zh: '目前仅有日语版本。今后计划扩展至 {langCount} 种语言。',
+    de: 'Aktuell nur auf Japanisch verfügbar. Eine Erweiterung auf {langCount} Sprachen ist geplant.',
+    fr: 'Actuellement disponible uniquement en japonais. Une extension à {langCount} langues est prévue.',
+    es: 'Por ahora solo está en japonés. Está previsto ampliarla a {langCount} idiomas.',
+    ru: 'Пока доступна только на японском. В будущем планирую расширить до {langCount} языков.',
+    it: 'Al momento è disponibile solo in giapponese. In futuro prevedo di estenderla a {langCount} lingue.',
+    pt: 'No momento, está disponível apenas em japonês. Pretendo expandi-la para {langCount} idiomas futuramente.',
   },
   naviLpGuidedSuitable: {
     ja: '向いている場面：ひとつのストーリーを、順番に伝えて、相談につなげたいとき。',
@@ -1778,6 +2113,8 @@ const UI_STRINGS = {
     fr: 'Idéal pour : raconter une histoire dans l’ordre et déboucher sur une prise de contact.',
     es: 'Ideal para: contar una historia en orden y llevar a una consulta.',
     ru: 'Подходит для: последовательного рассказа одной истории с переходом к консультации.',
+    it: 'Adatta a: raccontare una storia in ordine e condurre verso una richiesta di consulenza.',
+    pt: 'Ideal para: contar uma história em ordem e levar a uma consulta.',
   },
   naviLpGuidedButton: {
     ja: '音声ガイドLPを開く',
@@ -1788,6 +2125,8 @@ const UI_STRINGS = {
     fr: 'Ouvrir la LP guidée par la voix',
     es: 'Abrir la LP guiada por voz',
     ru: 'Открыть LP с голосовым гидом',
+    it: 'Apri la LP guidata dalla voce',
+    pt: 'Abrir a LP guiada por voz',
   },
   naviLpGuidedScreenshotAlt: {
     ja: '音声ガイドLPで、動画の案内役がページを進めている画面',
@@ -1798,6 +2137,8 @@ const UI_STRINGS = {
     fr: 'Écran de la LP guidée par la voix, avec un guide vidéo qui fait avancer la page',
     es: 'Pantalla de la LP guiada por voz, con un guía en vídeo que avanza por la página',
     ru: 'Экран LP с голосовым гидом, где видео-гид продвигает страницу',
+    it: 'Schermata della LP guidata dalla voce, con una guida video che conduce la pagina',
+    pt: 'Tela da LP guiada por voz, com um guia em vídeo conduzindo a página',
   },
   naviLpGuidedArticleLinkLabel: {
     ja: '【AIとLPづくり】GPT-5.6 Solで仕様を固め、GPT-6 Astraで実装したら「動画が話し、ページが動くLP」ができた',
@@ -1808,6 +2149,8 @@ const UI_STRINGS = {
     fr: '【AIとLPづくり】GPT-5.6 Solで仕様を固め、GPT-6 Astraで実装したら「動画が話し、ページが動くLP」ができた',
     es: '【AIとLPづくり】GPT-5.6 Solで仕様を固め、GPT-6 Astraで実装したら「動画が話し、ページが動くLP」ができた',
     ru: '【AIとLPづくり】GPT-5.6 Solで仕様を固め、GPT-6 Astraで実装したら「動画が話し、ページが動くLP」ができた',
+    it: '【AIとLPづくり】GPT-5.6 Solで仕様を固め、GPT-6 Astraで実装したら「動画が話し、ページが動くLP」ができた',
+    pt: '【AIとLPづくり】GPT-5.6 Solで仕様を固め、GPT-6 Astraで実装したら「動画が話し、ページが動くLP」ができた',
   },
   naviLpLpNotesTitle: {
     ja: 'LPNotes',
@@ -1818,6 +2161,8 @@ const UI_STRINGS = {
     fr: 'LPNotes',
     es: 'LPNotes',
     ru: 'LPNotes',
+    it: 'LPNotes',
+    pt: 'LPNotes',
   },
   naviLpLpNotesTagline: {
     ja: '記事のように書き足して育てるLP',
@@ -1828,6 +2173,8 @@ const UI_STRINGS = {
     fr: 'Une LP que l’on fait grandir en l’écrivant, comme un article',
     es: 'Una LP que crece a medida que se escribe, como un artículo',
     ru: 'LP, которая растёт, как статья, по мере дописывания',
+    it: 'Una LP che cresce continuando a scriverla, come un articolo',
+    pt: 'Uma LP que você faz crescer escrevendo mais, como um artigo',
   },
   naviLpLpNotesIntro: {
     ja: 'note記事のように書くと、1つのアイデアが1つのページになる、自分専用のLPの実験サイトです。',
@@ -1838,6 +2185,8 @@ const UI_STRINGS = {
     fr: 'En écrivant comme un article note, une idée devient une page : c’est mon site expérimental personnel pour les LP.',
     es: 'Al escribir como un artículo de note, una idea se convierte en una página: es mi sitio experimental personal para LP.',
     ru: 'Пишешь как статью note — и одна идея превращается в одну страницу. Это мой личный экспериментальный сайт для LP.',
+    it: "Scrivendola come un articolo note, un'idea diventa una pagina: è il mio sito sperimentale personale per le LP.",
+    pt: 'Ao escrever como um artigo do note, uma ideia se transforma em uma página — é meu site experimental pessoal para LPs.',
   },
   naviLpLpNotesPoint1: {
     ja: '記事のように書き足せます。画像、見出し、相談フォームを入れられます。',
@@ -1848,16 +2197,21 @@ const UI_STRINGS = {
     fr: 'Vous pouvez continuer à l’écrire comme un article : images, titres et formulaire de contact peuvent y être ajoutés.',
     es: 'Puede seguir escribiendo como un artículo: se pueden añadir imágenes, títulos y un formulario de consulta.',
     ru: 'Можно дописывать как статью — добавлять изображения, заголовки и форму для консультации.',
+    it: 'Può continuare ad ampliarla come un articolo: immagini, titoli e un modulo di richiesta trovano posto al suo interno.',
+    pt: 'Você pode continuar adicionando conteúdo como em um artigo — imagens, títulos e um formulário de consulta cabem nela.',
   },
+  // {langCount} は対応言語数（レジストリの LANGUAGES.length）に置換する。固定値にしない。
   naviLpLpNotesPoint2: {
-    ja: '8か国語に対応しています。地球儀で言語を切り替えられます。',
-    en: 'Supports 8 languages. You can switch languages with the globe.',
-    ko: '8개 언어를 지원합니다. 지구본으로 언어를 전환할 수 있습니다.',
-    zh: '支持 8 种语言，可通过地球仪切换语言。',
-    de: 'Unterstützt 8 Sprachen. Über den Globus lässt sich die Sprache umschalten.',
-    fr: 'Disponible en 8 langues. Le globe permet de changer de langue.',
-    es: 'Disponible en 8 idiomas. Puede cambiar de idioma con el globo terráqueo.',
-    ru: 'Поддерживает 8 языков. Переключить язык можно с помощью глобуса.',
+    ja: '{langCount}か国語に対応しています。地球儀で言語を切り替えられます。',
+    en: 'Supports {langCount} languages. You can switch languages with the globe.',
+    ko: '{langCount}개 언어를 지원합니다. 지구본으로 언어를 전환할 수 있습니다.',
+    zh: '支持 {langCount} 种语言，可通过地球仪切换语言。',
+    de: 'Unterstützt {langCount} Sprachen. Über den Globus lässt sich die Sprache umschalten.',
+    fr: 'Disponible en {langCount} langues. Le globe permet de changer de langue.',
+    es: 'Disponible en {langCount} idiomas. Puede cambiar de idioma con el globo terráqueo.',
+    ru: 'Поддерживает {langCount} языков. Переключить язык можно с помощью глобуса.',
+    it: 'Supporta {langCount} lingue. Può cambiare lingua con il mappamondo.',
+    pt: 'Compatível com {langCount} idiomas. Você pode trocar de idioma pelo globo.',
   },
   naviLpLpNotesPoint3: {
     ja: 'エリカと一緒に、音声で読み進められます。口の動きも付いています。',
@@ -1868,6 +2222,8 @@ const UI_STRINGS = {
     fr: 'Erica vous accompagne à voix haute, avec un mouvement des lèvres synchronisé.',
     es: 'Erica la lee en voz alta junto con usted, con movimiento de labios incluido.',
     ru: 'Эрика читает вместе с вами вслух, с синхронным движением губ.',
+    it: 'Erica la legge ad alta voce insieme a lei, con tanto di labiale in movimento.',
+    pt: 'A Erica lê em voz alta junto com você, com os lábios se movendo.',
   },
   naviLpLpNotesPoint4: {
     ja: '詳しい制作の記録は、noteの記事（一部有料）にまとめています。',
@@ -1878,6 +2234,8 @@ const UI_STRINGS = {
     fr: 'Le journal de développement détaillé est disponible dans un article note (en partie payant).',
     es: 'El registro detallado de la creación está recogido en un artículo de note (parcialmente de pago).',
     ru: 'Подробный дневник разработки описан в статье на note (частично платная).',
+    it: 'Il diario dettagliato dello sviluppo è raccontato in un articolo su note (in parte a pagamento).',
+    pt: 'O registro detalhado da criação está em um artigo do note (parcialmente pago).',
   },
   naviLpLpNotesSuitable: {
     ja: '向いている場面：たくさんのLPを次々に書いて、反応を試したいとき。',
@@ -1888,6 +2246,8 @@ const UI_STRINGS = {
     fr: 'Idéal pour : écrire de nombreuses LP les unes après les autres et tester les réactions.',
     es: 'Ideal para: escribir muchas LP una tras otra y probar la respuesta.',
     ru: 'Подходит для: быстрого написания множества LP подряд и проверки реакции.',
+    it: "Adatta a: scrivere molte LP una dopo l'altra e testare le reazioni.",
+    pt: 'Ideal para: escrever muitas LPs uma após a outra e testar a resposta.',
   },
   naviLpLpNotesScreenshotAlt: {
     ja: 'LPNotesで、記事のように書かれたページが表示された画面',
@@ -1898,6 +2258,8 @@ const UI_STRINGS = {
     fr: 'Écran d’une page LPNotes rédigée comme un article',
     es: 'Pantalla de una página de LPNotes escrita como un artículo',
     ru: 'Экран страницы LPNotes, написанной как статья',
+    it: 'Schermata di una pagina LPNotes scritta come un articolo',
+    pt: 'Tela de uma página do LPNotes escrita como um artigo',
   },
   naviLpLpNotesArticleLinkLabel: {
     ja: 'GPT-6 Astraで自分専用LPサイトを作った――8言語の翻訳・読み上げから一般公開まで',
@@ -1908,6 +2270,8 @@ const UI_STRINGS = {
     fr: 'GPT-6 Astraで自分専用LPサイトを作った――8言語の翻訳・読み上げから一般公開まで',
     es: 'GPT-6 Astraで自分専用LPサイトを作った――8言語の翻訳・読み上げから一般公開まで',
     ru: 'GPT-6 Astraで自分専用LPサイトを作った――8言語の翻訳・読み上げから一般公開まで',
+    it: 'GPT-6 Astraで自分専用LPサイトを作った――8言語の翻訳・読み上げから一般公開まで',
+    pt: 'GPT-6 Astraで自分専用LPサイトを作った――8言語の翻訳・読み上げから一般公開まで',
   },
   naviLpChoiceHeading: {
     ja: '選び方の目安',
@@ -1918,6 +2282,8 @@ const UI_STRINGS = {
     fr: 'Comment choisir',
     es: 'Cómo elegir',
     ru: 'Как выбрать',
+    it: 'Come scegliere',
+    pt: 'Como escolher',
   },
   naviLpChoiceLine1: {
     ja: '決まった流れで伝えたい：音声ガイドLP',
@@ -1928,6 +2294,8 @@ const UI_STRINGS = {
     fr: 'Pour raconter selon un déroulé fixe : la LP guidée par la voix',
     es: 'Para contar con un flujo fijo: la LP guiada por voz',
     ru: 'Хотите рассказывать в заданной последовательности: LP с голосовым гидом',
+    it: 'Vuole raccontarlo secondo un percorso fisso: la LP guidata dalla voce',
+    pt: 'Quer contar em um fluxo fixo: a LP guiada por voz',
   },
   naviLpChoiceLine2: {
     ja: 'アイデアを次々と試したい：LPNotes',
@@ -1938,6 +2306,8 @@ const UI_STRINGS = {
     fr: 'Pour tester des idées les unes après les autres : LPNotes',
     es: 'Para probar ideas una tras otra: LPNotes',
     ru: 'Хотите пробовать идеи одну за другой: LPNotes',
+    it: "Vuole provare idee una dopo l'altra: LPNotes",
+    pt: 'Quer testar ideias uma após a outra: LPNotes',
   },
   naviLpContactHeading: {
     ja: 'ご相談',
@@ -1948,6 +2318,8 @@ const UI_STRINGS = {
     fr: 'Nous contacter',
     es: 'Consultas',
     ru: 'Консультация',
+    it: 'Contattaci',
+    pt: 'Fale conosco',
   },
   naviLpContactBody: {
     ja: 'LPの制作や、ナビ付きの仕組みのご相談は、お問い合わせからどうぞ。',
@@ -1958,6 +2330,8 @@ const UI_STRINGS = {
     fr: 'Pour toute question sur la création d’une LP ou le système guidé, contactez-moi.',
     es: 'Para consultas sobre la creación de una LP o el sistema guiado, póngase en contacto conmigo.',
     ru: 'По вопросам создания LP или системы с гидом, пожалуйста, свяжитесь со мной.',
+    it: 'Per domande sulla realizzazione di una LP o sul sistema guidato, non esiti a contattarci.',
+    pt: 'Para dúvidas sobre a criação de uma LP ou sobre o sistema guiado, entre em contato.',
   },
 
   // /business「制作の紹介」セクション（/saas・/navi-lp へのカードリンク）
@@ -1970,6 +2344,8 @@ const UI_STRINGS = {
     fr: 'Projets réalisés',
     es: 'Proyectos destacados',
     ru: 'Избранные проекты',
+    it: 'Progetti in evidenza',
+    pt: 'Projetos em destaque',
   },
 
   // /privacy: GA4利用のお知らせ（本文・リンク文言）
@@ -1982,6 +2358,8 @@ const UI_STRINGS = {
     fr: 'Ce site utilise Google Analytics 4 pour analyser la fréquentation. Pour en savoir plus, veuillez consulter la politique suivante.',
     es: 'Este sitio utiliza Google Analytics 4 para analizar el tráfico. Para más información, consulte la siguiente política.',
     ru: 'Этот сайт использует Google Analytics 4 для анализа посещаемости. Подробнее см. в следующей политике.',
+    it: 'Questo sito utilizza Google Analytics 4 per analizzare il traffico. Per maggiori dettagli, consulti la seguente policy.',
+    pt: 'Este site usa o Google Analytics 4 para analisar o tráfego. Para mais detalhes, consulte a política a seguir.',
   },
   privacyGa4LinkLabel: {
     ja: 'Googleのポリシー',
@@ -1992,6 +2370,8 @@ const UI_STRINGS = {
     fr: 'Politique de Google',
     es: 'Política de Google',
     ru: 'Политика Google',
+    it: 'Policy di Google',
+    pt: 'Política do Google',
   },
 
   // イメージ100計算ページ（/image100）
@@ -2004,6 +2384,8 @@ const UI_STRINGS = {
     fr: 'Calcul Image 100',
     es: 'Cálculo Imagen 100',
     ru: 'Расчёт «Картинка 100»',
+    it: 'Calcolo Immagine 100',
+    pt: 'Cálculo Imagem 100',
   },
   image100Lead: {
     ja: '言語脳を刺激したら、計算脳も刺激して、頭の柔軟体操で、一息入れて、リラックスしましょう',
@@ -2014,6 +2396,8 @@ const UI_STRINGS = {
     fr: 'Après avoir stimulé votre cerveau du langage, stimulez aussi votre cerveau du calcul : faites une pause détente avec un peu de gymnastique mentale.',
     es: 'Después de estimular tu cerebro del lenguaje, estimula también tu cerebro del cálculo: haz una pausa de estiramiento mental y relájate.',
     ru: 'Простимулировав языковой мозг, простимулируйте и счётный — сделайте лёгкую умственную разминку и немного расслабьтесь.',
+    it: "Dopo aver stimolato il cervello linguistico, stimoliamo anche quello matematico: una pausa di stretching mentale, per rilassarsi un po'.",
+    pt: 'Depois de estimular o cérebro da linguagem, vamos estimular também o cérebro do cálculo — faça uma pausa de alongamento mental e relaxe.',
   },
   image100HowToIntro: {
     ja: '縦横の見出しが交わるマスを見て、その2つの数字を、頭の中で、足したり、引いたり、掛けたりして、声に出す遊びです。',
@@ -2024,6 +2408,8 @@ const UI_STRINGS = {
     fr: "Regardez la case où se croisent l'en-tête horizontal et l'en-tête vertical, additionnez, soustrayez ou multipliez les deux nombres dans votre tête, puis dites le résultat à voix haute.",
     es: 'Mira la casilla donde se cruzan el encabezado horizontal y el vertical, suma, resta o multiplica esos dos números mentalmente y di el resultado en voz alta.',
     ru: 'Посмотрите на ячейку, где пересекаются горизонтальный и вертикальный заголовки, сложите, вычтите или умножьте эти два числа в уме и произнесите ответ вслух.',
+    it: "Guardi la casella in cui si incrociano un'intestazione di riga e una di colonna, sommi, sottragga o moltiplichi mentalmente i due numeri e dica il risultato ad alta voce.",
+    pt: 'Olhe para a célula onde um cabeçalho de linha e um de coluna se cruzam, some, subtraia ou multiplique os dois números de cabeça e diga a resposta em voz alta.',
   },
   image100HowToExampleAnswerOnly: {
     ja: '例：答えだけを言う → 「5」（five）',
@@ -2034,6 +2420,8 @@ const UI_STRINGS = {
     fr: 'Exemple : dire seulement la réponse → « 5 » (five)',
     es: 'Ejemplo: decir solo la respuesta → "5" (five)',
     ru: 'Пример: сказать только ответ → «5» (five)',
+    it: 'Esempio: dica solo la risposta → "5" (five)',
+    pt: 'Exemplo: diga apenas a resposta → "5" (five)',
   },
   image100HowToExampleFullSentence: {
     ja: '例：英語で計算式ごと言う → 「one plus four equal five」',
@@ -2044,6 +2432,8 @@ const UI_STRINGS = {
     fr: "Exemple : dire toute l'opération en anglais → « one plus four equal five »",
     es: 'Ejemplo: decir toda la operación en inglés → "one plus four equal five"',
     ru: 'Пример: произнести весь пример по-английски → «one plus four equal five»',
+    it: 'Esempio: dica l\'intera equazione in inglese → "one plus four equal five"',
+    pt: 'Exemplo: diga toda a equação em inglês → "one plus four equal five"',
   },
   image100HowToExampleSubtraction: {
     ja: '例：引き算の言い方（答えがマイナスになる例） → 「three minus four is minus one」',
@@ -2054,6 +2444,8 @@ const UI_STRINGS = {
     fr: 'Exemple : comment dire une soustraction (avec un résultat négatif) → « three minus four is minus one »',
     es: 'Ejemplo: cómo decir una resta (con resultado negativo) → "three minus four is minus one"',
     ru: 'Пример: как сказать вычитание (с отрицательным ответом) → «three minus four is minus one»',
+    it: 'Esempio: come dire una sottrazione (con risultato negativo) → "three minus four is minus one"',
+    pt: 'Exemplo: como dizer uma subtração (com resposta negativa) → "three minus four is minus one"',
   },
   image100HowToExampleMultiplicationTimes: {
     ja: '例：「times」を使う、かけ算の言い方（学校で習う、標準の言い方） → 「two times four is eight」',
@@ -2064,6 +2456,8 @@ const UI_STRINGS = {
     fr: "Exemple : multiplication avec « times » (la forme standard enseignée à l'école) → « two times four is eight »",
     es: 'Ejemplo: multiplicación usando "times" (la forma estándar que se enseña en la escuela) → "two times four is eight"',
     ru: 'Пример: умножение со словом «times» (стандартная форма, которую учат в школе) → «two times four is eight»',
+    it: 'Esempio: moltiplicazione con "times" (il modo standard insegnato a scuola) → "two times four is eight"',
+    pt: 'Exemplo: multiplicação usando "times" (a forma padrão ensinada na escola) → "two times four is eight"',
   },
   image100HowToExampleMultiplication: {
     ja: '例：「by」を使う、かけ算の言い方 → 「two by four is eight」',
@@ -2074,6 +2468,8 @@ const UI_STRINGS = {
     fr: 'Exemple : multiplication avec « by » → « two by four is eight »',
     es: 'Ejemplo: multiplicación usando "by" → "two by four is eight"',
     ru: 'Пример: умножение со словом «by» → «two by four is eight»',
+    it: 'Esempio: moltiplicazione con "by" → "two by four is eight"',
+    pt: 'Exemplo: multiplicação usando "by" → "two by four is eight"',
   },
   image100HowToExampleNote: {
     ja: '※ 言い方は、いろいろあります。好きな言い方で、声に出してみましょう。',
@@ -2084,6 +2480,8 @@ const UI_STRINGS = {
     fr: 'Remarque : il existe plusieurs façons de le dire, essayez celle qui vous semble la plus naturelle.',
     es: 'Nota: hay muchas formas de decirlo; prueba la que te resulte más natural.',
     ru: 'Примечание: сказать это можно по-разному — попробуйте вариант, который вам удобнее.',
+    it: 'Nota: esistono molti modi per dirlo: provi quello che le viene più naturale.',
+    pt: 'Observação: há muitas formas de dizer isso — experimente a que parecer mais natural para você.',
   },
   image100ModeLabel: {
     ja: '並び',
@@ -2094,6 +2492,8 @@ const UI_STRINGS = {
     fr: 'Ordre',
     es: 'Orden',
     ru: 'Порядок',
+    it: 'Ordine',
+    pt: 'Ordem',
   },
   image100ModeRandom: {
     ja: 'ランダム',
@@ -2104,6 +2504,8 @@ const UI_STRINGS = {
     fr: 'Aléatoire',
     es: 'Aleatorio',
     ru: 'Случайно',
+    it: 'Casuale',
+    pt: 'Aleatório',
   },
   image100ModeKuku: {
     ja: '九九',
@@ -2114,6 +2516,8 @@ const UI_STRINGS = {
     fr: "Dans l'ordre",
     es: 'En orden',
     ru: 'По порядку',
+    it: 'In ordine',
+    pt: 'Em ordem',
   },
   image100OperatorLabel: {
     ja: '演算',
@@ -2124,6 +2528,8 @@ const UI_STRINGS = {
     fr: 'Opération',
     es: 'Operación',
     ru: 'Действие',
+    it: 'Operazione',
+    pt: 'Operação',
   },
   // セルの aria-label（例: 「2かける8を再生」）。{h}/{op}/{v} を置換して使う。
   image100CellPlayAriaLabel: {
@@ -2135,6 +2541,8 @@ const UI_STRINGS = {
     fr: 'Lire {h} {op} {v}',
     es: 'Reproducir {h} {op} {v}',
     ru: 'Воспроизвести {h} {op} {v}',
+    it: 'Riproduci {h} {op} {v}',
+    pt: 'Reproduzir {h} {op} {v}',
   },
   // 割り算で縦が0（0で割る）のセルの aria-label。「答えが存在しない」ことを
   // 案内する再生ボタンであることを伝える。{h}/{op}/{v} を置換して使う。
@@ -2147,6 +2555,8 @@ const UI_STRINGS = {
     fr: 'Lire {h} {op} {v} (pas de solution)',
     es: 'Reproducir {h} {op} {v} (sin solución)',
     ru: 'Воспроизвести {h} {op} {v} (нет решения)',
+    it: 'Riproduci {h} {op} {v} (nessuna risposta)',
+    pt: 'Reproduzir {h} {op} {v} (sem resposta)',
   },
   // スクリーンリーダー向けの表キャプション（視覚的には隠す）
   image100TableCaption: {
@@ -2158,6 +2568,8 @@ const UI_STRINGS = {
     fr: "Tableau d'exercice de calcul. La ligne du haut indique les nombres d'en-tête horizontaux, la colonne de gauche les nombres d'en-tête verticaux. Les 100 cases intérieures sont toutes vides.",
     es: 'Tabla de práctica de cálculo. La fila superior muestra los números de encabezado horizontales y la columna izquierda los números de encabezado verticales. Las 100 casillas interiores están todas vacías.',
     ru: 'Таблица для тренировки счёта. В верхней строке — числа горизонтального заголовка, в левом столбце — числа вертикального заголовка. Все 100 внутренних ячеек пусты.',
+    it: "Tabella per l'esercizio di calcolo. La riga superiore mostra i numeri dell'intestazione orizzontale, la colonna di sinistra i numeri dell'intestazione verticale. Tutte le 100 celle interne sono vuote.",
+    pt: 'Tabela de prática de cálculo. A linha superior mostra os números do cabeçalho horizontal, e a coluna esquerda mostra os números do cabeçalho vertical. Todas as 100 células internas estão vazias.',
   },
   image100ContactHeading: {
     ja: 'ご相談',
@@ -2168,6 +2580,8 @@ const UI_STRINGS = {
     fr: 'Nous contacter',
     es: 'Consultas',
     ru: 'Консультация',
+    it: 'Contattaci',
+    pt: 'Fale conosco',
   },
   image100ContactBody: {
     ja: 'イメージ100計算や、ほかのページについてのご相談は、お問い合わせからどうぞ。',
@@ -2178,6 +2592,8 @@ const UI_STRINGS = {
     fr: 'Pour toute question sur le Calcul Image 100 ou d’autres pages, contactez-moi.',
     es: 'Para consultas sobre el Cálculo Imagen 100 u otras páginas, póngase en contacto conmigo.',
     ru: 'По вопросам о «Расчёт «Картинка 100»» или других страницах, пожалуйста, свяжитесь со мной.',
+    it: 'Per domande sul Calcolo Immagine 100 o su altre pagine, non esiti a contattarci.',
+    pt: 'Para dúvidas sobre o Cálculo Imagem 100 ou outras páginas, entre em contato.',
   },
 } satisfies Record<string, Localized>;
 

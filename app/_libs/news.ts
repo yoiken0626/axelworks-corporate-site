@@ -72,3 +72,17 @@ export const localizedTitle = (article: TitleSource, lang: string): string =>
 
 export const localizedContent = (article: News, lang: string): string =>
   (CONTENT_FIELD[lang] && (article[CONTENT_FIELD[lang]] as string | undefined)) || article.content;
+
+// まだ翻訳されていない対象言語（title_*/content_* のどちらかが空）を、レジストリの
+// 翻訳対象言語一覧から動的に算出する。翻訳パイプライン（/api/translate-article）が、
+// 「未翻訳の言語だけを翻訳する」「失敗した言語だけ再試行する」ために使う。
+// 言語を追加しても固定のカウントを直す必要はない（レジストリの対象言語数がそのまま
+// 使われる）。
+export const missingTranslationLangs = (article: News): TranslationSuffix[] =>
+  LANGUAGES.flatMap((l) => {
+    if (!l.translationField) return [];
+    const suffix = l.translationField as TranslationSuffix;
+    const hasTitle = !!article[`title_${suffix}`];
+    const hasContent = !!article[`content_${suffix}`];
+    return hasTitle && hasContent ? [] : [suffix];
+  });

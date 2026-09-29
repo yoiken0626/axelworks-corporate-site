@@ -2,7 +2,8 @@ import { createClient } from 'microcms-js-sdk';
 import type { News, TitleFields, ContentFields } from './microcms';
 
 // 書き込み専用クライアント。
-// title_(en|ko|zh|de|fr|es|ru) / content_(en|ko|zh|de|fr|es|ru) / translation_status の更新にのみ使用する。
+// title_*/content_*（レジストリの翻訳対象言語から自動生成、app/_libs/news.ts）
+// および translation_status の更新にのみ使用する。
 // PATCH権限のみを付与した、閲覧用(MICROCMS_API_KEY)とは別のAPIキーを想定している。
 // フロント表示に使う app/_libs/microcms.ts とは分離し、
 // このモジュールを読み込まないページのビルドがMICROCMS_MANAGEMENT_API_KEY未設定で
