@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
   if (article.translation_status?.includes('生成中')) {
     console.warn(
       '[translate-article] 生成中 stuck since',
-      article.translation_started_at,
+      article.translation_started,
       '- treating as stalled and retrying',
       contentId,
     );

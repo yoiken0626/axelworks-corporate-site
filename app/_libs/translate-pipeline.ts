@@ -10,14 +10,14 @@ export const STALE_GENERATING_MS = 10 * 60 * 1000; // 10分
 
 /**
  * 「生成中」のまま滞留しているか（=ロックを無視して再試行してよいか）を判定する。
- * translation_started_at が無い（旧コードが生成中にした・書き込みに失敗した等）場合は、
+ * translation_started が無い（旧コードが生成中にした・書き込みに失敗した等）場合は、
  * 経過時間を判断できないため安全側に倒して「滞留していない」= 通常どおりスキップする。
  */
 export const isStaleGenerating = (
-  article: Pick<News, 'translation_status' | 'translation_started_at'>,
+  article: Pick<News, 'translation_status' | 'translation_started'>,
 ): boolean => {
   if (!article.translation_status?.includes('生成中')) return false;
-  const startedAtMs = article.translation_started_at ? Date.parse(article.translation_started_at) : NaN;
+  const startedAtMs = article.translation_started ? Date.parse(article.translation_started) : NaN;
   if (!Number.isFinite(startedAtMs)) return false;
   return Date.now() - startedAtMs >= STALE_GENERATING_MS;
 };
@@ -66,7 +66,7 @@ export async function translatePendingLanguages(
   try {
     await updateNewsTranslation(contentId, {
       translation_status: ['生成中'],
-      translation_started_at: new Date().toISOString(),
+      translation_started: new Date().toISOString(),
     });
   } catch (error) {
     console.error('[translate-pipeline] failed to lock article', contentId, error);

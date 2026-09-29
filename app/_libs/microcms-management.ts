@@ -32,10 +32,10 @@ const getWriteClient = () => {
 };
 
 // title_*/content_*（レジストリの翻訳対象言語から自動生成、app/_libs/news.ts）+ translation_status
-// + translation_started_at（「生成中」になった時刻。滞留検知に使う）
+// + translation_started（「生成中」になった時刻。滞留検知に使う）
 type NewsTranslationFields = TitleFields &
   ContentFields &
-  Pick<News, 'translation_status' | 'translation_started_at'>;
+  Pick<News, 'translation_status' | 'translation_started'>;
 
 // ニュース記事の翻訳関連フィールドをPATCHで更新する
 export const updateNewsTranslation = async (contentId: string, fields: NewsTranslationFields) => {
