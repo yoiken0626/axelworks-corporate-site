@@ -1,7 +1,6 @@
 import { cookies } from 'next/headers';
 import { LANG_COOKIE, resolveLang } from '@/app/_libs/lang';
 import { ui } from '@/app/_libs/ui-strings';
-import { SCROLL_DOCK_SENTINEL_ID } from '@/app/_libs/scroll-dock';
 import { DIGITS_0_TO_9, shuffle } from '@/app/_libs/shuffle';
 import ButtonLink from '@/app/_components/ButtonLink';
 import Image100Interactive from './Image100Interactive';
@@ -24,9 +23,6 @@ export default async function Page() {
         {ui('image100Heading', lang)}
       </h1>
       <p className={styles.lead}>{ui('image100Lead', lang)}</p>
-
-      {/* リード直後。ここが画面上端より上へ出たら地球儀・読み上げUIを画面最上部へせり上げる */}
-      <div id={SCROLL_DOCK_SENTINEL_ID} aria-hidden="true" />
 
       <div className={styles.howTo}>
         <p>{ui('image100HowToIntro', lang)}</p>

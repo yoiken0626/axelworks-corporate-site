@@ -1,7 +1,6 @@
 import { cookies } from 'next/headers';
 import { LANG_COOKIE, resolveLang } from '@/app/_libs/lang';
 import { ui } from '@/app/_libs/ui-strings';
-import { SCROLL_DOCK_SENTINEL_ID } from '@/app/_libs/scroll-dock';
 import PageReadAloud from '@/app/_components/PageReadAloud';
 import styles from './page.module.css';
 
@@ -32,9 +31,6 @@ export default async function Page() {
         <br />
         {ui('companyLeadLine2', lang)}
       </h1>
-
-      {/* リード直後。ここが画面上端より上へ出たら地球儀・読み上げUIを画面最上部へせり上げる */}
-      <div id={SCROLL_DOCK_SENTINEL_ID} aria-hidden="true" />
 
       <section className={styles.block} data-read-aloud-body>
         <h2 className={styles.heading}>{ui('companyHeading', lang)}</h2>
