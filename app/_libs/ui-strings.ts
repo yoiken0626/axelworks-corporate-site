@@ -19,6 +19,7 @@ const UI_STRINGS = {
     ru: 'AXelWorks — связываем мир на многих языках вместе с ИИ',
     it: "AXelWorks — in contatto con il mondo in tante lingue, insieme all'IA",
     pt: 'AXelWorks — conectando-se com o mundo em muitos idiomas, ao lado da IA',
+    fil: 'AXelWorks — kumokonekta sa mundo sa maraming wika, kasama ang AI',
   },
 
   // ヘッダー / フッター共通のナビゲーション
@@ -33,6 +34,7 @@ const UI_STRINGS = {
     ru: 'Статьи',
     it: 'Articoli',
     pt: 'Artigos',
+    fil: 'Mga Artikulo',
   },
   navBusiness: {
     ja: '事業内容',
@@ -45,6 +47,7 @@ const UI_STRINGS = {
     ru: 'Услуги',
     it: 'Attività',
     pt: 'Serviços',
+    fil: 'Negosyo',
   },
   navAbout: {
     ja: '私たちについて',
@@ -57,6 +60,7 @@ const UI_STRINGS = {
     ru: 'Кто мы',
     it: 'Chi siamo',
     pt: 'Quem somos',
+    fil: 'Sino Kami',
   },
   navContact: {
     ja: 'お問い合わせ',
@@ -69,6 +73,7 @@ const UI_STRINGS = {
     ru: 'Контакты',
     it: 'Contatti',
     pt: 'Contato',
+    fil: 'Makipag-ugnayan',
   },
 
   // アクセシビリティ用のラベル
@@ -83,6 +88,7 @@ const UI_STRINGS = {
     ru: 'Перейти к основному содержанию',
     it: 'Salta al contenuto principale',
     pt: 'Pular para o conteúdo principal',
+    fil: 'Lumaktaw papunta sa pangunahing nilalaman',
   },
   navMain: {
     ja: 'メインメニュー',
@@ -95,6 +101,7 @@ const UI_STRINGS = {
     ru: 'Главное меню',
     it: 'Menu principale',
     pt: 'Menu principal',
+    fil: 'Pangunahing menu',
   },
   navFooter: {
     ja: 'フッターメニュー',
@@ -107,6 +114,7 @@ const UI_STRINGS = {
     ru: 'Меню в подвале',
     it: 'Menu di piè di pagina',
     pt: 'Menu de rodapé',
+    fil: 'Menu ng footer',
   },
   menuOpen: {
     ja: 'メニューを開く',
@@ -119,6 +127,7 @@ const UI_STRINGS = {
     ru: 'Открыть меню',
     it: 'Apri il menu',
     pt: 'Abrir o menu',
+    fil: 'Buksan ang menu',
   },
   menuClose: {
     ja: 'メニューを閉じる',
@@ -131,6 +140,7 @@ const UI_STRINGS = {
     ru: 'Закрыть меню',
     it: 'Chiudi il menu',
     pt: 'Fechar o menu',
+    fil: 'Isara ang menu',
   },
   paginationLabel: {
     ja: 'ページ送り',
@@ -143,6 +153,7 @@ const UI_STRINGS = {
     ru: 'Постраничная навигация',
     it: 'Paginazione',
     pt: 'Paginação',
+    fil: 'Pagpapahina',
   },
   paginationPage: {
     ja: '{n}ページ目',
@@ -155,6 +166,7 @@ const UI_STRINGS = {
     ru: 'Страница {n}',
     it: 'Pagina {n}',
     pt: 'Página {n}',
+    fil: 'Pahina {n}',
   },
   opensInNewTab: {
     ja: '（新しいタブで開く）',
@@ -167,6 +179,7 @@ const UI_STRINGS = {
     ru: '(откроется в новой вкладке)',
     it: '(si apre in una nuova scheda)',
     pt: '(abre em uma nova guia)',
+    fil: '(bubukas sa bagong tab)',
   },
 
   // ヘッダーナビ（/hire-me。日本語のみ）
@@ -187,6 +200,7 @@ const UI_STRINGS = {
     ru: '© {year} AXelWorks',
     it: '© {year} AXelWorks',
     pt: '© {year} AXelWorks',
+    fil: '© {year} AXelWorks',
   },
 
   // News セクション（トップページの記事グリッド見出し・読み上げ文言）
@@ -201,6 +215,7 @@ const UI_STRINGS = {
     ru: 'Статьи',
     it: 'Articoli',
     pt: 'Artigos',
+    fil: 'Mga Artikulo',
   },
   // ニュース一覧ページ（/news, /news/p/N）の h1
   newsListHeading: {
@@ -214,6 +229,7 @@ const UI_STRINGS = {
     ru: 'Статьи',
     it: 'Articoli',
     pt: 'Artigos',
+    fil: 'Mga Artikulo',
   },
   seeMore: {
     ja: 'もっとみる',
@@ -226,6 +242,7 @@ const UI_STRINGS = {
     ru: 'Подробнее',
     it: 'Vedi altro',
     pt: 'Ver mais',
+    fil: 'Tingnan pa',
   },
   newsListLink: {
     ja: '記事一覧へ',
@@ -238,6 +255,7 @@ const UI_STRINGS = {
     ru: 'Все статьи',
     it: 'Vedi tutti gli articoli',
     pt: 'Ver todos os artigos',
+    fil: 'Tingnan ang lahat ng artikulo',
   },
   // トップページの記事グリッド「もっと見る」ボタン（読み込み中）
   loadMoreLoading: {
@@ -251,6 +269,7 @@ const UI_STRINGS = {
     ru: 'Загрузка…',
     it: 'Caricamento…',
     pt: 'Carregando…',
+    fil: 'Naglo-load…',
   },
   // 取得失敗時のエラーメッセージ（下にボタンは残るので再度押せる旨は含めない）
   loadMoreError: {
@@ -264,6 +283,7 @@ const UI_STRINGS = {
     ru: 'Не удалось загрузить статьи. Повторите попытку.',
     it: 'Impossibile caricare altri articoli. Riprovi.',
     pt: 'Falha ao carregar mais artigos. Tente novamente.',
+    fil: 'Nabigong i-load ang mga karagdagang artikulo. Pakisubukang muli.',
   },
   // 追加読み込み完了時の読み上げ用アナウンス（{n} は追加件数）
   loadMoreAnnouncement: {
@@ -277,6 +297,7 @@ const UI_STRINGS = {
     ru: 'Добавлено ещё {n} статей',
     it: 'Aggiunti altri {n} articoli',
     pt: '{n} artigos adicionados',
+    fil: '{n} pang artikulo ang naidagdag',
   },
 
   // 記事詳細ページの目次
@@ -291,6 +312,7 @@ const UI_STRINGS = {
     ru: 'Содержание',
     it: 'Indice',
     pt: 'Índice',
+    fil: 'Talaan ng Nilalaman',
   },
 
   // 下層ページのヒーローバナー小見出し（news はバナー廃止済み）
@@ -305,6 +327,7 @@ const UI_STRINGS = {
     ru: 'Услуги',
     it: 'Attività',
     pt: 'Serviços',
+    fil: 'Negosyo',
   },
 
   // ページ読み上げコントロール
@@ -319,6 +342,7 @@ const UI_STRINGS = {
     ru: 'Озвучить эту страницу',
     it: 'Leggi questa pagina ad alta voce',
     pt: 'Ler esta página em voz alta',
+    fil: 'Basahin nang malakas ang pahinang ito',
   },
   readAloudPause: {
     ja: '読み上げを一時停止',
@@ -331,6 +355,7 @@ const UI_STRINGS = {
     ru: 'Приостановить озвучивание',
     it: 'Metti in pausa la lettura',
     pt: 'Pausar a leitura',
+    fil: 'I-pause ang pagbasa',
   },
   readAloudStop: {
     ja: '読み上げを停止',
@@ -343,6 +368,7 @@ const UI_STRINGS = {
     ru: 'Остановить озвучивание',
     it: 'Interrompi la lettura',
     pt: 'Parar a leitura',
+    fil: 'Itigil ang pagbasa',
   },
   readAloudSpeed: {
     ja: '速度',
@@ -355,6 +381,7 @@ const UI_STRINGS = {
     ru: 'Скорость',
     it: 'Velocità',
     pt: 'Velocidade',
+    fil: 'Bilis',
   },
   // 「繰り返し」ボタン（停止中/未選択時のラベル。押すと回数を選ぶメニューが開く）
   readAloudRepeat: {
@@ -368,6 +395,7 @@ const UI_STRINGS = {
     ru: 'Повторить',
     it: 'Ripeti',
     pt: 'Repetir',
+    fil: 'Ulitin',
   },
   // 「繰り返し」ボタン（繰り返し中のラベル。押すとメニューは開かず、今の周を
   // 最後まで読んだところで止まる）
@@ -382,6 +410,7 @@ const UI_STRINGS = {
     ru: 'Остановить повтор',
     it: 'Interrompi la ripetizione',
     pt: 'Parar a repetição',
+    fil: 'Itigil ang pag-uulit',
   },
   // 繰り返し回数メニューの見出し（メニューの aria-label にも使う）
   readAloudRepeatMenuHeading: {
@@ -395,6 +424,7 @@ const UI_STRINGS = {
     ru: 'Количество повторов',
     it: 'Numero di ripetizioni',
     pt: 'Número de repetições',
+    fil: 'Bilang ng pag-uulit',
   },
   // 繰り返し回数メニューの各項目（{count} は REPEAT_OPTIONS の値に置換）
   readAloudRepeatOption: {
@@ -408,6 +438,7 @@ const UI_STRINGS = {
     ru: '{count} раз',
     it: '{count} volte',
     pt: '{count} vezes',
+    fil: '{count} beses',
   },
   // 繰り返し再生中の進行状況（aria-live で通知。読み上げ音声には含めない）
   readAloudRepeatProgress: {
@@ -421,6 +452,7 @@ const UI_STRINGS = {
     ru: 'Повтор {lap} из {count}',
     it: 'Ripetizione {lap} di {count}',
     pt: 'Repetição {lap} de {count}',
+    fil: 'Pag-ulit {lap} ng {count}',
   },
   // 記事が長く音声キャッシュの上限を超えたため、繰り返し再生を無効化した旨の控えめな注記
   readAloudRepeatUnavailable: {
@@ -434,6 +466,7 @@ const UI_STRINGS = {
     ru: 'Эта статья слишком длинная для повтора воспроизведения.',
     it: 'Questo articolo è troppo lungo per la ripetizione.',
     pt: 'Este artigo é longo demais para a repetição.',
+    fil: 'Masyadong mahaba ang artikulong ito para sa paulit-ulit na pagbasa.',
   },
   // /api/tts が失敗した（403/429/502等）ときの控えめなエラー表示。読み上げ対象の
   // テキストには含めず、aria-live での通知にのみ使う。
@@ -448,6 +481,7 @@ const UI_STRINGS = {
     ru: 'Озвучивание сейчас недоступно. Повторите попытку позже.',
     it: 'La lettura ad alta voce non è disponibile al momento. Riprovi più tardi.',
     pt: 'A leitura em voz alta não está disponível no momento. Tente novamente mais tarde.',
+    fil: 'Hindi available ang pagbasa nang malakas ngayon. Pakisubukang muli mamaya.',
   },
 
   // 地球儀（言語切り替え）ボタンの aria-label。{lang} は選択中の言語の現地語名
@@ -463,6 +497,7 @@ const UI_STRINGS = {
     ru: 'Текущий язык: {lang}. Изменить язык',
     it: 'Lingua attuale: {lang}. Cambia lingua',
     pt: 'Idioma atual: {lang}. Mudar idioma',
+    fil: 'Kasalukuyang wika: {lang}. Baguhin ang wika',
   },
   // 言語選択メニュー（対応言語ぶんの国旗リング）の aria-label
   globeLanguageMenuHeading: {
@@ -476,6 +511,7 @@ const UI_STRINGS = {
     ru: 'Выбрать язык',
     it: 'Seleziona la lingua',
     pt: 'Selecionar idioma',
+    fil: 'Pumili ng wika',
   },
 
   // ディクテーション練習モード（記事ページのみ）
@@ -490,6 +526,7 @@ const UI_STRINGS = {
     ru: 'Практика',
     it: 'Esercizio',
     pt: 'Prática',
+    fil: 'Pagsasanay',
   },
   practiceEntryAriaLabel: {
     ja: 'ディクテーション練習を開く',
@@ -502,6 +539,7 @@ const UI_STRINGS = {
     ru: 'Открыть практику диктанта',
     it: "Apri l'esercizio di dettato",
     pt: 'Abrir a prática de ditado',
+    fil: 'Buksan ang pagsasanay sa dictation',
   },
   practicePanelHeading: {
     ja: 'ディクテーション練習',
@@ -514,6 +552,7 @@ const UI_STRINGS = {
     ru: 'Практика диктанта',
     it: 'Esercizio di dettato',
     pt: 'Prática de ditado',
+    fil: 'Pagsasanay sa Dictation',
   },
   practiceBoundaryLabel: {
     ja: '区切り',
@@ -526,6 +565,7 @@ const UI_STRINGS = {
     ru: 'Точки паузы',
     it: 'Punti di pausa',
     pt: 'Pontos de pausa',
+    fil: 'Mga break point',
   },
   practiceBoundaryCommaPeriod: {
     ja: 'カンマ・ピリオド',
@@ -538,6 +578,7 @@ const UI_STRINGS = {
     ru: 'Запятые и точки',
     it: 'Virgole e punti',
     pt: 'Vírgulas e pontos',
+    fil: 'Kuwit at tuldok',
   },
   practiceBoundarySentence: {
     ja: '1文',
@@ -550,6 +591,7 @@ const UI_STRINGS = {
     ru: 'Целые предложения',
     it: 'Frasi complete',
     pt: 'Frases completas',
+    fil: 'Buong pangungusap',
   },
   // 進み具合の表示（例: "3 / 42"）。{current} / {total} を置換する
   practiceProgress: {
@@ -563,6 +605,7 @@ const UI_STRINGS = {
     ru: '{current} / {total}',
     it: '{current} / {total}',
     pt: '{current} / {total}',
+    fil: '{current} / {total}',
   },
   practiceRevealShow: {
     ja: '答えを見る',
@@ -575,6 +618,7 @@ const UI_STRINGS = {
     ru: 'Показать ответ',
     it: 'Mostra la risposta',
     pt: 'Mostrar resposta',
+    fil: 'Ipakita ang sagot',
   },
   practiceRevealHide: {
     ja: '隠す',
@@ -587,6 +631,7 @@ const UI_STRINGS = {
     ru: 'Скрыть',
     it: 'Nascondi',
     pt: 'Ocultar',
+    fil: 'Itago',
   },
   practiceHiddenNote: {
     ja: '紙に書き取ってから「答えを見る」を押してください',
@@ -599,6 +644,7 @@ const UI_STRINGS = {
     ru: 'Запишите на бумаге, затем нажмите «Показать ответ»',
     it: 'Lo scriva su carta, poi tocchi «Mostra la risposta»',
     pt: 'Escreva no papel e depois toque em "Mostrar resposta"',
+    fil: 'Isulat muna sa papel, pagkatapos ay pindutin ang "Ipakita ang sagot"',
   },
   practiceStart: {
     ja: '開始',
@@ -611,6 +657,7 @@ const UI_STRINGS = {
     ru: 'Начать',
     it: 'Inizia',
     pt: 'Iniciar',
+    fil: 'Simulan',
   },
   practiceReplay: {
     ja: 'もう一度',
@@ -623,6 +670,7 @@ const UI_STRINGS = {
     ru: 'Ещё раз',
     it: 'Riascolta',
     pt: 'Ouvir novamente',
+    fil: 'Ulitin',
   },
   practiceNext: {
     ja: '次へ',
@@ -635,6 +683,7 @@ const UI_STRINGS = {
     ru: 'Далее',
     it: 'Avanti',
     pt: 'Próximo',
+    fil: 'Susunod',
   },
   practicePrevious: {
     ja: '前へ',
@@ -647,6 +696,7 @@ const UI_STRINGS = {
     ru: 'Назад',
     it: 'Indietro',
     pt: 'Anterior',
+    fil: 'Nakaraan',
   },
   practiceFinish: {
     ja: '終了',
@@ -659,6 +709,7 @@ const UI_STRINGS = {
     ru: 'Завершить',
     it: 'Termina',
     pt: 'Finalizar',
+    fil: 'Tapusin',
   },
   practiceFinishedHeading: {
     ja: 'おわりました',
@@ -671,6 +722,7 @@ const UI_STRINGS = {
     ru: 'Готово!',
     it: 'Fatto!',
     pt: 'Concluído!',
+    fil: 'Tapos na!',
   },
   practiceRestart: {
     ja: '最初から',
@@ -683,6 +735,7 @@ const UI_STRINGS = {
     ru: 'Начать сначала',
     it: 'Ricomincia',
     pt: 'Recomeçar',
+    fil: 'Magsimula ulit',
   },
   // 練習の種類（手書き／リピート再生）を選ぶ2択の見出し・aria-label
   practiceTypeLabel: {
@@ -696,6 +749,7 @@ const UI_STRINGS = {
     ru: 'Тип практики',
     it: 'Tipo di esercizio',
     pt: 'Tipo de prática',
+    fil: 'Uri ng pagsasanay',
   },
   practiceTypeDictation: {
     ja: '手書き',
@@ -708,6 +762,7 @@ const UI_STRINGS = {
     ru: 'Письмо от руки',
     it: 'Scrittura a mano',
     pt: 'Escrita à mão',
+    fil: 'Pagsulat nang kamay',
   },
   // 既存の繰り返し機能の英語表記「Repeat」とは区別する（区間ごとに自動で
   // 進み続ける「リピート再生」練習モード）
@@ -722,6 +777,7 @@ const UI_STRINGS = {
     ru: 'Повторное воспроизведение',
     it: 'Riproduzione in loop',
     pt: 'Reprodução em loop',
+    fil: 'Paulit-ulit na Pag-playback',
   },
   // リピート再生専用のボタン（自動で進むのを一時的に止める・続きから再開する）
   practicePause: {
@@ -735,6 +791,7 @@ const UI_STRINGS = {
     ru: 'Пауза',
     it: 'Pausa',
     pt: 'Pausa',
+    fil: 'I-pause',
   },
   practiceResume: {
     ja: '再開',
@@ -747,6 +804,7 @@ const UI_STRINGS = {
     ru: 'Продолжить',
     it: 'Riprendi',
     pt: 'Retomar',
+    fil: 'Ituloy',
   },
 
   // Business セクション
@@ -762,6 +820,7 @@ const UI_STRINGS = {
     ru: 'Наша деятельность',
     it: 'La nostra attività',
     pt: 'Nossos serviços',
+    fil: 'Ang aming negosyo',
   },
   businessBody1: {
     ja: '当社は、次世代テクノロジーの研究開発・製造・販売を行う革新的な企業です。',
@@ -774,6 +833,7 @@ const UI_STRINGS = {
     ru: 'Мы — инновационная компания, занимающаяся исследованиями, разработкой, производством и продажей технологий нового поколения.',
     it: "Siamo un'azienda innovativa impegnata nella ricerca, sviluppo, produzione e vendita di tecnologie di nuova generazione.",
     pt: 'Somos uma empresa inovadora dedicada à pesquisa, desenvolvimento, fabricação e venda de tecnologia de próxima geração.',
+    fil: 'Kami ay isang makabagong kumpanya na nakatuon sa pananaliksik, pagpapaunlad, paggawa, at pagbebenta ng teknolohiya ng susunod na henerasyon.',
   },
   businessBody2: {
     ja: 'AI、ロボット工学、自律システムなど、幅広い分野でのソリューション提供を通じて、社会の進化と未来の創造に貢献します。',
@@ -786,6 +846,7 @@ const UI_STRINGS = {
     ru: 'Предлагая решения в самых разных областях — искусственный интеллект, робототехника, автономные системы и многое другое, — мы вносим вклад в развитие общества и создание будущего.',
     it: "Attraverso soluzioni in un'ampia gamma di settori — IA, robotica, sistemi autonomi e altro ancora — contribuiamo al progresso della società e alla creazione del futuro.",
     pt: 'Por meio de soluções em uma ampla gama de áreas — IA, robótica, sistemas autônomos e muito mais —, contribuímos para o avanço da sociedade e a criação do futuro.',
+    fil: 'Sa pamamagitan ng mga solusyon sa malawak na hanay ng mga larangan — AI, robotics, autonomous systems, at higit pa — nag-aambag kami sa pag-unlad ng lipunan at sa paglikha ng kinabukasan.',
   },
 
   // About Us セクション
@@ -801,6 +862,7 @@ const UI_STRINGS = {
     ru: 'Кто мы',
     it: 'Chi siamo',
     pt: 'Quem somos',
+    fil: 'Sino Kami',
   },
   // トップページの要約。全文は /company ページ
   aboutLead: {
@@ -814,6 +876,7 @@ const UI_STRINGS = {
     ru: 'Один сотрудник. Но здесь никто не работает в одиночку.',
     it: 'Un solo dipendente. Ma qui nessuno lavora da solo.',
     pt: 'Um único funcionário. Mas aqui ninguém trabalha sozinho.',
+    fil: 'Isang empleyado lang. Pero walang nagtatrabaho nang mag-isa dito.',
   },
   aboutSummary: {
     ja: 'AIと人がお互いの得意で働き、企業の「面倒」を減らすアプリと、人の「学びたい」を後押しするアプリをつくっています。',
@@ -826,6 +889,7 @@ const UI_STRINGS = {
     ru: 'Человек и ИИ используют свои сильные стороны и создают приложения, которые избавляют бизнес от рутины, и приложения для тех, кто хочет учиться.',
     it: "Le persone e l'IA mettono in campo ciascuna i propri punti di forza, creando app che riducono il lavoro noioso delle aziende e app che sostengono chi vuole imparare.",
     pt: 'Pessoas e IA usam cada uma seus próprios pontos fortes, criando aplicativos que reduzem tarefas tediosas das empresas e aplicativos que apoiam quem quer aprender.',
+    fil: 'Ginagamit ng mga tao at AI ang kanya-kanyang lakas upang gumawa ng mga app na nagpapababa ng abalang gawain ng negosyo, at mga app na sumusuporta sa mga taong gustong matuto.',
   },
 
   // /company ページ（私たちについて）。リード2行（companyLeadLine1/2）は、
@@ -843,6 +907,7 @@ const UI_STRINGS = {
     ru: 'Один сотрудник.',
     it: 'Un solo dipendente.',
     pt: 'Um único funcionário.',
+    fil: 'Isang empleyado lang.',
   },
   companyLeadLine2: {
     ja: 'でも、仕事は一人でやらない。',
@@ -855,6 +920,7 @@ const UI_STRINGS = {
     ru: 'Но здесь никто не работает в одиночку.',
     it: 'Ma qui nessuno lavora da solo.',
     pt: 'Mas aqui ninguém trabalha sozinho.',
+    fil: 'Pero walang nagtatrabaho nang mag-isa dito.',
   },
   companyHeading: {
     ja: 'AIと人が、お互いの得意で働く会社。',
@@ -867,6 +933,7 @@ const UI_STRINGS = {
     ru: 'Компания, где человек и ИИ используют свои сильные стороны.',
     it: "Un'azienda in cui le persone e l'IA mettono in campo ciascuna i propri punti di forza.",
     pt: 'Uma empresa onde pessoas e IA usam cada uma seus próprios pontos fortes.',
+    fil: 'Isang kumpanya kung saan ang mga tao at AI ay gumagamit ng kanya-kanyang lakas.',
   },
   companyBody: {
     ja: 'AIと長年のIT経験を組み合わせ、企業の「面倒」を減らすアプリと、人の「学びたい」を後押しするアプリをつくります。開発の過程もすべて公開しながら、AIと一緒に会社を育てていきます。',
@@ -879,6 +946,7 @@ const UI_STRINGS = {
     ru: 'Сочетая ИИ с многолетним опытом в сфере IT, я создаю приложения, которые избавляют бизнес от рутины, и приложения для тех, кто хочет учиться. Открыто делясь всем процессом разработки, я развиваю эту компанию вместе с ИИ.',
     it: "Combinando l'IA con anni di esperienza nel settore IT, creo app che riducono il lavoro noioso delle aziende e app che sostengono chi vuole imparare. Condivido apertamente tutto il processo di sviluppo, facendo crescere questa azienda insieme all'IA.",
     pt: 'Combinando a IA com anos de experiência em TI, crio aplicativos que reduzem tarefas tediosas das empresas e aplicativos que apoiam quem quer aprender. Compartilho todo o processo de desenvolvimento de forma aberta, fazendo esta empresa crescer junto com a IA.',
+    fil: 'Sa pagsasama ng AI at maraming taong karanasan sa IT, gumagawa ako ng mga app na nagpapababa ng abalang gawain ng negosyo, at mga app na sumusuporta sa mga taong gustong matuto. Ibinabahagi ko nang bukas ang buong proseso ng pagpapaunlad, habang pinapalago ang kumpanyang ito kasama ang AI.',
   },
   companyRepHeading: {
     ja: '代表について',
@@ -891,6 +959,7 @@ const UI_STRINGS = {
     ru: 'Об основателе',
     it: 'Il fondatore',
     pt: 'Sobre o fundador',
+    fil: 'Tungkol sa Tagapagtatag',
   },
   companyRepBody: {
     ja: '約39年、IT業界でエンジニアとして生きてきました。今はAIエージェント達と共に、一人企業に挑戦中です。',
@@ -903,6 +972,7 @@ const UI_STRINGS = {
     ru: 'Около 39 лет я работаю инженером в сфере IT. Сейчас вместе с ИИ-агентами я берусь за вызов — компанию, где работает один человек.',
     it: "Da circa 39 anni lavoro come ingegnere nel settore IT. Ora, insieme ad agenti IA, mi sto cimentando nella sfida di gestire un'azienda individuale.",
     pt: 'Há cerca de 39 anos trabalho como engenheiro no setor de TI. Agora, junto com agentes de IA, estou encarando o desafio de administrar uma empresa unipessoal.',
+    fil: 'Halos 39 taon na akong nagtatrabaho bilang inhinyero sa industriya ng IT. Ngayon, kasama ang mga AI agent, hinaharap ko ang hamon ng pagpapatakbo ng isang one-person na kumpanya.',
   },
   // 代表者名（対応言語ぶん）。人名は翻訳せず、各言語の慣習に合わせる：
   // ja=原表記、en/de/fr/es/it/pt=ヘボン式ローマ字（西欧語共通・名→ニックネーム→姓の順）、
@@ -920,6 +990,7 @@ const UI_STRINGS = {
     ru: 'Кэнъити (Kenny) Ёсида',
     it: 'Kenichi (Kenny) Yoshida',
     pt: 'Kenichi (Kenny) Yoshida',
+    fil: 'Kenichi (Kenny) Yoshida',
   },
   companyRepNote: {
     ja: '法人設立準備中｜所在地・登記情報は設立後に掲載予定',
@@ -932,6 +1003,7 @@ const UI_STRINGS = {
     ru: 'Регистрация юридического лица готовится | Адрес и регистрационные данные будут опубликованы после регистрации',
     it: "Costituzione della società in corso | L'indirizzo e i dati di registrazione saranno pubblicati dopo la costituzione",
     pt: 'Constituição da empresa em andamento | O endereço e os dados de registro serão publicados após a constituição',
+    fil: 'Kasalukuyang inihahanda ang pagpapatala ng korporasyon | Ilalathala ang address at impormasyon ng pagpaparehistro pagkatapos ng pagpapatala',
   },
 
   // トップページの「私を採用情報」誘導セクション（/hire-me へ）。
@@ -960,6 +1032,7 @@ const UI_STRINGS = {
     ru: 'Связаться с нами',
     it: 'Contatti',
     pt: 'Contato',
+    fil: 'Makipag-ugnayan',
   },
   businessContactBody: {
     ja: 'ご相談・お見積もりなど、お気軽にお問い合わせください。',
@@ -972,6 +1045,7 @@ const UI_STRINGS = {
     ru: 'Консультация, смета или просто идея для обсуждения — напишите нам.',
     it: "Domande, preventivi o semplicemente un'idea da discutere: non esiti a contattarci.",
     pt: 'Dúvidas, orçamentos ou apenas uma ideia para conversar — sinta-se à vontade para entrar em contato.',
+    fil: 'Mga tanong, pagtatantya, o ideyang gustong pag-usapan — huwag mag-atubiling makipag-ugnayan.',
   },
   businessContactLink: {
     ja: 'お問い合わせフォームへ',
@@ -984,6 +1058,7 @@ const UI_STRINGS = {
     ru: 'Перейти к форме обращения',
     it: 'Vai al modulo di contatto',
     pt: 'Ir para o formulário de contato',
+    fil: 'Pumunta sa form ng pakikipag-ugnayan',
   },
 
   // ----- Contact セクション（左カラム） -----
@@ -999,6 +1074,7 @@ const UI_STRINGS = {
     ru: 'Та самая «небольшая загвоздка»,',
     it: 'Quel piccolo intoppo che la blocca,',
     pt: 'Aquele pequeno problema que está te incomodando,',
+    fil: 'Ang "medyo nahihirapan" mong iyan,',
   },
   contactHeadingAccent: {
     ja: '聞かせてください。',
@@ -1011,6 +1087,7 @@ const UI_STRINGS = {
     ru: 'расскажите нам о ней.',
     it: 'ce lo racconti.',
     pt: 'conte para nós.',
+    fil: 'pag-usapan natin.',
   },
   contactLead1: {
     ja: 'まだアイデアが固まっていなくても大丈夫です。',
@@ -1023,6 +1100,7 @@ const UI_STRINGS = {
     ru: 'Ничего страшного, если ваша идея ещё не оформилась.',
     it: 'Va benissimo anche se la sua idea non è ancora del tutto definita.',
     pt: 'Não tem problema se sua ideia ainda não estiver totalmente definida.',
+    fil: 'Okay lang kahit hindi pa ganap ang inyong ideya.',
   },
   contactLead2: {
     ja: 'できることから、一緒に考えます。',
@@ -1035,6 +1113,7 @@ const UI_STRINGS = {
     ru: 'Вместе подумаем над следующим шагом.',
     it: 'Penseremo insieme al prossimo passo.',
     pt: 'Vamos pensar juntos no próximo passo.',
+    fil: 'Sama-sama nating iisipin ang susunod na hakbang.',
   },
   contactService1: {
     ja: 'AIエージェント実装支援（法人向けコンサルティング）',
@@ -1047,6 +1126,7 @@ const UI_STRINGS = {
     ru: 'Поддержка внедрения ИИ-агентов (консалтинг для компаний)',
     it: "Supporto all'implementazione di agenti IA (consulenza per aziende)",
     pt: 'Suporte à implementação de agentes de IA (consultoria para empresas)',
+    fil: 'Suporta sa implementasyon ng AI agent (konsultasyon para sa mga negosyo)',
   },
   contactService2: {
     ja: '受託開発・SaaS開発',
@@ -1059,6 +1139,7 @@ const UI_STRINGS = {
     ru: 'Разработка на заказ и разработка SaaS',
     it: 'Sviluppo su commessa e sviluppo SaaS',
     pt: 'Desenvolvimento sob encomenda e desenvolvimento de SaaS',
+    fil: 'Contract development at SaaS development',
   },
   contactService3: {
     ja: 'AI・IT研修事業「AX Academy」',
@@ -1071,6 +1152,7 @@ const UI_STRINGS = {
     ru: 'Обучение ИИ и ИТ «AX Academy»',
     it: 'Formazione in IA e IT — «AX Academy»',
     pt: 'Treinamento em IA e TI — "AX Academy"',
+    fil: 'Pagsasanay sa AI at IT — "AX Academy"',
   },
 
   // ----- Contact フォーム -----
@@ -1085,6 +1167,7 @@ const UI_STRINGS = {
     ru: 'Имя',
     it: 'Nome',
     pt: 'Nome',
+    fil: 'Pangalan',
   },
   formNamePlaceholder: {
     ja: '山田 太郎',
@@ -1097,6 +1180,7 @@ const UI_STRINGS = {
     ru: 'Иван Иванов',
     it: 'Mario Rossi',
     pt: 'João Silva',
+    fil: 'Juan Dela Cruz',
   },
   formEmail: {
     ja: 'メールアドレス',
@@ -1109,6 +1193,7 @@ const UI_STRINGS = {
     ru: 'Электронная почта',
     it: 'Email',
     pt: 'E-mail',
+    fil: 'Email',
   },
   formConsultation: {
     ja: 'ご相談内容',
@@ -1121,6 +1206,7 @@ const UI_STRINGS = {
     ru: 'Ваш запрос',
     it: 'Di cosa vorrebbe parlare?',
     pt: 'Sobre o que você gostaria de falar?',
+    fil: 'Ano ang gusto ninyong pag-usapan?',
   },
   formConsultationPlaceholder: {
     ja: '選択してください',
@@ -1133,6 +1219,7 @@ const UI_STRINGS = {
     ru: 'Выберите',
     it: "Selezioni un'opzione",
     pt: 'Selecione uma opção',
+    fil: 'Mangyaring pumili',
   },
   formMessage: {
     ja: 'メッセージ',
@@ -1145,6 +1232,7 @@ const UI_STRINGS = {
     ru: 'Сообщение',
     it: 'Messaggio',
     pt: 'Mensagem',
+    fil: 'Mensahe',
   },
   formMessagePlaceholder: {
     ja: 'まだぼんやりした内容でも、お気軽にどうぞ。',
@@ -1157,6 +1245,7 @@ const UI_STRINGS = {
     ru: 'Даже если идея пока размытая, пишите смело.',
     it: "Va bene anche un'idea ancora vaga: scriva pure liberamente.",
     pt: 'Mesmo uma ideia ainda vaga está tudo bem — escreva à vontade.',
+    fil: 'Okay lang kahit magaspang pa ang ideya — huwag mag-atubiling isulat.',
   },
   formRequired: {
     ja: '必須',
@@ -1169,6 +1258,7 @@ const UI_STRINGS = {
     ru: 'Обязательно',
     it: 'Obbligatorio',
     pt: 'Obrigatório',
+    fil: 'Kailangan',
   },
   formOptional: {
     ja: '任意',
@@ -1181,6 +1271,7 @@ const UI_STRINGS = {
     ru: 'Необязательно',
     it: 'Facoltativo',
     pt: 'Opcional',
+    fil: 'Opsyonal',
   },
   formCalendarLegend: {
     ja: 'Google Meet相談（顔出し不要）の候補日時を選択してください（最大{max}件）',
@@ -1193,6 +1284,7 @@ const UI_STRINGS = {
     ru: 'Выберите до {max} вариантов даты и времени для встречи в Google Meet (камера по желанию)',
     it: 'Scelga fino a {max} orari preferiti per una videochiamata su Google Meet (webcam facoltativa)',
     pt: 'Escolha até {max} horários preferidos para uma chamada no Google Meet (câmera opcional)',
+    fil: 'Pumili ng hanggang {max} na nais na oras para sa tawag sa Google Meet (opsyonal ang camera)',
   },
   formCalendarNote: {
     ja: '直近の営業日から自動で3日分表示しています',
@@ -1205,6 +1297,7 @@ const UI_STRINGS = {
     ru: 'Автоматически показаны ближайшие 3 рабочих дня',
     it: 'Vengono mostrati automaticamente i prossimi 3 giorni lavorativi',
     pt: 'Os próximos 3 dias úteis são exibidos automaticamente',
+    fil: 'Awtomatikong ipinapakita ang susunod na 3 araw ng trabaho',
   },
   formTimeColumn: {
     ja: '時間帯',
@@ -1217,6 +1310,7 @@ const UI_STRINGS = {
     ru: 'Время',
     it: 'Orario',
     pt: 'Horário',
+    fil: 'Oras',
   },
   formSlotClosed: {
     ja: '（受付終了）',
@@ -1229,6 +1323,7 @@ const UI_STRINGS = {
     ru: '(приём закрыт)',
     it: '(chiuso)',
     pt: '(encerrado)',
+    fil: '(sarado na)',
   },
   formSlotsCounter: {
     ja: '{n} / {max}件選択中',
@@ -1241,6 +1336,7 @@ const UI_STRINGS = {
     ru: 'Выбрано {n} / {max}',
     it: '{n} di {max} selezionati',
     pt: '{n} de {max} selecionados',
+    fil: '{n} sa {max} ang napili',
   },
   formSubmit: {
     ja: '相談内容を送る',
@@ -1253,6 +1349,7 @@ const UI_STRINGS = {
     ru: 'Отправить сообщение',
     it: 'Invia messaggio',
     pt: 'Enviar mensagem',
+    fil: 'Ipadala ang mensahe',
   },
   formSubmitting: {
     ja: '送信中…',
@@ -1265,6 +1362,7 @@ const UI_STRINGS = {
     ru: 'Отправка…',
     it: 'Invio in corso…',
     pt: 'Enviando…',
+    fil: 'Ipinapadala…',
   },
   formSubmitNote: {
     ja: '入力内容と選択した候補日時を、担当者へメールで送信します。',
@@ -1277,6 +1375,7 @@ const UI_STRINGS = {
     ru: 'Ваши данные и выбранные варианты времени будут отправлены нашей команде по электронной почте.',
     it: 'I suoi dati e gli orari selezionati verranno inviati via email al nostro team.',
     pt: 'Seus dados e os horários selecionados serão enviados por e-mail à nossa equipe.',
+    fil: 'Ang inyong mga detalye at napiling oras ay ipapadala sa email ng aming team.',
   },
   formSuccessTitle: {
     ja: '送信しました。ありがとうございます。',
@@ -1289,6 +1388,7 @@ const UI_STRINGS = {
     ru: 'Отправлено. Спасибо!',
     it: 'Inviato: grazie!',
     pt: 'Enviado — obrigado!',
+    fil: 'Naipadala na — salamat!',
   },
   formSuccessBody: {
     ja: '担当者が内容を確認のうえ、いただいたメールアドレス宛に日程のご連絡をいたします。通常2〜3営業日以内にご返信します。',
@@ -1301,6 +1401,7 @@ const UI_STRINGS = {
     ru: 'Наша команда рассмотрит ваше сообщение и напишет вам на указанный адрес электронной почты, чтобы согласовать время — обычно в течение 2–3 рабочих дней.',
     it: 'Il nostro team esaminerà il suo messaggio e le scriverà via email per fissare un orario, di norma entro 2-3 giorni lavorativi.',
     pt: 'Nossa equipe vai analisar sua mensagem e enviar um e-mail para combinar um horário, normalmente em até 2 a 3 dias úteis.',
+    fil: 'Susuriin ng aming team ang inyong mensahe at magpapadala ng email para mag-ayos ng oras, karaniwang sa loob ng 2–3 araw ng trabaho.',
   },
 
   // ご相談内容の選択肢
@@ -1315,6 +1416,7 @@ const UI_STRINGS = {
     ru: 'Внедрение ИИ-агентов',
     it: 'Implementazione di agenti IA',
     pt: 'Implementação de agentes de IA',
+    fil: 'Implementasyon ng AI agent',
   },
   consultDev: {
     ja: '受託開発・SaaS開発相談',
@@ -1327,6 +1429,7 @@ const UI_STRINGS = {
     ru: 'Разработка на заказ / SaaS',
     it: 'Sviluppo su commessa / SaaS',
     pt: 'Desenvolvimento sob encomenda / SaaS',
+    fil: 'Contract / SaaS development',
   },
   consultTraining: {
     ja: 'AI・IT研修相談（AX Academy）',
@@ -1339,6 +1442,7 @@ const UI_STRINGS = {
     ru: 'Обучение ИИ и ИТ (AX Academy)',
     it: 'Formazione in IA e IT (AX Academy)',
     pt: 'Treinamento em IA e TI (AX Academy)',
+    fil: 'Pagsasanay sa AI at IT (AX Academy)',
   },
   consultOther: {
     ja: 'その他',
@@ -1351,6 +1455,7 @@ const UI_STRINGS = {
     ru: 'Другое',
     it: 'Altro',
     pt: 'Outro',
+    fil: 'Iba pa',
   },
 
   // バリデーションエラー
@@ -1365,6 +1470,7 @@ const UI_STRINGS = {
     ru: 'Введите ваше имя.',
     it: 'Inserisca il suo nome.',
     pt: 'Digite seu nome.',
+    fil: 'Mangyaring ilagay ang inyong pangalan.',
   },
   errEmailRequired: {
     ja: 'メールアドレスを入力してください',
@@ -1377,6 +1483,7 @@ const UI_STRINGS = {
     ru: 'Введите адрес электронной почты.',
     it: 'Inserisca il suo indirizzo email.',
     pt: 'Digite seu endereço de e-mail.',
+    fil: 'Mangyaring ilagay ang inyong email address.',
   },
   errEmailInvalid: {
     ja: 'メールアドレスの形式が正しくありません',
@@ -1389,6 +1496,7 @@ const UI_STRINGS = {
     ru: 'Введите корректный адрес электронной почты.',
     it: 'Inserisca un indirizzo email valido.',
     pt: 'Digite um endereço de e-mail válido.',
+    fil: 'Mangyaring maglagay ng wastong email address.',
   },
   errConsultationRequired: {
     ja: 'ご相談内容を選択してください',
@@ -1401,6 +1509,7 @@ const UI_STRINGS = {
     ru: 'Выберите тему.',
     it: 'Selezioni un argomento.',
     pt: 'Selecione um assunto.',
+    fil: 'Mangyaring pumili ng paksa.',
   },
   errSlotsRequired: {
     ja: '候補日時を1件以上選択してください',
@@ -1413,6 +1522,7 @@ const UI_STRINGS = {
     ru: 'Выберите хотя бы один вариант времени.',
     it: 'Selezioni almeno un orario.',
     pt: 'Selecione pelo menos um horário.',
+    fil: 'Mangyaring pumili ng kahit isang oras.',
   },
   errSubmitFailed: {
     ja: '送信に失敗しました。お手数ですが時間をおいて再度お試しいただくか、直接メールにてご連絡ください。',
@@ -1425,6 +1535,7 @@ const UI_STRINGS = {
     ru: 'Произошла ошибка. Повторите попытку позже или свяжитесь с нами напрямую по электронной почте.',
     it: 'Si è verificato un problema. Riprovi più tardi oppure ci contatti direttamente via email.',
     pt: 'Algo deu errado. Tente novamente mais tarde ou entre em contato diretamente por e-mail.',
+    fil: 'May nangyaring mali. Pakisubukang muli mamaya, o makipag-ugnayan nang direkta sa pamamagitan ng email.',
   },
   errNetwork: {
     ja: 'ネットワークエラーにより送信できませんでした。通信環境をご確認のうえ再度お試しください。',
@@ -1437,6 +1548,7 @@ const UI_STRINGS = {
     ru: 'Не удалось отправить из-за сетевой ошибки. Проверьте подключение и повторите попытку.',
     it: 'Impossibile inviare a causa di un errore di rete. Verifichi la connessione e riprovi.',
     pt: 'Não foi possível enviar devido a um erro de rede. Verifique sua conexão e tente novamente.',
+    fil: 'Hindi naipadala dahil sa network error. Pakisuri ang inyong koneksyon at subukang muli.',
   },
   errNotConfigured: {
     ja: '送信設定が未完了のため送信できませんでした。お手数ですが時間をおいて再度お試しください。',
@@ -1449,6 +1561,7 @@ const UI_STRINGS = {
     ru: 'Форма ещё не полностью настроена. Повторите попытку позже.',
     it: 'Il modulo non è ancora configurato completamente. Riprovi più tardi.',
     pt: 'O formulário ainda não está totalmente configurado. Tente novamente mais tarde.',
+    fil: 'Hindi pa ganap na naka-configure ang form. Pakisubukang muli mamaya.',
   },
 
   // SaaS開発ページ（/saas）
@@ -1463,6 +1576,7 @@ const UI_STRINGS = {
     ru: 'Разработка SaaS',
     it: 'Sviluppo SaaS',
     pt: 'Desenvolvimento de SaaS',
+    fil: 'SaaS Development',
   },
   // /saas・/navi-lp の見出し付近に置く「事業内容に戻る」リンク（ヘッダーが使えない場合の保険）
   backToBusinessLabel: {
@@ -1476,6 +1590,7 @@ const UI_STRINGS = {
     ru: '← Назад к Услугам',
     it: '← Torna alle Attività',
     pt: '← Voltar para Serviços',
+    fil: '← Bumalik sa Negosyo',
   },
   saasHeading: {
     ja: 'SaaS開発',
@@ -1488,6 +1603,7 @@ const UI_STRINGS = {
     ru: 'Разработка SaaS',
     it: 'Sviluppo SaaS',
     pt: 'Desenvolvimento de SaaS',
+    fil: 'SaaS Development',
   },
   saasLead: {
     ja: '自分のnoteのデータで動く、マルチテナント型のSaaS「noteAnalytics」を、AIと一緒に作っています。',
@@ -1500,6 +1616,7 @@ const UI_STRINGS = {
     ru: 'Вместе с ИИ я разрабатываю noteAnalytics — мультитенантный SaaS, работающий на основе моих собственных данных note.',
     it: "Sto sviluppando, insieme all'IA, noteAnalytics, un SaaS multi-tenant alimentato dai miei stessi dati di note.",
     pt: 'Estou desenvolvendo, junto com a IA, o noteAnalytics, um SaaS multi-tenant que funciona com meus próprios dados do note.',
+    fil: 'Ginagawa ko ang noteAnalytics, isang multi-tenant SaaS na pinapatakbo ng sarili kong data mula sa note, kasama ang AI.',
   },
   saasBuildingHeading: {
     ja: '作っているもの',
@@ -1512,6 +1629,7 @@ const UI_STRINGS = {
     ru: 'Что я разрабатываю',
     it: 'Cosa sto sviluppando',
     pt: 'O que estou desenvolvendo',
+    fil: 'Ang ginagawa ko',
   },
   saasBuildingBody: {
     ja: 'noteのフォロワー数、スキ・フォロー・コメントなどのデータを集めて、1つのダッシュボードで見られるWebシステムです。複数のアカウントを、まとめて見ることができます。',
@@ -1524,6 +1642,7 @@ const UI_STRINGS = {
     ru: 'Веб-система, которая собирает данные note — число подписчиков, лайки, подписки и комментарии — в единой панели. Несколько аккаунтов можно просматривать вместе.',
     it: "Un sistema web che raccoglie i dati di note — numero di follower, mi piace, follow e commenti — in un'unica dashboard. È possibile visualizzare più account insieme.",
     pt: 'Um sistema web que reúne os dados do note — número de seguidores, curtidas, follows e comentários — em um único painel. É possível visualizar várias contas juntas.',
+    fil: 'Isang web system na nagtitipon ng data ng note — bilang ng followers, likes, follows, at comments — sa iisang dashboard. Puwedeng tingnan ang maraming account nang magkasama.',
   },
   saasScreensHeading: {
     ja: '主な画面',
@@ -1536,6 +1655,7 @@ const UI_STRINGS = {
     ru: 'Основные экраны',
     it: 'Schermate principali',
     pt: 'Telas principais',
+    fil: 'Mga pangunahing screen',
   },
   saasScreenYojitsuTitle: {
     ja: '予実管理',
@@ -1548,6 +1668,7 @@ const UI_STRINGS = {
     ru: 'План/факт',
     it: 'Obiettivo vs. effettivo',
     pt: 'Meta vs. real',
+    fil: 'Target laban sa aktwal',
   },
   saasScreenYojitsuDesc: {
     ja: '月ごとのフォロワー数の目標と実績を、複合グラフで見ます。',
@@ -1560,6 +1681,7 @@ const UI_STRINGS = {
     ru: 'Ежемесячная цель и фактическое число подписчиков на комбинированной диаграмме.',
     it: "Visualizzi l'obiettivo mensile di follower e i numeri effettivi in un grafico combinato.",
     pt: 'Veja a meta mensal de seguidores e os números reais em um gráfico combinado.',
+    fil: 'Tingnan ang buwanang target at aktwal na bilang ng followers sa isang combo chart.',
   },
   saasScreenFollowerTitle: {
     ja: 'フォロワー数',
@@ -1572,6 +1694,7 @@ const UI_STRINGS = {
     ru: 'Число подписчиков',
     it: 'Numero di follower',
     pt: 'Número de seguidores',
+    fil: 'Bilang ng followers',
   },
   saasScreenFollowerDesc: {
     ja: 'アカウントごとの日別の推移を、年・月で絞り込んで見ます。',
@@ -1584,6 +1707,7 @@ const UI_STRINGS = {
     ru: 'Ежедневная динамика по каждому аккаунту с фильтром по году и месяцу.',
     it: "Visualizzi l'andamento giornaliero di ogni account, filtrato per anno e mese.",
     pt: 'Veja a tendência diária de cada conta, filtrada por ano e mês.',
+    fil: 'Tingnan ang araw-araw na trend ng bawat account, na na-filter ayon sa taon at buwan.',
   },
   saasScreenNotificationTitle: {
     ja: '通知分析',
@@ -1596,6 +1720,7 @@ const UI_STRINGS = {
     ru: 'Анализ уведомлений',
     it: 'Analisi delle notifiche',
     pt: 'Análise de notificações',
+    fil: 'Pagsusuri ng notification',
   },
   saasScreenNotificationDesc: {
     ja: 'スキ・フォロー・コメントを、曜日別・時間帯別に見ます。',
@@ -1608,6 +1733,7 @@ const UI_STRINGS = {
     ru: 'Лайки, подписки и комментарии по дням недели и времени суток.',
     it: 'Visualizzi mi piace, follow e commenti suddivisi per giorno della settimana e fascia oraria.',
     pt: 'Veja curtidas, follows e comentários divididos por dia da semana e horário.',
+    fil: 'Tingnan ang likes, follows, at comments na hinati ayon sa araw ng linggo at oras ng araw.',
   },
   saasScreenAccessTitle: {
     ja: 'アクセス分析',
@@ -1620,6 +1746,7 @@ const UI_STRINGS = {
     ru: 'Анализ посещений',
     it: 'Analisi degli accessi',
     pt: 'Análise de acessos',
+    fil: 'Pagsusuri ng access',
   },
   saasScreenAccessDesc: {
     ja: 'Google Analytics 4のデータを、地図で見ます（実装予定）。',
@@ -1632,6 +1759,7 @@ const UI_STRINGS = {
     ru: 'Данные Google Analytics 4 на карте (в разработке).',
     it: 'Visualizzi i dati di Google Analytics 4 su una mappa (in arrivo).',
     pt: 'Veja os dados do Google Analytics 4 em um mapa (em breve).',
+    fil: 'Tingnan ang data ng Google Analytics 4 sa isang mapa (malapit nang mailabas).',
   },
   saasScreensNote: {
     ja: 'スマホ、タブレット、PCに対応しています。',
@@ -1644,6 +1772,7 @@ const UI_STRINGS = {
     ru: 'Работает на смартфонах, планшетах и компьютерах.',
     it: 'Funziona su smartphone, tablet e PC.',
     pt: 'Funciona em smartphones, tablets e computadores.',
+    fil: 'Gumagana sa smartphone, tablet, at PC.',
   },
   saasApproachHeading: {
     ja: 'つくり方の考え方',
@@ -1656,6 +1785,7 @@ const UI_STRINGS = {
     ru: 'Подход к разработке',
     it: 'Come lo sviluppo',
     pt: 'Como eu construo',
+    fil: 'Paano ko ito ginagawa',
   },
   saasApproachSelfTitle: {
     ja: 'まず自分から',
@@ -1668,6 +1798,7 @@ const UI_STRINGS = {
     ru: 'Сначала для себя',
     it: 'Prima di tutto io stesso',
     pt: 'Primeiro eu mesmo',
+    fil: 'Magsimula sa sarili',
   },
   saasApproachSelfDesc: {
     ja: '最初のユーザーは自分です。要件が速く決まり、動かなければすぐに気づけます。',
@@ -1680,6 +1811,7 @@ const UI_STRINGS = {
     ru: 'Я сам — первый пользователь. Требования проясняются быстро, а сбои заметны сразу.',
     it: 'Sono il primo utente. I requisiti si definiscono rapidamente e mi accorgo subito se qualcosa non funziona.',
     pt: 'Eu sou o primeiro usuário. Os requisitos se definem rápido, e percebo na hora se algo quebra.',
+    fil: 'Ako ang unang user. Mabilis na natutukoy ang mga requirement, at agad kong napapansin kung may nasira.',
   },
   saasApproachMultiTenantTitle: {
     ja: '最初から複数の企業に対応',
@@ -1692,6 +1824,7 @@ const UI_STRINGS = {
     ru: 'С самого начала для нескольких компаний',
     it: "Multi-tenant fin dall'inizio",
     pt: 'Multi-tenant desde o início',
+    fil: 'Multi-tenant mula sa simula',
   },
   saasApproachMultiTenantDesc: {
     ja: '1社で使うところから始めて、複数の企業に提供できる構造で作っています。',
@@ -1704,6 +1837,7 @@ const UI_STRINGS = {
     ru: 'Начинается с использования одной компанией, но структура рассчитана на несколько компаний.',
     it: 'Inizia servendo una sola azienda, ma è costruito con una struttura in grado di servirne molte.',
     pt: 'Começa servindo uma única empresa, mas é construído com uma estrutura capaz de atender muitas.',
+    fil: 'Nagsisimula ito sa paglilingkod sa isang kumpanya, ngunit ginawa ito na may istrukturang kayang maglingkod sa marami.',
   },
   saasApproachAssetsTitle: {
     ja: '既存の資産を活かす',
@@ -1716,6 +1850,7 @@ const UI_STRINGS = {
     ru: 'Использование существующих ресурсов',
     it: 'Riutilizzo delle risorse esistenti',
     pt: 'Reaproveitando recursos existentes',
+    fil: 'Muling paggamit ng umiiral na asset',
   },
   saasApproachAssetsDesc: {
     ja: 'GASとスプレッドシートで集めたデータを、Google Sheets APIで取り込みます。',
@@ -1728,6 +1863,7 @@ const UI_STRINGS = {
     ru: 'Данные, собранные с помощью Google Apps Script и таблиц, импортируются через Google Sheets API.',
     it: "I dati raccolti con Google Apps Script e i fogli di calcolo vengono importati tramite l'API di Google Sheets.",
     pt: 'Os dados coletados com Google Apps Script e planilhas são importados por meio da API do Google Sheets.',
+    fil: 'Ang data na nakolekta gamit ang Google Apps Script at Spreadsheets ay ini-import sa pamamagitan ng Google Sheets API.',
   },
   saasApproachMigrationTitle: {
     ja: '移行しやすい構成',
@@ -1740,6 +1876,7 @@ const UI_STRINGS = {
     ru: 'Архитектура, удобная для переноса',
     it: 'Facile da migrare in futuro',
     pt: 'Fácil de migrar depois',
+    fil: 'Madaling i-migrate sa hinaharap',
   },
   saasApproachMigrationDesc: {
     ja: 'Next.js、Vercel、Supabaseで動いています。将来、AWSやGCP、Azureへ移りやすい構成です。',
@@ -1752,6 +1889,7 @@ const UI_STRINGS = {
     ru: 'Работает на Next.js, Vercel и Supabase — эту конфигурацию будет легко перенести на AWS, GCP или Azure в будущем.',
     it: 'Funziona su Next.js, Vercel e Supabase, una configurazione che in futuro si potrà migrare facilmente verso AWS, GCP o Azure.',
     pt: 'Funciona em Next.js, Vercel e Supabase — uma configuração que poderá ser facilmente migrada para AWS, GCP ou Azure mais adiante.',
+    fil: 'Tumatakbo ito sa Next.js, Vercel, at Supabase — isang setup na madaling ma-migrate sa AWS, GCP, o Azure sa hinaharap.',
   },
   saasApproachAiTitle: {
     ja: 'AIと開発',
@@ -1764,6 +1902,7 @@ const UI_STRINGS = {
     ru: 'Разработка вместе с ИИ',
     it: "Sviluppare con l'IA",
     pt: 'Desenvolvendo com IA',
+    fil: 'Pagpapaunlad kasama ang AI',
   },
   saasApproachAiDesc: {
     ja: '仕様書をClaudeと一緒に作り、Claude Codeで実装しています。',
@@ -1776,6 +1915,7 @@ const UI_STRINGS = {
     ru: 'Спецификацию я составляю вместе с Claude, а реализую с помощью Claude Code.',
     it: 'Scrivo le specifiche insieme a Claude, poi le implemento con Claude Code.',
     pt: 'Escrevo as especificações junto com o Claude e depois as implemento com o Claude Code.',
+    fil: 'Isinusulat ko ang mga spec kasama si Claude, pagkatapos ay ini-implement ko ito gamit ang Claude Code.',
   },
   saasDemoHeading: {
     ja: 'デモサイト',
@@ -1788,6 +1928,7 @@ const UI_STRINGS = {
     ru: 'Демо-сайт',
     it: 'Sito demo',
     pt: 'Site de demonstração',
+    fil: 'Demo site',
   },
   saasDemoBody: {
     ja: '実際に動くデモを、お試しいただけます。参照のみのデモ環境で、テストデータで動いています。本番のデータは含まれていません。',
@@ -1800,6 +1941,7 @@ const UI_STRINGS = {
     ru: 'Вы можете опробовать полностью рабочую демоверсию. Это демо-среда только для просмотра, работающая на тестовых данных — производственные данные не используются.',
     it: 'Può provare la demo funzionante. È un ambiente demo di sola consultazione che utilizza dati di prova: non contiene dati di produzione.',
     pt: 'Você pode experimentar a demonstração, que funciona de verdade. É um ambiente somente de visualização, com dados de teste — não há dados de produção.',
+    fil: 'Maaari ninyong subukan ang gumaganang demo. Ito ay isang view-only demo environment na tumatakbo sa test data — walang kasamang production data.',
   },
   saasDemoButton: {
     ja: 'デモサイトを開く',
@@ -1812,6 +1954,7 @@ const UI_STRINGS = {
     ru: 'Открыть демо-сайт',
     it: 'Apri il sito demo',
     pt: 'Abrir o site de demonstração',
+    fil: 'Buksan ang demo site',
   },
   saasDemoIdLabel: {
     ja: 'ログインID',
@@ -1824,6 +1967,7 @@ const UI_STRINGS = {
     ru: 'Логин',
     it: 'ID di accesso',
     pt: 'ID de login',
+    fil: 'Login ID',
   },
   saasDemoPasswordLabel: {
     ja: 'パスワード',
@@ -1836,6 +1980,7 @@ const UI_STRINGS = {
     ru: 'Пароль',
     it: 'Password',
     pt: 'Senha',
+    fil: 'Password',
   },
   saasArticleHeading: {
     ja: '関連するnote記事',
@@ -1848,6 +1993,7 @@ const UI_STRINGS = {
     ru: 'Связанная статья на note',
     it: 'Articolo note correlato',
     pt: 'Artigo relacionado no note',
+    fil: 'Kaugnay na note article',
   },
   saasArticleBody: {
     ja: '開発の経緯と設計の考え方は、noteにまとめています。記事の後半（有料）では、実際にClaude Codeに渡した、仕様書と開発指示書の全文を公開しています。',
@@ -1860,6 +2006,7 @@ const UI_STRINGS = {
     ru: 'Предысторию разработки и логику проектирования я изложил в статье на note. Во второй, платной части статьи я публикую полный текст спецификации и инструкций, которые реально передал Claude Code.',
     it: "Ho raccontato il contesto e le scelte di progettazione su note. Nella seconda parte dell'articolo (a pagamento) pubblico il testo completo delle specifiche e delle istruzioni che ho realmente fornito a Claude Code.",
     pt: 'Escrevi sobre o histórico e o raciocínio de design no note. Na segunda parte do artigo (paga), publico o texto completo da especificação e das instruções que realmente dei ao Claude Code.',
+    fil: 'Isinulat ko ang background at proseso ng pag-iisip sa disenyo sa note. Sa ikalawang bahagi ng artikulo (bayad), inilalathala ko ang buong teksto ng spec at mga tagubilin na aktwal kong ibinigay sa Claude Code.',
   },
   saasArticleLinkLabel: {
     ja: '【マルチテナント型SaaSの開発はまず自分から:デモサイト有り】Vol.4～自分のnoteデータで作るSaaSのリアル、ポートフォリオはデプロイしてから語れ～',
@@ -1872,6 +2019,7 @@ const UI_STRINGS = {
     ru: '【マルチテナント型SaaSの開発はまず自分から:デモサイト有り】Vol.4～自分のnoteデータで作るSaaSのリアル、ポートフォリオはデプロイしてから語れ～',
     it: '【マルチテナント型SaaSの開発はまず自分から:デモサイト有り】Vol.4～自分のnoteデータで作るSaaSのリアル、ポートフォリオはデプロイしてから語れ～',
     pt: '【マルチテナント型SaaSの開発はまず自分から:デモサイト有り】Vol.4～自分のnoteデータで作るSaaSのリアル、ポートフォリオはデプロイしてから語れ～',
+    fil: '【マルチテナント型SaaSの開発はまず自分から:デモサイト有り】Vol.4～自分のnoteデータで作るSaaSのリアル、ポートフォリオはデプロイしてから語れ～',
   },
   saasArticleLangNote: {
     ja: '（記事は日本語です）',
@@ -1884,6 +2032,7 @@ const UI_STRINGS = {
     ru: '(Статья написана на японском языке.)',
     it: "(L'articolo è in giapponese.)",
     pt: '(O artigo está em japonês.)',
+    fil: '(Nasa Japanese ang artikulo.)',
   },
   saasContactHeading: {
     ja: 'ご相談',
@@ -1896,6 +2045,7 @@ const UI_STRINGS = {
     ru: 'Консультация',
     it: 'Contattaci',
     pt: 'Fale conosco',
+    fil: 'Makipag-ugnayan',
   },
   saasContactBody: {
     ja: 'SaaSの開発や、データの可視化のご相談は、お問い合わせからどうぞ。',
@@ -1908,6 +2058,7 @@ const UI_STRINGS = {
     ru: 'По вопросам разработки SaaS или визуализации данных, пожалуйста, свяжитесь со мной.',
     it: 'Per domande sullo sviluppo SaaS o sulla visualizzazione dei dati, non esiti a contattarci.',
     pt: 'Para dúvidas sobre desenvolvimento de SaaS ou visualização de dados, entre em contato.',
+    fil: 'Para sa mga tanong tungkol sa SaaS development o data visualization, mangyaring makipag-ugnayan.',
   },
   saasScreenshotYojitsuAlt: {
     ja: '予実管理ページの複合グラフの画面',
@@ -1920,6 +2071,7 @@ const UI_STRINGS = {
     ru: 'Экран с комбинированной диаграммой плана и факта',
     it: 'Schermata del grafico combinato obiettivo vs. effettivo',
     pt: 'Tela do gráfico combinado de meta vs. real',
+    fil: 'Screen na nagpapakita ng combo chart ng target kumpara sa aktwal',
   },
   saasScreenshotDashboardAlt: {
     ja: '複数のグラフが並ぶダッシュボードの画面',
@@ -1932,6 +2084,7 @@ const UI_STRINGS = {
     ru: 'Экран панели с несколькими диаграммами рядом',
     it: 'Schermata della dashboard con più grafici affiancati',
     pt: 'Tela do painel com vários gráficos lado a lado',
+    fil: 'Screen na nagpapakita ng dashboard na may maraming chart na magkatabi',
   },
   saasScreenshotFollowerAlt: {
     ja: 'フォロワー数ページの日別推移グラフの画面',
@@ -1944,6 +2097,7 @@ const UI_STRINGS = {
     ru: 'Экран с графиком ежедневной динамики подписчиков',
     it: "Schermata del grafico dell'andamento giornaliero dei follower",
     pt: 'Tela do gráfico de tendência diária de seguidores',
+    fil: 'Screen na nagpapakita ng chart ng araw-araw na trend ng bilang ng followers',
   },
   saasScreenshotNotificationAlt: {
     ja: '通知分析ページの曜日別・時間帯別グラフの画面',
@@ -1956,6 +2110,7 @@ const UI_STRINGS = {
     ru: 'Экран с уведомлениями по дням недели и времени суток',
     it: 'Schermata delle notifiche suddivise per giorno della settimana e fascia oraria',
     pt: 'Tela das notificações divididas por dia da semana e horário',
+    fil: 'Screen na nagpapakita ng mga notification na hinati ayon sa araw ng linggo at oras ng araw',
   },
   saasLearnMoreLabel: {
     ja: '詳しく見る',
@@ -1968,6 +2123,7 @@ const UI_STRINGS = {
     ru: 'Подробнее',
     it: 'Scopri di più',
     pt: 'Saiba mais',
+    fil: 'Alamin pa',
   },
 
   // ナビ付きLPページ（/navi-lp）
@@ -1982,6 +2138,7 @@ const UI_STRINGS = {
     ru: 'LP с гидом',
     it: 'LP guidata',
     pt: 'LP guiada',
+    fil: 'Guided LP',
   },
   naviLpLead: {
     ja: '動画や音声が案内してくれる、「ナビ付き」のLPです。AIと一緒に作った、2つのバリエーションを紹介します。',
@@ -1994,6 +2151,7 @@ const UI_STRINGS = {
     ru: 'LP с гидом — видео или голос ведёт вас по странице. Представляю два варианта, созданных вместе с ИИ.',
     it: "Una LP «guidata», condotta da un video o da una voce. Ecco due varianti che ho realizzato con l'IA.",
     pt: 'Uma LP "guiada", conduzida por vídeo ou voz. Aqui estão duas variações que criei com a IA.',
+    fil: 'Isang "guided" LP, na pinapatnubayan ng video o boses. Narito ang dalawang variation na ginawa ko kasama ang AI.',
   },
   naviLpAboutHeading: {
     ja: 'ナビ付きLPとは',
@@ -2006,6 +2164,7 @@ const UI_STRINGS = {
     ru: 'Что такое LP с гидом',
     it: "Cos'è una LP guidata?",
     pt: 'O que é uma LP guiada?',
+    fil: 'Ano ang Guided LP?',
   },
   naviLpAboutBody: {
     ja: 'ふつうのLPは、読む人が自分で、上から下へ読み進めます。ナビ付きLPは、音声や動画の案内役が話しかけ、ページを一緒に進めてくれます。読む人は、案内に身をまかせるだけで、内容が伝わります。',
@@ -2018,6 +2177,7 @@ const UI_STRINGS = {
     ru: 'На обычной LP читатель сам листает страницу сверху вниз. На LP с гидом голосовой или видео-гид обращается к читателю и вместе с ним продвигается по странице. Читателю достаточно довериться гиду — и суть будет понятна.',
     it: "In una LP normale, il lettore scorre la pagina da solo, dall'alto verso il basso. In una LP guidata, una guida vocale o video si rivolge al lettore e avanza insieme a lui nella pagina. Al lettore basta lasciarsi guidare, e il messaggio arriva.",
     pt: 'Em uma LP normal, o leitor rola a página sozinho, de cima para baixo. Em uma LP guiada, um guia de voz ou vídeo fala com o leitor e avança pela página junto com ele. O leitor só precisa se deixar guiar, e a mensagem chega.',
+    fil: 'Sa karaniwang LP, mag-isang nag-scroll ang reader mula sa itaas pababa. Sa guided LP, kinakausap ng isang voice o video guide ang reader at sabay silang sumusulong sa pahina. Susundan lang ng reader ang gabay, at maihahatid ang mensahe.',
   },
   naviLpVariantsHeading: {
     ja: '2つのバリエーション',
@@ -2030,6 +2190,7 @@ const UI_STRINGS = {
     ru: 'Два варианта',
     it: 'Due varianti',
     pt: 'Duas variações',
+    fil: 'Dalawang Variation',
   },
   naviLpGuidedTitle: {
     ja: '音声ガイドLP',
@@ -2042,6 +2203,7 @@ const UI_STRINGS = {
     ru: 'LP с голосовым гидом',
     it: 'LP guidata dalla voce',
     pt: 'LP guiada por voz',
+    fil: 'Voice-guided LP',
   },
   naviLpGuidedIntro: {
     ja: '動画の人物が話しかけ、その声に合わせて、ページが動き出します。最後は、面談の相談フォームで止まります。',
@@ -2054,6 +2216,7 @@ const UI_STRINGS = {
     ru: 'Человек в видео обращается к вам, и страница движется в такт его голосу. В конце — форма для записи на консультацию.',
     it: 'Una persona in video le parla, e la pagina si muove seguendo la sua voce. Termina con un modulo di richiesta per un appuntamento.',
     pt: 'Uma pessoa em vídeo fala com você, e a página se move ao ritmo da voz dela. Termina em um formulário de solicitação de reunião.',
+    fil: 'Kakausapin kayo ng isang tao sa video, at gagalaw ang pahina kasabay ng kanyang boses. Magtatapos ito sa isang consultation form para sa isang meeting.',
   },
   naviLpGuidedPoint1: {
     ja: '動画、音声、ページの動きが、ひとつにつながります。',
@@ -2066,6 +2229,7 @@ const UI_STRINGS = {
     ru: 'Видео, голос и движение страницы объединены в единое целое.',
     it: "Video, voce e movimento della pagina sono collegati in un'unica esperienza.",
     pt: 'Vídeo, voz e movimento da página estão todos conectados em um só.',
+    fil: 'Ang video, boses, at galaw ng pahina ay pinagsama bilang isa.',
   },
   naviLpGuidedPoint2: {
     ja: '話が進むと、その内容のセクションが現れます。',
@@ -2078,6 +2242,7 @@ const UI_STRINGS = {
     ru: 'По мере развития рассказа появляется соответствующий раздел.',
     it: 'Man mano che il discorso procede, appare la sezione corrispondente.',
     pt: 'À medida que a fala avança, a seção correspondente aparece.',
+    fil: 'Habang umuusad ang usapan, lumalabas ang kaukulang section.',
   },
   naviLpGuidedPoint3: {
     ja: '最後は、相談フォームへ。候補日時を選んで送れます。すぐに予約が確定するのではなく、メールの返信で日程を決めます。',
@@ -2090,6 +2255,7 @@ const UI_STRINGS = {
     ru: 'В конце — форма заявки. Можно выбрать предполагаемое время и отправить. Встреча подтверждается не мгновенно — дата согласовывается ответным письмом.',
     it: "Termina con un modulo di richiesta. Può scegliere alcuni orari indicativi e inviarli. L'appuntamento non viene confermato immediatamente: la data viene fissata con una risposta via email.",
     pt: 'Termina em um formulário de solicitação. Você pode escolher horários candidatos e enviá-los. A reunião não é confirmada na hora — o horário é definido por uma resposta por e-mail.',
+    fil: 'Magtatapos ito sa isang consultation form. Puwede kayong pumili ng mga posibleng oras at ipadala ito. Hindi agad ma-kokonfirma ang meeting — itatakda ang schedule sa pamamagitan ng email reply.',
   },
   // {langCount} は対応言語数（レジストリの LANGUAGES.length）に置換する。固定値にしない。
   naviLpGuidedPoint4: {
@@ -2103,6 +2269,7 @@ const UI_STRINGS = {
     ru: 'Пока доступна только на японском. В будущем планирую расширить до {langCount} языков.',
     it: 'Al momento è disponibile solo in giapponese. In futuro prevedo di estenderla a {langCount} lingue.',
     pt: 'No momento, está disponível apenas em japonês. Pretendo expandi-la para {langCount} idiomas futuramente.',
+    fil: 'Kasalukuyang Japanese lang ito. Plano kong palawakin ito sa {langCount} na wika sa hinaharap.',
   },
   naviLpGuidedSuitable: {
     ja: '向いている場面：ひとつのストーリーを、順番に伝えて、相談につなげたいとき。',
@@ -2115,6 +2282,7 @@ const UI_STRINGS = {
     ru: 'Подходит для: последовательного рассказа одной истории с переходом к консультации.',
     it: 'Adatta a: raccontare una storia in ordine e condurre verso una richiesta di consulenza.',
     pt: 'Ideal para: contar uma história em ordem e levar a uma consulta.',
+    fil: 'Angkop para sa: pagsasabi ng isang kuwento sa maayos na pagkakasunod-sunod at pag-akay tungo sa isang konsultasyon.',
   },
   naviLpGuidedButton: {
     ja: '音声ガイドLPを開く',
@@ -2127,6 +2295,7 @@ const UI_STRINGS = {
     ru: 'Открыть LP с голосовым гидом',
     it: 'Apri la LP guidata dalla voce',
     pt: 'Abrir a LP guiada por voz',
+    fil: 'Buksan ang voice-guided LP',
   },
   naviLpGuidedScreenshotAlt: {
     ja: '音声ガイドLPで、動画の案内役がページを進めている画面',
@@ -2139,6 +2308,7 @@ const UI_STRINGS = {
     ru: 'Экран LP с голосовым гидом, где видео-гид продвигает страницу',
     it: 'Schermata della LP guidata dalla voce, con una guida video che conduce la pagina',
     pt: 'Tela da LP guiada por voz, com um guia em vídeo conduzindo a página',
+    fil: 'Screen na nagpapakita ng voice-guided LP kasama ang video guide na umaakay sa pahina',
   },
   naviLpGuidedArticleLinkLabel: {
     ja: '【AIとLPづくり】GPT-5.6 Solで仕様を固め、GPT-6 Astraで実装したら「動画が話し、ページが動くLP」ができた',
@@ -2151,6 +2321,7 @@ const UI_STRINGS = {
     ru: '【AIとLPづくり】GPT-5.6 Solで仕様を固め、GPT-6 Astraで実装したら「動画が話し、ページが動くLP」ができた',
     it: '【AIとLPづくり】GPT-5.6 Solで仕様を固め、GPT-6 Astraで実装したら「動画が話し、ページが動くLP」ができた',
     pt: '【AIとLPづくり】GPT-5.6 Solで仕様を固め、GPT-6 Astraで実装したら「動画が話し、ページが動くLP」ができた',
+    fil: '【AIとLPづくり】GPT-5.6 Solで仕様を固め、GPT-6 Astraで実装したら「動画が話し、ページが動くLP」ができた',
   },
   naviLpLpNotesTitle: {
     ja: 'LPNotes',
@@ -2163,6 +2334,7 @@ const UI_STRINGS = {
     ru: 'LPNotes',
     it: 'LPNotes',
     pt: 'LPNotes',
+    fil: 'LPNotes',
   },
   naviLpLpNotesTagline: {
     ja: '記事のように書き足して育てるLP',
@@ -2175,6 +2347,7 @@ const UI_STRINGS = {
     ru: 'LP, которая растёт, как статья, по мере дописывания',
     it: 'Una LP che cresce continuando a scriverla, come un articolo',
     pt: 'Uma LP que você faz crescer escrevendo mais, como um artigo',
+    fil: 'Isang LP na pinapalago mo sa pamamagitan ng patuloy na pagsulat, tulad ng isang artikulo',
   },
   naviLpLpNotesIntro: {
     ja: 'note記事のように書くと、1つのアイデアが1つのページになる、自分専用のLPの実験サイトです。',
@@ -2187,6 +2360,7 @@ const UI_STRINGS = {
     ru: 'Пишешь как статью note — и одна идея превращается в одну страницу. Это мой личный экспериментальный сайт для LP.',
     it: "Scrivendola come un articolo note, un'idea diventa una pagina: è il mio sito sperimentale personale per le LP.",
     pt: 'Ao escrever como um artigo do note, uma ideia se transforma em uma página — é meu site experimental pessoal para LPs.',
+    fil: 'Isulat ito tulad ng isang note article, at ang isang ideya ay nagiging isang pahina — ito ang aking personal na experimental site para sa mga LP.',
   },
   naviLpLpNotesPoint1: {
     ja: '記事のように書き足せます。画像、見出し、相談フォームを入れられます。',
@@ -2199,6 +2373,7 @@ const UI_STRINGS = {
     ru: 'Можно дописывать как статью — добавлять изображения, заголовки и форму для консультации.',
     it: 'Può continuare ad ampliarla come un articolo: immagini, titoli e un modulo di richiesta trovano posto al suo interno.',
     pt: 'Você pode continuar adicionando conteúdo como em um artigo — imagens, títulos e um formulário de consulta cabem nela.',
+    fil: 'Maaari kayong magpatuloy na magdagdag dito tulad ng isang artikulo — kasya ang mga larawan, headings, at isang consultation form.',
   },
   // {langCount} は対応言語数（レジストリの LANGUAGES.length）に置換する。固定値にしない。
   naviLpLpNotesPoint2: {
@@ -2212,6 +2387,7 @@ const UI_STRINGS = {
     ru: 'Поддерживает {langCount} языков. Переключить язык можно с помощью глобуса.',
     it: 'Supporta {langCount} lingue. Può cambiare lingua con il mappamondo.',
     pt: 'Compatível com {langCount} idiomas. Você pode trocar de idioma pelo globo.',
+    fil: 'Sumusuporta sa {langCount} na wika. Puwede ninyong palitan ang wika gamit ang globo.',
   },
   naviLpLpNotesPoint3: {
     ja: 'エリカと一緒に、音声で読み進められます。口の動きも付いています。',
@@ -2224,6 +2400,7 @@ const UI_STRINGS = {
     ru: 'Эрика читает вместе с вами вслух, с синхронным движением губ.',
     it: 'Erica la legge ad alta voce insieme a lei, con tanto di labiale in movimento.',
     pt: 'A Erica lê em voz alta junto com você, com os lábios se movendo.',
+    fil: 'Binabasa ito ni Erica nang malakas kasama ninyo, kumpleto na may gumagalaw na labi.',
   },
   naviLpLpNotesPoint4: {
     ja: '詳しい制作の記録は、noteの記事（一部有料）にまとめています。',
@@ -2236,6 +2413,7 @@ const UI_STRINGS = {
     ru: 'Подробный дневник разработки описан в статье на note (частично платная).',
     it: 'Il diario dettagliato dello sviluppo è raccontato in un articolo su note (in parte a pagamento).',
     pt: 'O registro detalhado da criação está em um artigo do note (parcialmente pago).',
+    fil: 'Ang detalyadong build log ay nakasulat sa isang note article (bahagyang bayad).',
   },
   naviLpLpNotesSuitable: {
     ja: '向いている場面：たくさんのLPを次々に書いて、反応を試したいとき。',
@@ -2248,6 +2426,7 @@ const UI_STRINGS = {
     ru: 'Подходит для: быстрого написания множества LP подряд и проверки реакции.',
     it: "Adatta a: scrivere molte LP una dopo l'altra e testare le reazioni.",
     pt: 'Ideal para: escrever muitas LPs uma após a outra e testar a resposta.',
+    fil: 'Angkop para sa: pagsusulat ng maraming LP nang sunud-sunod at pagsubok sa reaksyon.',
   },
   naviLpLpNotesScreenshotAlt: {
     ja: 'LPNotesで、記事のように書かれたページが表示された画面',
@@ -2260,6 +2439,7 @@ const UI_STRINGS = {
     ru: 'Экран страницы LPNotes, написанной как статья',
     it: 'Schermata di una pagina LPNotes scritta come un articolo',
     pt: 'Tela de uma página do LPNotes escrita como um artigo',
+    fil: 'Screen na nagpapakita ng isang LPNotes page na nakasulat tulad ng isang artikulo',
   },
   naviLpLpNotesArticleLinkLabel: {
     ja: 'GPT-6 Astraで自分専用LPサイトを作った――8言語の翻訳・読み上げから一般公開まで',
@@ -2272,6 +2452,7 @@ const UI_STRINGS = {
     ru: 'GPT-6 Astraで自分専用LPサイトを作った――8言語の翻訳・読み上げから一般公開まで',
     it: 'GPT-6 Astraで自分専用LPサイトを作った――8言語の翻訳・読み上げから一般公開まで',
     pt: 'GPT-6 Astraで自分専用LPサイトを作った――8言語の翻訳・読み上げから一般公開まで',
+    fil: 'GPT-6 Astraで自分専用LPサイトを作った――8言語の翻訳・読み上げから一般公開まで',
   },
   naviLpChoiceHeading: {
     ja: '選び方の目安',
@@ -2284,6 +2465,7 @@ const UI_STRINGS = {
     ru: 'Как выбрать',
     it: 'Come scegliere',
     pt: 'Como escolher',
+    fil: 'Alin ang Piliin',
   },
   naviLpChoiceLine1: {
     ja: '決まった流れで伝えたい：音声ガイドLP',
@@ -2296,6 +2478,7 @@ const UI_STRINGS = {
     ru: 'Хотите рассказывать в заданной последовательности: LP с голосовым гидом',
     it: 'Vuole raccontarlo secondo un percorso fisso: la LP guidata dalla voce',
     pt: 'Quer contar em um fluxo fixo: a LP guiada por voz',
+    fil: 'Gusto ninyong isalaysay ito sa fixed na daloy: ang voice-guided LP',
   },
   naviLpChoiceLine2: {
     ja: 'アイデアを次々と試したい：LPNotes',
@@ -2308,6 +2491,7 @@ const UI_STRINGS = {
     ru: 'Хотите пробовать идеи одну за другой: LPNotes',
     it: "Vuole provare idee una dopo l'altra: LPNotes",
     pt: 'Quer testar ideias uma após a outra: LPNotes',
+    fil: 'Gusto ninyong subukan ang mga ideya nang paisa-isa: LPNotes',
   },
   naviLpContactHeading: {
     ja: 'ご相談',
@@ -2320,6 +2504,7 @@ const UI_STRINGS = {
     ru: 'Консультация',
     it: 'Contattaci',
     pt: 'Fale conosco',
+    fil: 'Makipag-ugnayan',
   },
   naviLpContactBody: {
     ja: 'LPの制作や、ナビ付きの仕組みのご相談は、お問い合わせからどうぞ。',
@@ -2332,6 +2517,7 @@ const UI_STRINGS = {
     ru: 'По вопросам создания LP или системы с гидом, пожалуйста, свяжитесь со мной.',
     it: 'Per domande sulla realizzazione di una LP o sul sistema guidato, non esiti a contattarci.',
     pt: 'Para dúvidas sobre a criação de uma LP ou sobre o sistema guiado, entre em contato.',
+    fil: 'Para sa mga tanong tungkol sa paggawa ng LP o guided setup, mangyaring makipag-ugnayan.',
   },
 
   // /business「制作の紹介」セクション（/saas・/navi-lp へのカードリンク）
@@ -2346,6 +2532,7 @@ const UI_STRINGS = {
     ru: 'Избранные проекты',
     it: 'Progetti in evidenza',
     pt: 'Projetos em destaque',
+    fil: 'Mga Featured na Proyekto',
   },
 
   // /privacy: GA4利用のお知らせ（本文・リンク文言）
@@ -2360,6 +2547,7 @@ const UI_STRINGS = {
     ru: 'Этот сайт использует Google Analytics 4 для анализа посещаемости. Подробнее см. в следующей политике.',
     it: 'Questo sito utilizza Google Analytics 4 per analizzare il traffico. Per maggiori dettagli, consulti la seguente policy.',
     pt: 'Este site usa o Google Analytics 4 para analisar o tráfego. Para mais detalhes, consulte a política a seguir.',
+    fil: 'Ginagamit ng site na ito ang Google Analytics 4 upang suriin ang traffic. Para sa mga detalye, mangyaring tingnan ang sumusunod na patakaran.',
   },
   privacyGa4LinkLabel: {
     ja: 'Googleのポリシー',
@@ -2372,6 +2560,7 @@ const UI_STRINGS = {
     ru: 'Политика Google',
     it: 'Policy di Google',
     pt: 'Política do Google',
+    fil: 'Patakaran ng Google',
   },
 
   // イメージ100計算ページ（/image100）
@@ -2386,6 +2575,7 @@ const UI_STRINGS = {
     ru: 'Расчёт «Картинка 100»',
     it: 'Calcolo Immagine 100',
     pt: 'Cálculo Imagem 100',
+    fil: 'Image 100 Calculation',
   },
   image100Lead: {
     ja: '言語脳を刺激したら、計算脳も刺激して、頭の柔軟体操で、一息入れて、リラックスしましょう',
@@ -2398,6 +2588,7 @@ const UI_STRINGS = {
     ru: 'Простимулировав языковой мозг, простимулируйте и счётный — сделайте лёгкую умственную разминку и немного расслабьтесь.',
     it: "Dopo aver stimolato il cervello linguistico, stimoliamo anche quello matematico: una pausa di stretching mentale, per rilassarsi un po'.",
     pt: 'Depois de estimular o cérebro da linguagem, vamos estimular também o cérebro do cálculo — faça uma pausa de alongamento mental e relaxe.',
+    fil: 'Matapos pasiglahin ang inyong language brain, pasiglahin din natin ang math brain — mag-take ng mental stretch break at magrelaks.',
   },
   image100HowToIntro: {
     ja: '縦横の見出しが交わるマスを見て、その2つの数字を、頭の中で、足したり、引いたり、掛けたりして、声に出す遊びです。',
@@ -2410,6 +2601,7 @@ const UI_STRINGS = {
     ru: 'Посмотрите на ячейку, где пересекаются горизонтальный и вертикальный заголовки, сложите, вычтите или умножьте эти два числа в уме и произнесите ответ вслух.',
     it: "Guardi la casella in cui si incrociano un'intestazione di riga e una di colonna, sommi, sottragga o moltiplichi mentalmente i due numeri e dica il risultato ad alta voce.",
     pt: 'Olhe para a célula onde um cabeçalho de linha e um de coluna se cruzam, some, subtraia ou multiplique os dois números de cabeça e diga a resposta em voz alta.',
+    fil: 'Tingnan ang cell kung saan nagtatagpo ang row heading at column heading, idagdag, ibawas, o i-multiply ang dalawang numero sa isip, at sabihin ang sagot nang malakas.',
   },
   image100HowToExampleAnswerOnly: {
     ja: '例：答えだけを言う → 「5」（five）',
@@ -2422,6 +2614,7 @@ const UI_STRINGS = {
     ru: 'Пример: сказать только ответ → «5» (five)',
     it: 'Esempio: dica solo la risposta → "5" (five)',
     pt: 'Exemplo: diga apenas a resposta → "5" (five)',
+    fil: 'Halimbawa: sabihin lang ang sagot → "5" (five)',
   },
   image100HowToExampleFullSentence: {
     ja: '例：英語で計算式ごと言う → 「one plus four equal five」',
@@ -2434,6 +2627,7 @@ const UI_STRINGS = {
     ru: 'Пример: произнести весь пример по-английски → «one plus four equal five»',
     it: 'Esempio: dica l\'intera equazione in inglese → "one plus four equal five"',
     pt: 'Exemplo: diga toda a equação em inglês → "one plus four equal five"',
+    fil: 'Halimbawa: sabihin ang buong equation sa English → "one plus four equal five"',
   },
   image100HowToExampleSubtraction: {
     ja: '例：引き算の言い方（答えがマイナスになる例） → 「three minus four is minus one」',
@@ -2446,6 +2640,7 @@ const UI_STRINGS = {
     ru: 'Пример: как сказать вычитание (с отрицательным ответом) → «three minus four is minus one»',
     it: 'Esempio: come dire una sottrazione (con risultato negativo) → "three minus four is minus one"',
     pt: 'Exemplo: como dizer uma subtração (com resposta negativa) → "three minus four is minus one"',
+    fil: 'Halimbawa: paano sabihin ang pagbabawas (na may negatibong sagot) → "three minus four is minus one"',
   },
   image100HowToExampleMultiplicationTimes: {
     ja: '例：「times」を使う、かけ算の言い方（学校で習う、標準の言い方） → 「two times four is eight」',
@@ -2458,6 +2653,7 @@ const UI_STRINGS = {
     ru: 'Пример: умножение со словом «times» (стандартная форма, которую учат в школе) → «two times four is eight»',
     it: 'Esempio: moltiplicazione con "times" (il modo standard insegnato a scuola) → "two times four is eight"',
     pt: 'Exemplo: multiplicação usando "times" (a forma padrão ensinada na escola) → "two times four is eight"',
+    fil: 'Halimbawa: pagpaparami gamit ang "times" (ang standard na paraan na itinuturo sa paaralan) → "two times four is eight"',
   },
   image100HowToExampleMultiplication: {
     ja: '例：「by」を使う、かけ算の言い方 → 「two by four is eight」',
@@ -2470,6 +2666,7 @@ const UI_STRINGS = {
     ru: 'Пример: умножение со словом «by» → «two by four is eight»',
     it: 'Esempio: moltiplicazione con "by" → "two by four is eight"',
     pt: 'Exemplo: multiplicação usando "by" → "two by four is eight"',
+    fil: 'Halimbawa: pagpaparami gamit ang "by" → "two by four is eight"',
   },
   image100HowToExampleNote: {
     ja: '※ 言い方は、いろいろあります。好きな言い方で、声に出してみましょう。',
@@ -2482,6 +2679,7 @@ const UI_STRINGS = {
     ru: 'Примечание: сказать это можно по-разному — попробуйте вариант, который вам удобнее.',
     it: 'Nota: esistono molti modi per dirlo: provi quello che le viene più naturale.',
     pt: 'Observação: há muitas formas de dizer isso — experimente a que parecer mais natural para você.',
+    fil: 'Tandaan: maraming paraan para sabihin ito — subukan ang alinman ang pakiramdam ninyo ay natural.',
   },
   image100ModeLabel: {
     ja: '並び',
@@ -2494,6 +2692,7 @@ const UI_STRINGS = {
     ru: 'Порядок',
     it: 'Ordine',
     pt: 'Ordem',
+    fil: 'Pagkakasunod-sunod',
   },
   image100ModeRandom: {
     ja: 'ランダム',
@@ -2506,6 +2705,7 @@ const UI_STRINGS = {
     ru: 'Случайно',
     it: 'Casuale',
     pt: 'Aleatório',
+    fil: 'Random',
   },
   image100ModeKuku: {
     ja: '九九',
@@ -2518,6 +2718,7 @@ const UI_STRINGS = {
     ru: 'По порядку',
     it: 'In ordine',
     pt: 'Em ordem',
+    fil: 'Ayon sa Pagkakasunod-sunod',
   },
   image100OperatorLabel: {
     ja: '演算',
@@ -2530,6 +2731,7 @@ const UI_STRINGS = {
     ru: 'Действие',
     it: 'Operazione',
     pt: 'Operação',
+    fil: 'Operasyon',
   },
   // セルの aria-label（例: 「2かける8を再生」）。{h}/{op}/{v} を置換して使う。
   image100CellPlayAriaLabel: {
@@ -2543,6 +2745,7 @@ const UI_STRINGS = {
     ru: 'Воспроизвести {h} {op} {v}',
     it: 'Riproduci {h} {op} {v}',
     pt: 'Reproduzir {h} {op} {v}',
+    fil: 'I-play ang {h} {op} {v}',
   },
   // 割り算で縦が0（0で割る）のセルの aria-label。「答えが存在しない」ことを
   // 案内する再生ボタンであることを伝える。{h}/{op}/{v} を置換して使う。
@@ -2557,6 +2760,7 @@ const UI_STRINGS = {
     ru: 'Воспроизвести {h} {op} {v} (нет решения)',
     it: 'Riproduci {h} {op} {v} (nessuna risposta)',
     pt: 'Reproduzir {h} {op} {v} (sem resposta)',
+    fil: 'I-play ang {h} {op} {v} (walang sagot)',
   },
   // スクリーンリーダー向けの表キャプション（視覚的には隠す）
   image100TableCaption: {
@@ -2570,6 +2774,7 @@ const UI_STRINGS = {
     ru: 'Таблица для тренировки счёта. В верхней строке — числа горизонтального заголовка, в левом столбце — числа вертикального заголовка. Все 100 внутренних ячеек пусты.',
     it: "Tabella per l'esercizio di calcolo. La riga superiore mostra i numeri dell'intestazione orizzontale, la colonna di sinistra i numeri dell'intestazione verticale. Tutte le 100 celle interne sono vuote.",
     pt: 'Tabela de prática de cálculo. A linha superior mostra os números do cabeçalho horizontal, e a coluna esquerda mostra os números do cabeçalho vertical. Todas as 100 células internas estão vazias.',
+    fil: 'Talahanayan para sa pagsasanay sa pagkalkula. Ang itaas na row ay nagpapakita ng mga numero ng horizontal heading, at ang kaliwang column ay nagpapakita ng mga numero ng vertical heading. Lahat ng 100 panloob na cell ay walang laman.',
   },
   image100ContactHeading: {
     ja: 'ご相談',
@@ -2582,6 +2787,7 @@ const UI_STRINGS = {
     ru: 'Консультация',
     it: 'Contattaci',
     pt: 'Fale conosco',
+    fil: 'Makipag-ugnayan',
   },
   image100ContactBody: {
     ja: 'イメージ100計算や、ほかのページについてのご相談は、お問い合わせからどうぞ。',
@@ -2594,6 +2800,7 @@ const UI_STRINGS = {
     ru: 'По вопросам о «Расчёт «Картинка 100»» или других страницах, пожалуйста, свяжитесь со мной.',
     it: 'Per domande sul Calcolo Immagine 100 o su altre pagine, non esiti a contattarci.',
     pt: 'Para dúvidas sobre o Cálculo Imagem 100 ou outras páginas, entre em contato.',
+    fil: 'Para sa mga tanong tungkol sa Image 100 Calculation o ibang mga pahina, mangyaring makipag-ugnayan.',
   },
 } satisfies Record<string, Localized>;
 

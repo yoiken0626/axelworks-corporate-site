@@ -16,7 +16,7 @@
 // 配列の並び順が、そのまま地球儀（GlobeLanguageSwitcher）の国旗リングの並び順になる。
 // 最終的に12言語（日本・韓国・中国・ネパール・ロシア・ドイツ・イタリア・フランス・
 // スペイン・ブラジル・アメリカ・フィリピン）になる計画のうち、現時点で存在する
-// 言語だけをその順に並べてある（ネパール語・フィリピノ語は未追加）。
+// 言語だけをその順に並べてある（ネパール語は未追加）。
 
 type LanguageEntry = {
   /** サイト内部で使う言語コード。Cookie・?lang=・翻訳フィールド名の元になる */
@@ -147,6 +147,16 @@ export const LANGUAGES = [
     translationNameJa: '英語',
     translationInstruction: '英語は自然で専門的なビジネス英語に',
     speechLangCode: 'en-US',
+    script: 'latin',
+  },
+  {
+    code: 'fil',
+    label: 'Filipino',
+    flagIcon: 'ph',
+    translationField: 'fil',
+    translationNameJa: 'フィリピノ語',
+    translationInstruction: 'フィリピノ語は自然で丁寧なビジネスフィリピノ語（敬称 po/opo を交えた丁寧表現ベース）に',
+    speechLangCode: 'fil-PH',
     script: 'latin',
   },
 ] as const satisfies readonly LanguageEntry[];

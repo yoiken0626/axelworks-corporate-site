@@ -19,6 +19,12 @@ import { LANGUAGES, type Lang } from './lang-registry';
 //  - it-IT-Neural2-A … イタリア語の女性。voices API で実在・FEMALE を確認済み
 //  - pt-BR-Neural2-A … ブラジルポルトガル語の女性。voices API で実在・FEMALE を
 //    確認済み（pt-PT ではなく pt-BR。ポルトガル本国の音声とは別物）
+//  - fil-ph-Neural2-A … フィリピノ語の女性。voices API で実在・FEMALE を確認済み。
+//    Google側の命名ゆれで、Standard/Wavenetは"fil-PH-"（大文字PH）だが、Neural2だけ
+//    "fil-ph-"（小文字ph）である点に注意（voices APIのレスポンスをそのまま使うこと。
+//    大文字化した "fil-PH-Neural2-A" は存在しない）。合成APIのvoice.languageCode
+//    （フィールド側は 'fil-PH'）とvoice.nameの大文字小文字が食い違っても、実機確認では
+//    正常に合成できた。
 //    （存在しない name を渡すと Google 側が別ボイス（男性含む）にフォールバック
 //     または 400 を返す。追加時は必ず voices API で実在と性別を確認すること）
 //
@@ -35,6 +41,7 @@ const VOICE_NAME: Record<Lang, string> = {
   ru: 'ru-RU-Wavenet-A',
   it: 'it-IT-Neural2-A',
   pt: 'pt-BR-Neural2-A',
+  fil: 'fil-ph-Neural2-A',
 };
 
 // 言語コード（レジストリの speechLangCode）と音声名（上記、server-only）を合わせた、

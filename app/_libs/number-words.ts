@@ -17,6 +17,10 @@ export const NUMBER_WORDS: Record<Lang, string[]> = {
   ru: ['ноль', 'один', 'два', 'три', 'четыре', 'пять', 'шесть', 'семь', 'восемь', 'девять'],
   it: ['zero', 'uno', 'due', 'tre', 'quattro', 'cinque', 'sei', 'sette', 'otto', 'nove'],
   pt: ['zero', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove'],
+  // タガログ語（フィリピノ語）本来の数詞。スペイン語由来の数詞（uno, dos, tres...）は
+  // 時刻・金額の口語表現で使われるのが中心で、計算・数え上げの文脈ではフィリピノ語
+  // 本来の数詞が学校教育の標準（このアプリの用途に合致する）。
+  fil: ['wala', 'isa', 'dalawa', 'tatlo', 'apat', 'lima', 'anim', 'pito', 'walo', 'siyam'],
 };
 
 /** digit は 0〜9。範囲外は空文字を返す。 */
@@ -185,6 +189,24 @@ const pt = (n: number, ones: string[]): string => {
   return `${PT_TENS[tens]} e ${ones[units]}`;
 };
 
+const FIL_TEENS = [
+  'sampu', 'labing-isa', 'labindalawa', 'labintatlo', 'labing-apat',
+  'labinlima', 'labing-anim', 'labimpito', 'labingwalo', 'labinsiyam',
+];
+const FIL_TENS: Record<number, string> = {
+  2: 'dalawampu', 3: 'tatlumpu', 4: 'apatnapu', 5: 'limampu',
+  6: 'animnapu', 7: 'pitumpu', 8: 'walumpu', 9: 'siyamnapu',
+};
+// フィリピノ語（タガログ語）は「十の位 + 't + 一の位」の合成（dalawampu't isa = 21）。
+const fil = (n: number, ones: string[]): string => {
+  if (n < 10) return ones[n];
+  if (n < 20) return FIL_TEENS[n - 10];
+  const tens = Math.floor(n / 10);
+  const units = n % 10;
+  if (units === 0) return FIL_TENS[tens];
+  return `${FIL_TENS[tens]}'t ${ones[units]}`;
+};
+
 /** 0〜99 の、単語での読み方。範囲外・非整数は算用数字の文字列にフォールバックする。 */
 export const extendedNumberWord = (n: number, lang: Lang): string => {
   if (!Number.isInteger(n) || n < 0 || n > 99) return String(n);
@@ -210,6 +232,8 @@ export const extendedNumberWord = (n: number, lang: Lang): string => {
       return it(n, ones);
     case 'pt':
       return pt(n, ones);
+    case 'fil':
+      return fil(n, ones);
     default:
       return String(n);
   }

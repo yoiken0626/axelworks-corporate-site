@@ -25,6 +25,7 @@ const WEEKDAY: Record<Lang, string[]> = {
   ru: ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'],
   it: ['dom.', 'lun.', 'mar.', 'mer.', 'gio.', 'ven.', 'sab.'],
   pt: ['dom.', 'seg.', 'ter.', 'qua.', 'qui.', 'sex.', 'sáb.'],
+  fil: ['Lin.', 'Lun.', 'Mar.', 'Miy.', 'Huw.', 'Biy.', 'Sab.'],
 };
 
 const isBusinessDay = (d: Date) => {
