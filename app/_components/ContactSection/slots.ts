@@ -23,6 +23,7 @@ const WEEKDAY: Record<Lang, string[]> = {
   fr: ['dim.', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.'],
   es: ['dom.', 'lun.', 'mar.', 'mié.', 'jue.', 'vie.', 'sáb.'],
   ru: ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'],
+  ne: ['आइत', 'सोम', 'मंगल', 'बुध', 'बिही', 'शुक्र', 'शनि'],
   it: ['dom.', 'lun.', 'mar.', 'mer.', 'gio.', 'ven.', 'sab.'],
   pt: ['dom.', 'seg.', 'ter.', 'qua.', 'qui.', 'sex.', 'sáb.'],
   fil: ['Lin.', 'Lun.', 'Mar.', 'Miy.', 'Huw.', 'Biy.', 'Sab.'],

@@ -27,6 +27,17 @@ import { LANGUAGES, type Lang } from './lang-registry';
 //    正常に合成できた。
 //    （存在しない name を渡すと Google 側が別ボイス（男性含む）にフォールバック
 //     または 400 を返す。追加時は必ず voices API で実在と性別を確認すること）
+//  - Kore（ne, Gemini TTS）… ne-NP は Standard/Neural2/WaveNet/Chirp3-HD のいずれにも
+//    音声が1件も存在しない（voices API で languageCode=ne-NP が空配列を返すことを確認済み）。
+//    Gemini TTS（Preview、モデル名は下記 GEMINI_TTS_MODEL）だけが ne-NP を話せる。
+//    Gemini TTS は Vertex AI 経由で動くため、サービスアカウントに
+//    roles/aiplatform.user（Agent Platform ユーザー、旧 Vertex AI ユーザー）が
+//    必要（無いと 403 aiplatform.endpoints.predict で失敗する）。
+//    実機確認（2026-09-29）: languageCode=ne-NP, voice.name=Kore, modelName=
+//    gemini-2.5-flash-tts, input.prompt="Read the text naturally in Nepali."
+//    で合成成功。音声の長さがテキスト量に比例し（無音・固定長フォールバックでない）、
+//    ピッチが時間とともに変化する（発話特有の抑揚があり、無音・ノイズでない）ことを
+//    確認済み。
 //
 // Record<Lang, string> のため、LANGUAGES に言語を追加してもここに音声名を
 // 追加し忘れるとコンパイルエラーになる。
@@ -35,6 +46,7 @@ const VOICE_NAME: Record<Lang, string> = {
   en: 'en-US-Neural2-F',
   ko: 'ko-KR-Neural2-A',
   zh: 'cmn-CN-Wavenet-A',
+  ne: 'Kore',
   de: 'de-DE-Neural2-G',
   fr: 'fr-FR-Neural2-F',
   es: 'es-ES-Neural2-A',
@@ -44,12 +56,40 @@ const VOICE_NAME: Record<Lang, string> = {
   fil: 'fil-ph-Neural2-A',
 };
 
+// Gemini TTS（Preview）のモデル名。ne 以外の言語は Standard/Neural2/WaveNet の
+// 通常合成のままなので、ここで使うのは ne だけ（将来 Gemini TTS でしか話せない
+// 言語が増えたら GEMINI_TTS_PROMPT に追加する）。
+const GEMINI_TTS_MODEL = 'gemini-2.5-flash-tts';
+
+// Gemini TTS を使う言語だけが持つ、input.prompt に渡す話し方の指示（英語）。
+// このキーが存在する言語だけ、google-tts.ts が Gemini TTS 用のリクエスト形式
+// （v1beta1 + voice.modelName + input.prompt）に切り替える。
+const GEMINI_TTS_PROMPT: Partial<Record<Lang, string>> = {
+  ne: 'Read the text naturally in Nepali.',
+};
+
+export type VoiceInfo = {
+  languageCode: string;
+  name: string;
+  /** 設定されている言語だけ、Gemini TTS（v1beta1 + modelName）で合成する */
+  geminiModelName?: string;
+  /** Gemini TTS 使用時のみ。input.prompt に渡す話し方の指示 */
+  geminiPrompt?: string;
+};
+
 // 言語コード（レジストリの speechLangCode）と音声名（上記、server-only）を合わせた、
 // 表示言語ごとの自然な女性ボイス。
-export const VOICE_BY_LANG: Record<Lang, { languageCode: string; name: string }> =
-  Object.fromEntries(
-    LANGUAGES.map((l) => [
-      l.code,
-      { languageCode: l.speechLangCode, name: VOICE_NAME[l.code as Lang] },
-    ]),
-  ) as Record<Lang, { languageCode: string; name: string }>;
+export const VOICE_BY_LANG: Record<Lang, VoiceInfo> = Object.fromEntries(
+  LANGUAGES.map((l) => {
+    const lang = l.code as Lang;
+    const geminiPrompt = GEMINI_TTS_PROMPT[lang];
+    return [
+      lang,
+      {
+        languageCode: l.speechLangCode,
+        name: VOICE_NAME[lang],
+        ...(geminiPrompt ? { geminiModelName: GEMINI_TTS_MODEL, geminiPrompt } : {}),
+      },
+    ];
+  }),
+) as Record<Lang, VoiceInfo>;

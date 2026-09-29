@@ -9,6 +9,9 @@ import { VOICE_BY_LANG } from './tts-voices.server';
 
 const TOKEN_URI = 'https://oauth2.googleapis.com/token';
 const TTS_ENDPOINT = 'https://texttospeech.googleapis.com/v1/text:synthesize';
+// Gemini TTS（Preview）専用。voice.modelName / input.prompt は v1 では
+// 「Unknown name」で 400 になるため、Gemini TTS を使う言語（ne 等）だけ v1beta1 を使う。
+const TTS_ENDPOINT_GEMINI = 'https://texttospeech.googleapis.com/v1beta1/text:synthesize';
 const SCOPE = 'https://www.googleapis.com/auth/cloud-platform';
 
 type ServiceAccount = {
@@ -118,7 +121,7 @@ export const resolveVoice = (opts: {
   lang?: string;
   languageCode?: string;
   voiceName?: string;
-}): { languageCode: string; name?: string } => {
+}): { languageCode: string; name?: string; geminiModelName?: string; geminiPrompt?: string } => {
   if (opts.voiceName) {
     return {
       languageCode:
@@ -137,6 +140,13 @@ export const resolveVoice = (opts: {
 
 /**
  * テキストを合成して MP3 バイナリ（Buffer）を返す。
+ *
+ * geminiModelName が指定された言語（現状 ne のみ。VOICE_BY_LANG 参照）は、
+ * 通常の Standard/Neural2/WaveNet とはリクエスト形式が異なる Gemini TTS（Preview）で
+ * 合成する: v1beta1 エンドポイント・voice.modelName・input.prompt（自然な発話指示、
+ * 英語）を使う。v1 エンドポイントに modelName や input.prompt を送ると
+ * 「Unknown name」で 400 になるため、この分岐でエンドポイント自体を切り替える。
+ * 他の言語には一切影響しない。
  */
 export const synthesizeSpeech = async (params: {
   text: string;
@@ -144,27 +154,42 @@ export const synthesizeSpeech = async (params: {
   voiceName?: string;
   gender?: TtsGender;
   speakingRate?: number;
+  geminiModelName?: string;
+  geminiPrompt?: string;
 }): Promise<Buffer> => {
   const token = await getAccessToken();
 
-  const res = await fetch(TTS_ENDPOINT, {
+  const endpoint = params.geminiModelName ? TTS_ENDPOINT_GEMINI : TTS_ENDPOINT;
+  const body = params.geminiModelName
+    ? {
+        input: { text: params.text, ...(params.geminiPrompt ? { prompt: params.geminiPrompt } : {}) },
+        voice: {
+          languageCode: params.languageCode,
+          ...(params.voiceName ? { name: params.voiceName } : {}),
+          modelName: params.geminiModelName,
+        },
+        audioConfig: { audioEncoding: 'MP3' },
+      }
+    : {
+        input: { text: params.text },
+        voice: {
+          languageCode: params.languageCode,
+          ...(params.voiceName ? { name: params.voiceName } : {}),
+          ...(params.gender ? { ssmlGender: params.gender } : {}),
+        },
+        audioConfig: {
+          audioEncoding: 'MP3',
+          ...(params.speakingRate ? { speakingRate: params.speakingRate } : {}),
+        },
+      };
+
+  const res = await fetch(endpoint, {
     method: 'POST',
     headers: {
       authorization: `Bearer ${token}`,
       'content-type': 'application/json; charset=utf-8',
     },
-    body: JSON.stringify({
-      input: { text: params.text },
-      voice: {
-        languageCode: params.languageCode,
-        ...(params.voiceName ? { name: params.voiceName } : {}),
-        ...(params.gender ? { ssmlGender: params.gender } : {}),
-      },
-      audioConfig: {
-        audioEncoding: 'MP3',
-        ...(params.speakingRate ? { speakingRate: params.speakingRate } : {}),
-      },
-    }),
+    body: JSON.stringify(body),
   });
   if (!res.ok) {
     throw new Error(`Google TTS request failed (${res.status}): ${await res.text()}`);

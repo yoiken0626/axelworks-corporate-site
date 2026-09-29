@@ -14,9 +14,13 @@
 //    コンパイルエラーにはならないが、利用者に表示される文言なので実際には埋める）
 //
 // 配列の並び順が、そのまま地球儀（GlobeLanguageSwitcher）の国旗リングの並び順になる。
-// 最終的に12言語（日本・韓国・中国・ネパール・ロシア・ドイツ・イタリア・フランス・
-// スペイン・ブラジル・アメリカ・フィリピン）になる計画のうち、現時点で存在する
-// 言語だけをその順に並べてある（ネパール語は未追加）。
+// 12言語（日本・韓国・中国・ネパール・ロシア・ドイツ・イタリア・フランス・
+// スペイン・ブラジル・アメリカ・フィリピン）がその順に並んでいる。
+//
+// ネパール語（ne）は読み上げだけ他言語と異なる: ne-NP は Google Cloud TTS の
+// 従来ボイス（Standard/Neural2/WaveNet/Chirp3-HD）が1件も存在しないため、
+// Gemini TTS（Preview）で合成する。分岐は app/_libs/google-tts.ts 側で行う
+// （このレジストリからは他言語と同じ speechLangCode='ne-NP' として見える）。
 
 type LanguageEntry = {
   /** サイト内部で使う言語コード。Cookie・?lang=・翻訳フィールド名の元になる */
@@ -77,6 +81,16 @@ export const LANGUAGES = [
     translationInstruction: '中国語は自然で丁寧なビジネス中国語（簡体字・大陸標準）に',
     speechLangCode: 'cmn-CN',
     script: 'cjk',
+  },
+  {
+    code: 'ne',
+    label: 'नेपाली',
+    flagIcon: 'np',
+    translationField: 'ne',
+    translationNameJa: 'ネパール語',
+    translationInstruction: 'ネパール語は自然で丁寧なビジネスネパール語（敬称 तपाईं ベース）に',
+    speechLangCode: 'ne-NP',
+    script: 'latin',
   },
   {
     code: 'ru',

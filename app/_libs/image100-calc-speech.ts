@@ -9,10 +9,10 @@ export type Operator = 'add' | 'sub' | 'mul' | 'div';
 // （beses/hati sa）は簡潔な接続語としての用法が実際の話し言葉に近い（正式な
 // 数学教育用語「pagpaparami」等はここでの短い接続語の型に合わないため採用しない）。
 export const OPERATOR_WORD: Record<Operator, Record<Lang, string>> = {
-  add: { ja: 'たす', en: 'plus', ko: '더하기', zh: '加', de: 'plus', fr: 'plus', es: 'más', ru: 'плюс', it: 'più', pt: 'mais', fil: 'dagdag' },
-  sub: { ja: 'ひく', en: 'minus', ko: '빼기', zh: '减', de: 'minus', fr: 'moins', es: 'menos', ru: 'минус', it: 'meno', pt: 'menos', fil: 'bawas' },
-  mul: { ja: 'かける', en: 'times', ko: '곱하기', zh: '乘', de: 'mal', fr: 'fois', es: 'por', ru: 'умножить на', it: 'per', pt: 'vezes', fil: 'beses' },
-  div: { ja: 'わる', en: 'divided by', ko: '나누기', zh: '除以', de: 'geteilt durch', fr: 'divisé par', es: 'dividido entre', ru: 'разделить на', it: 'diviso per', pt: 'dividido por', fil: 'hati sa' },
+  add: { ja: 'たす', en: 'plus', ko: '더하기', zh: '加', de: 'plus', fr: 'plus', es: 'más', ru: 'плюс', it: 'più', pt: 'mais', fil: 'dagdag', ne: 'जोड' },
+  sub: { ja: 'ひく', en: 'minus', ko: '빼기', zh: '减', de: 'minus', fr: 'moins', es: 'menos', ru: 'минус', it: 'meno', pt: 'menos', fil: 'bawas', ne: 'घटाउ' },
+  mul: { ja: 'かける', en: 'times', ko: '곱하기', zh: '乘', de: 'mal', fr: 'fois', es: 'por', ru: 'умножить на', it: 'per', pt: 'vezes', fil: 'beses', ne: 'गुणा' },
+  div: { ja: 'わる', en: 'divided by', ko: '나누기', zh: '除以', de: 'geteilt durch', fr: 'divisé par', es: 'dividido entre', ru: 'разделить на', it: 'diviso per', pt: 'dividido por', fil: 'hati sa', ne: 'भाग' },
 };
 
 const MINUS_WORD: Record<Lang, string> = {
@@ -27,6 +27,8 @@ const MINUS_WORD: Record<Lang, string> = {
   it: 'meno',
   pt: 'menos',
   fil: 'negatibo',
+  // ja の「マイナス」と同様、ネパール語でも算数の文脈では外来語「माइनस」がそのまま使われる。
+  ne: 'माइनस',
 };
 
 // マイナスの符号を、直前の数詞にくっつけて書く言語（間に空白を置かない）
@@ -72,6 +74,8 @@ const buildCopulaSentence = (hWord: string, opWord: string, vWord: string, answe
       return `${hWord} ${opWord} ${vWord} é igual a ${answerWord}`;
     case 'fil':
       return `${hWord} ${opWord} ${vWord} ay ${answerWord}`;
+    case 'ne':
+      return `${hWord} ${opWord} ${vWord} बराबर ${answerWord} हुन्छ`;
     case 'en':
     default:
       return `${hWord} ${opWord} ${vWord} is ${answerWord}`;
@@ -110,6 +114,8 @@ const buildDivisionWithRemainder = (
       return `${base}, resto ${remainderWord}`;
     case 'fil':
       return `${base}, labi ${remainderWord}`;
+    case 'ne':
+      return `${base}, बाँकी ${remainderWord}`;
     case 'en':
     default:
       return `${base}, remainder ${remainderWord}`;
@@ -139,6 +145,8 @@ const buildNoAnswer = (hWord: string, opWord: string, vWord: string, lang: Lang)
       return `${hWord} ${opWord} ${vWord} não tem solução`;
     case 'fil':
       return `${hWord} ${opWord} ${vWord} ay walang sagot`;
+    case 'ne':
+      return `${hWord} ${opWord} ${vWord} को कुनै जवाफ छैन`;
     case 'en':
     default:
       return `${hWord} ${opWord} ${vWord} has no answer`;

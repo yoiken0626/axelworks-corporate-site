@@ -101,6 +101,8 @@ export async function POST(request: NextRequest) {
       // ボイス名を確定できている場合は gender 指定は無視される（矛盾を避けて渡さない）
       gender: voice.name ? undefined : gender,
       speakingRate,
+      geminiModelName: voice.geminiModelName,
+      geminiPrompt: voice.geminiPrompt,
     });
 
     return new NextResponse(new Uint8Array(audio), {

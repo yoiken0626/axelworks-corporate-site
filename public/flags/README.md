@@ -8,7 +8,7 @@ To refresh / add a locale:
 
 ```sh
 npm i -D circle-flags@latest
-cp node_modules/circle-flags/flags/{jp,us,kr,cn,de,es,fr,ru,it,br,ph}.svg public/flags/
+cp node_modules/circle-flags/flags/{jp,us,kr,cn,de,es,fr,ru,it,br,ph,np}.svg public/flags/
 ```
 
-Currently vendored: `jp`, `us`, `kr`, `cn`, `de`, `es`, `fr`, `ru`, `it`, `br`, `ph`.
+Currently vendored: `jp`, `us`, `kr`, `cn`, `de`, `es`, `fr`, `ru`, `it`, `br`, `ph`, `np`.
