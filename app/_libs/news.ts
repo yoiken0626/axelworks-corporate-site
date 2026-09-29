@@ -15,6 +15,11 @@ export type Category = {
 // 翻訳ステータスの型定義
 export type TranslationStatus = '未処理' | '生成中' | '完了';
 
+// translation_status が「生成中」になった時刻（ISO 8601）。多重実行防止のロック取得時に
+// 毎回打ち直す。処理が途中で落ちて「生成中」のまま固まった記事を、一定時間の経過で
+// 検知して再試行するために使う（app/_libs/translate-pipeline.ts の STALE_GENERATING_MS）。
+// microCMS側に日時フィールド（フィールドID: translation_started_at）の追加が必要。
+
 // 翻訳対象言語（レジストリの TranslationSuffix）ごとの title_*/content_* フィールド。
 // 言語を追加すると、対応する title_*/content_* がここに自動で増える。
 export type TitleFields = { [K in TranslationSuffix as `title_${K}`]?: string };
@@ -26,6 +31,7 @@ export type News = {
   description: string;
   content: string;
   translation_status?: TranslationStatus[];
+  translation_started_at?: string;
   thumbnail?: MicroCMSImage;
   category: Category;
 } & TitleFields &

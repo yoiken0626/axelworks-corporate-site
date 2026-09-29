@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "prettier --write --ignore-path .gitignore './**/*.{js,jsx,ts,tsx,json,css}'"
+    "format": "prettier --write --ignore-path .gitignore './**/*.{js,jsx,ts,tsx,json,css}'",
+    "translate:backfill": "tsx scripts/translate-backfill.ts"
   },
   "prettier": {
     "trailingComma": "all",
@@ -42,6 +43,7 @@
   },
   "devDependencies": {
     "@types/three": "^0.185.4",
-    "circle-flags": "^2.8.3"
+    "circle-flags": "^2.8.3",
+    "tsx": "^4.19.2"
   }
 }
